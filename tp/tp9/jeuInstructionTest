@@ -1,0 +1,33 @@
+// Routine d'initialisation
+// Version test
+
+dbt;				//DEBUT
+
+dbc 2	;			//BOUCLE (3 FOIS)
+dal 1;
+att 25;
+det 1;
+att 25;
+fbc	;				//FIN BOUCLE
+
+
+trd;				//TOURNER A DROITE
+att 50;
+sgo 69;
+mav 150;			//AVANCER (SPEED 200)
+att 255;
+sgo 57;
+mre 150;			//RECULER (SPEED 100)
+att 255;
+mar;				//STOP MOTEUR
+sgo 45;
+trg;
+sar;
+att 100;
+trg;
+dal 2;				//ALLUMER ROUGE			
+att 100;
+dal 0;				//ETEINDRE LUMIERE
+
+
+fin;				//FIN

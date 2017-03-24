@@ -1,0 +1,103 @@
+/*  TP3 - INF1995
+ *  Réalisé par Mathieu Bélanger et William Harvey
+ *  31/01/2017
+ */
+
+/*   _______________________________________
+ *  |Etat initial|Btn|Etat suivant|DEL libre|             
+ *  |------------|---|------------|---------|
+ *  |     INIT   | 1 |     E1     |  Rouge  |
+ *  |      E1    | 1 |     E1     |  Ambre  |
+ *  |      E1    | 0 |     E2     |  Ambre  |
+ *  |      E2    | 1 |     E3     |  Vert   |
+ *  |      E3    | 0 |     E4     |  Rouge  |
+ *  |      E4    | 1 |     E5     |  Off    |
+ *  |      E5    | 0 |     INIT   |  Vert   |
+ *  |____________|___|____________|_________|
+ * 
+ * 
+*/
+
+#define F_CPU 8000000
+#include <util/delay.h>
+#include <avr/io.h> 
+#include <avr/interrupt.h>
+
+volatile uint8_t minuterieExpiree;
+volatile uint8_t boutonPoussoir; 
+
+
+
+ISR (TIMER1_ect) {
+minuterieExpiree = 1;
+}
+
+ISR (INT0_vect) {
+// anti-rebond
+_delay_ms(10);
+if(PIND & 0x04)
+    boutonPoussoir = 1;
+}
+
+
+void partirMinuterie ( uint16_t duree ) {
+
+minuterieExpiree = 0;
+
+// mode CTC du timer 1 avec horloge divisee par 1024
+
+// interruption apres la duree specifiee
+
+TCNT1 = 0;
+
+OCR1A = duree;
+
+TCCR1A |= 1 << COM1A0;
+
+TCCR1B |= (1 << CS10) | (1 << CS12);
+
+TCCR1C = 0;
+
+TIMSK1 |= (1<<OCIE1A);
+}
+
+
+
+void initialisation ( void ) {
+    cli();
+    EIMSK |= _BV(INT0);
+    EICRA |= (1<<ISC00);
+    sei();
+}
+
+
+
+int main()
+{
+    DDRA = 0xff; //Sortie
+    DDRD = 0x00; //Entrée
+    
+    _delay_ms(10000); //délai 10s
+    PORTA = 0x01;
+    _delay_ms(100); //attente 1/10s
+    PORTA = 0x00;
+    initialisation(); //On permet maintenant les interruptions
+    partirMinuterie(0x1E84);
+    
+    do {
+    // attendre qu'une des deux variables soit modifiee
+    // par une ou l'autre des interruptions.
+    } while ( minuterieExpiree == 0 && boutonPoussoir == 0 );
+
+    // Une interruption s'est produite. Arreter toute
+    // forme d'interruption. Une seule reponse suffit.
+    cli ();
+
+    // Verifier la reponse
+
+    if (minuterieExpiree)
+        PORTA = 0x01;
+    else
+        PORTA = 0x02;
+    return 0;
+} 

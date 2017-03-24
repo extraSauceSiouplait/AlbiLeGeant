@@ -1,0 +1,42 @@
+Polytechnique Montr�al
+
+D�partement de g�nie informatique et g�nie logiciel
+
+INF1995: Projet initial en ing�nierie informatique
+         et travail en �quipe
+
+Grille de correction des programmes:
+
+Identification:
+  Travail Pratique # : td3
+  Section #  : 03
+  �quipe #   : 65
+  Correcteur : Pierre-Olivier Guimond-Cataford
+
+
+Lisibilit�:  /5
+  En-t�tes en d�but de programme et de fonctions   (1 point) : .5
+  Identificateurs significatifs (variables, etc.)  (1 point) : 1
+  Commentaires aux endroits strat�giques           (1 point) : 0
+  Indentation et facilit� de lecture               (1 point) : 1
+  Broches, ressources mat�rielles bien identifi�es (1 point) : 1
+
+Modularit� et comprehension:   /5
+  Les fonctions sont assez courtes, bien
+        �tablies et avec de bons param�tres        (1 point) : 1
+  Le code refl�te une bonne compr�hension
+        des concepts de base                       (2 points): 2
+  Le code montre que la solution propos�e
+        permet de bien r�soudre le probl�me        (2 points): 2
+
+Fonctionnalit�:   /10
+  Soumission r�ussie sous Git (bon endroit,
+        sans fichiers inutiles)                    (3 points): 3
+  Compilation sans "warnings" et sans erreurs      (2 point) : 2
+  Fonctionnement correct (�valu� en "boite noire") (5 points): 5
+
+
+Total:     18.5/20
+
+
+Commentaires du correcteur:

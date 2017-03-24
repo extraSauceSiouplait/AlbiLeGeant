@@ -1,0 +1,207 @@
+dbt; #Début
+
+dbc 4;	#5 double croche (si)
+att 1;
+sgo 71;
+att 4;
+sar;
+fbc;
+
+att 95;
+
+sgo 74;#1 noir (re)
+att 20;
+sar;
+
+dbc 4;	
+#5 double croche (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+
+att 135;
+
+dbc 3; #4 fois
+dbc 3;	#3 double croche (si) et 1 noire (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71;
+att 20;
+sar;
+fbc;
+
+dbc 27; #28 double croche (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+
+sgo 59;
+att 2;
+sar;
+sgo 57;
+att 3;
+sar;
+sgo 55;
+att 2;
+sar;
+sgo 53;
+att 3;
+sar;
+sgo 52;
+att 2;
+sar;
+sgo 50;
+att 3;
+sgo 48;
+att 2;
+sar;
+sgo 47;
+att 3;
+sar;
+sgo 45;
+att 2;
+sar;
+sgo 79;
+att 3;
+sar;
+sgo 78;
+att 2;
+sar;
+sgo 76;
+att 3;
+sar;
+sgo 74;
+att 2;
+sar;
+sgo 72;
+att 3;
+sar;
+sgo 71;
+att 2;
+sar;
+sgo 69;
+att 3;
+sar;
+
+dbc 3;	#4 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 5;	#6 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 5; #6 doubles croches (mi)
+sgo 76;
+att 5;
+sar;
+sgo 76; #croche (mi)
+att 10;
+sar;
+
+dbc 5; #6 doubles croches (re)
+sgo 74;
+att 5;
+sar;
+fbc;
+sgo 74;
+att 10;
+sar;
+
+dbc 1; #2 doubles croches (la)
+sgo 69;
+att 5;
+sar;
+fbc;
+
+dbc 1; #2 fois
+
+dbc 3;	#4 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 5;	#6 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 1; #2 doubles croches (mi)
+sgo 76;
+att 5;
+sar;
+
+fbc;
+
+dbc 3;	#4 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 5;	#6 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+fbc;
+sgo 71; #croche (si)
+att 10;
+sar;
+
+dbc 5; #6 doubles croches (mi)
+sgo 76;
+att 5;
+sar;
+sgo 76; #croche (mi)
+att 10;
+sar;
+
+dbc 5;	#6 doubles croches (si)
+sgo 71;
+att 5;
+sar;
+sgo 71;
+att 10;
+sar;
+
+dbc 1; #2 doubles croches (la)
+sgo 69;
+att 5;
+fbc;
+
+sar;
+fin;
+
+
+#triplecrochhe:0.066 (att 2)
+#doublecroche:0.125 (att 5)
+#croche: 0.25 (att 10)
+#noir: 0.5s (att 20)
+#blanche:1 (att 40)
+#ronde:2 (att 80)
+
