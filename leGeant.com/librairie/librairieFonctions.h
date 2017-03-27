@@ -21,21 +21,17 @@ void ajustementPwmProcesseur(int duree, double pourcentage, double frequence);
 // Ajuster le PWM du moteur avec le compteur1.
 void ajustementPwmTimer(uint8_t pourcentageA, uint8_t pourcentageB);
 
+void ajustementPwmFrequence(double frequence);
+
 // Initialise external interrupt request 0 
-void initialisationINT0(bool modeBit0, bool modeBit1);
+void initialisationINT0(bool modeBit1, bool modeBit0);
     
 // Initialise external interrupt request 1 
-void initialisationINT1(bool modeBit0, bool modeBit1);
+void initialisationINT1(bool modeBit1, bool modeBit0);
 
 // Initialise external interrupt request 2 
-void initialisationINT2(bool modeBit0, bool modeBit1);
+void initialisationINT2(bool modeBit1, bool modeBit0);
 
-// Declarations des interrupt service resquest pour les differentes interrutpions du microcontrolleur (le code a l'interieur de ces interruptions sera a ecrire dans le futur.)
-ISR(INT0_vect);
-ISR(INT1_vect);
-ISR(INT2_vect);
-ISR(TIMER1_COMPA_vect);
-ISR(TIMER1_COMPB_vect);
 
 // Interrupt lorsque le timer atteint la valeur voulue
 void minuterie(uint16_t duree);
@@ -53,6 +49,8 @@ void transmissionUART(uint8_t donnee);
 unsigned char receptionUART(void);
 
 void readMemoryUART(uint16_t adresseDebut, uint16_t adresseFin, uint8_t* donnee, Memoire24CXXX&);
+
+void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool estDbt, bool estFini);
 
 void jouerSonorite(uint8_t operande);
 

@@ -6,8 +6,9 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
-#include "librairieFonctions.h"
-#include "memoire_24.h"
+#include "header.h"
+
+
 
 //************FONCTIONS************//
 
@@ -22,74 +23,75 @@ bool verifierRebondMecanique(){
 }
 
     
-void ajustementPwmProcesseur(int temps, double pourcentage, double frequence){	//PWM avec les ports
+void ajustementPwmProcesseur(int temps, double pourcentage, double frequence){       //PWM avec les ports
    for (int n = 0; n < temps * frequence; n++){
-        PORTB |= 1 << 0 ; 														//1 sur le bit 0 Enable du moteur   (changer le port et le bit si necessaire).
+        PORTB |= 1 << 0 ;       //1 sur le bit 0 Enable du moteur   (changer le port et le bit si necessaire).
         _delay_loop_2((pourcentage/100) * F_CPU/(4*frequence) + 1);             
-        PORTB &= (0xfe); 														//0 sur le bit 0.
-        _delay_loop_2((F_CPU/(4*frequence)) * (1 - (pourcentage/100)) + 1);		//Lorsque l'argument est 0, c'est la valeur 65 536 qui est passee a la fonction, d'ou le +1.
+        PORTB &= (0xfe);                                                                                                    //0 sur le bit 0.
+        _delay_loop_2((F_CPU/(4*frequence)) * (1 - (pourcentage/100)) + 1);              //Lorsque l'argument est 0, c'est la valeur 65 536 qui est passee a la fonction, d'ou le +1.
     }
 }
 
-void ajustementPwmFrequence(double frequence){
-	TCNT0 = 0x00;
-	TCCR0A &= ~(1 << COM0A0);					  //toggle OC0A  on compare match A for timer0.
-	TCCR0A |= (1 << COM0A0);  					  //toggle OC0A  on compare match A for timer0.
-	TCCR0A &= ~(1 << COM0B1) & ~(1 << COM0B0);   //normal port operation, OC0B disconnected.
-	TCCR0A |= (1 << WGM01);                       //CTC mode.
-	TCCR0A &= ~(1 << WGM00);					  //CTC mode.
-	
-	TCCR0B &= ~(1 << WGM02); 		  			  //CTC mode.
-	TCCR0B |= (1 << CS02) | (1 << CS00);		  //clk/1024 (from prescaler)
-	TCCR0B &= ~(1 << CS01);		 			  	  //clk/1024 (from prescaler)
-	
-	OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
-}
+void ajustementPwmFrequence(double frequence){    
+    TCNT0 = 0x00;
+    TCCR0A &= ~(1 << COM0A1);                     //toggle OC0A  on compare match A for timer0.
+    TCCR0A |= (1 << COM0A0);                      //toggle OC0A  on compare match A for timer0.
+    TCCR0A &= ~(1 << COM0B1) & ~(1 << COM0B0);    //normal port operation, OC0B disconnected.
+    TCCR0A |= (1 << WGM01);                       //CTC mode.
+    TCCR0A &= ~(1 << WGM00);                      //CTC mode.
+
+    TCCR0B &= ~(1 << WGM02);                      //CTC mode.
+    TCCR0B |= (1 << CS02) | (1 << CS00);          //clk/1024 (from prescaler)
+    TCCR0B &= ~(1 << CS01);                       //clk/1024 (from prescaler)
+
+    OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
+    }
 
 
 
 void ajustementPwmTimer(uint8_t pourcentageA, uint8_t pourcentageB) {
 
-TCNT1 = 0x0000;      
-TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
-TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
-TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
-TCCR1B = (1 << CS11) ; // division d'horloge par 8 - implique une frequence de PWM fixe.
-TCCR1C = 0;
+    TCNT1 = 0x0000;      
+    TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
+    TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
+    TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
+    TCCR1B = (1 << CS11) ; // division d'horloge par 8 - implique une frequence de PWM fixe.
+    TCCR1C = 0;
 
 
-pourcentageA *= 0.92;
-	
-OCR1A = 255 * (100 - pourcentageA)/100;
-OCR1B = 255 * (100 - pourcentageB)/100;
+    pourcentageA *= 0.92;
+        
+    OCR1A = 255 * (100 - pourcentageA)/100;
+    OCR1B = 255 * (100 - pourcentageB)/100;
 
 }
 
-void initialisationINT0(bool modeBit0, bool modeBit1){
+void initialisationINT0(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
     
-    EIMSK |= _BV(INT0);
-    EICRA |= (modeBit1 << ISC01) | (modeBit0 << ISC00) ;  //interrupt sense control p.68
+    EIMSK |= _BV(INT0);                                         //interrupt sense control p.68
+    EICRA |= (modeBit1 << ISC01) | (modeBit0 << ISC00) ;        //met un 1 au bit spécifié si modeBitN = 1 (XX | 10 = 1X) et ne fait rien si modeBitN = 0 (XX | 00 = 00).
+    EICRA &= ~(~modeBit1 << ISC01) & ~(~modeBit0 << ISC00);     //met un 0 au bit spécifié si modeBitN = 0 (XXX & 101 = X0X) et ne fait rien si modeBitN = 0 (XXX & 111 = 111).
     
     sei();          //Interruptions réactivées
-    printf ("Characters: %c %c \n", 'a', 65);
 }  
 
-void initialisationINT1(bool modeBit0, bool modeBit1){
+void initialisationINT1(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
 
     EIMSK |= _BV(INT1);
     EICRA |= (modeBit1 << ISC11) | (modeBit0 << ISC10) ; //interrupt sense control p.68
-
+     EICRA &= ~(~modeBit1 << ISC11) & ~(~modeBit0 << ISC10);
     
     sei();          //Interruptions réactivées
 }  
 
-void initialisationINT2(bool modeBit0, bool modeBit1){
+void initialisationINT2(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
 
     EIMSK |= _BV(INT2);
     EICRA |= (modeBit1 << ISC21) | (modeBit0 << ISC20) ;  //interrupt sense control p.68
+    EICRA &= ~(~modeBit1 << ISC21) & ~(~modeBit0 << ISC20);
     
     sei();          //Interruptions réactivées
 }  
@@ -111,11 +113,6 @@ void minuterie(uint16_t duree){
     TIMSK1 |= (1 << OCIE1A);     //Timer 1, Output compare A match interrupt enable
 }
 
-ISR(INT0_vect) {}
-ISR(INT1_vect) {}
-ISR(INT2_vect) {}
-ISR(TIMER1_COMPA_vect) {}
-ISR(TIMER1_COMPB_vect) {}
 
 void ecrire1(char port, int broche){
     switch (port){
@@ -151,7 +148,7 @@ void ecrire0(char port, int broche){
     }
 }
 
-void transmissionUART ( uint8_t donnee ) {
+void transmissionUART (uint8_t donnee) {
 
     while (!(UCSR0A & (1<<UDRE0))){}
     
@@ -161,11 +158,11 @@ void transmissionUART ( uint8_t donnee ) {
 
 unsigned char receptionUART(void)
 {
-/* Wait for data to be received */
-while (!(UCSR0A & (1<<RXC0)))
-;
-/* Get and return received data from buffer */
-return UDR0;
+    /* Wait for data to be received */
+    while (!(UCSR0A & (1<<RXC0)))
+    ;
+    /* Get and return received data from buffer */
+    return UDR0;
 }
 
 void initialisationUART () {
@@ -197,127 +194,217 @@ void initialisationUART () {
 }
 
 void readMemoryUART(uint16_t adresseDebut, uint16_t adresseFin, uint8_t* donnee, Memoire24CXXX& memoire){
-	while (adresseDebut < adresseFin){
-		memoire.lecture(adresseDebut++, donnee);
-		_delay_ms(5);
-		transmissionUART(*donnee);
-	}
+       while (adresseDebut < adresseFin){
+              memoire.lecture(adresseDebut++, donnee);
+              _delay_ms(5);
+              transmissionUART(*donnee);
+       }
+}
+
+void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool& estDbt, bool& estFini){
+    uint16_t adresseBoucle = 0;
+    uint8_t compteurBoucle = 0;
+    if(!estDbt){
+        if(instruction == dbt)
+            estDbt = true;
+    }
+    else{
+        switch(instruction)
+        {
+        case att: 
+            for(int i = 0; i < 25 * operande; i++){                           
+                _delay_loop_2(F_CPU/(4*1000));           //on ne peut pas faire 25 ms * operande avec _delay_ms, car la valeur doit etre connu a la compilation. _delay_loop_2(parametre) attend 4*parametre cycles du cpu donc ici, il attend 1 ms.
+            }
+            break;                             
+
+        case dal:                           
+            PORTA = operande;               //si les pins de PORTA sont les entrées des dels
+            break;
+
+        case det:
+            PORTA &= ~(operande);       //si les pins de PORTA sont les entrées des dels
+            break;
+
+        case sgo:
+            TCCR0A &= ~(1 << COM0A1);                     //toggle OC0A  on compare match A for timer0.
+            TCCR0A |= (1 << COM0A0);                     //toggle OC0A  on compare match A for timer0.
+            jouerSonorite(operande);
+            break;
+
+        case sar:
+            TCCR0A &= ~(1 << COM0A0);                    //normal port utilisation
+            TCCR0A &= ~(1 << COM0A1);                     //normal port utilisation
+        break;
+
+        case mar:
+            ajustementPwmTimer(0,0);        //Arret des moteurs
+        break;
+
+        case 0x61:
+            ajustementPwmTimer(0,0);        //Arret des moteurs
+        break;
+
+        case mav:
+            ecrire0('D', 2);            //Set direction = 0
+            ecrire0('D', 3);
+            ajustementPwmTimer(100 * operande/255, 100 * operande/255);     //ajustement de vitesse
+        break;
+
+        case mre:
+            ecrire1('D', 2);        //Set direction = 1;
+            ecrire1('D', 3);
+            ajustementPwmTimer(100*operande/255, 100*operande/255);     //ajustement de vitesse
+        break;
+
+        case trd:
+            ajustementPwmTimer(180, 180);           //debuter rotation droite du robot
+            ecrire1('D', 3);
+            ecrire0('D', 2);
+            _delay_ms(1000);                        //ajuster pour que le robot vire de 90 degres
+            ajustementPwmTimer(0,0);                //Set vitesse = 0
+        break;
+
+        case trg:
+            ajustementPwmTimer(180, 180);       
+            ecrire1('D', 2);              
+            ecrire0('D', 3);              //debuter rotation gauche du robot
+            _delay_ms(1000);                  //ajuster pour que le robot vire de 90 degres
+            ajustementPwmTimer(0,0);            //Set vitesse =0
+        break;
+
+        case dbc:
+            adresseBoucle = adresse;
+            compteurBoucle = operande + 1;                                                 //on enregistre l'addresse du debut de la boucle
+        break;
+
+        case fbc:
+            if (compteurBoucle > 0)
+            {
+                compteurBoucle -= 0x01;                                                               //on est passer dans boucle donc compteurBoucle--
+                adresse = adresseBoucle;                                          //on retourne au debut de la boucle
+            }
+        break;
+
+        case fin:
+            estFini = true;
+        break;
+        }
+    }
 }
 
 void jouerSonorite(uint8_t operande)  {
     switch(operande) {
         
- 
         case 45:
             ajustementPwmFrequence(110);
             break;
         case 46:
-            ajustementPwmFrequence( 116.54);
+            ajustementPwmFrequence(116.54);
             break;
         case 47:
-            ajustementPwmFrequence( 123.471);
+            ajustementPwmFrequence(123.471);
             break;
         case 48:
-            ajustementPwmFrequence( 130.813);
+            ajustementPwmFrequence(130.813);
             break;
         case 49:
-            ajustementPwmFrequence( 138.591);
+            ajustementPwmFrequence(138.591);
             break;
         case 50:
-            ajustementPwmFrequence( 146.832);
+            ajustementPwmFrequence(146.832);
             break;
         case 51:
-            ajustementPwmFrequence( 155.563);
+            ajustementPwmFrequence(155.563);
             break;
         case 52:
-            ajustementPwmFrequence( 164.814);
+            ajustementPwmFrequence(164.814);
             break;
         case 53:
-            ajustementPwmFrequence( 174.614);
+            ajustementPwmFrequence(174.614);
             break;
         case 54:
-            ajustementPwmFrequence( 185);
+            ajustementPwmFrequence(185);
             break;
         case 55:
-            ajustementPwmFrequence( 196);
+            ajustementPwmFrequence(196);
             break;
         case 56:
-            ajustementPwmFrequence( 207.65);
+            ajustementPwmFrequence(207.65);
             break;
         case 57:
-            ajustementPwmFrequence( 220);
+            ajustementPwmFrequence(220);
             break;
         case 58:
-            ajustementPwmFrequence( 233.082);
+            ajustementPwmFrequence(233.082);
             break;
         case 59:
-            ajustementPwmFrequence( 246.942);
+            ajustementPwmFrequence(246.942);
             break;
         case 60:
-            ajustementPwmFrequence( 261.63);
+            ajustementPwmFrequence(261.63);
             break;
         case 61:
-            ajustementPwmFrequence( 277.18);
+            ajustementPwmFrequence(277.18);
             break;
         case 62:
-            ajustementPwmFrequence( 293.66);
+            ajustementPwmFrequence(293.66);
             break;
         case 63:
-            ajustementPwmFrequence( 311.13);
+            ajustementPwmFrequence(311.13);
             break;
         case 64:
             ajustementPwmFrequence(329.627);
             break;
         case 65:
-            ajustementPwmFrequence( 349.28);
+            ajustementPwmFrequence(349.28);
             break;
         case 66:
-            ajustementPwmFrequence( 370);
+            ajustementPwmFrequence(370);
             break;
         case 67:
-            ajustementPwmFrequence( 392);
+            ajustementPwmFrequence(392);
             break;
         case 68:
-            ajustementPwmFrequence( 415.3);
+            ajustementPwmFrequence(415.3);
             break;
         case 69:
             ajustementPwmFrequence(440);
             break;
         case 70:
-            ajustementPwmFrequence( 466.16);
+            ajustementPwmFrequence(466.16);
             break;
         case 71:
-            ajustementPwmFrequence( 493.89);
+            ajustementPwmFrequence(493.89);
             break;
         case 72:
-            ajustementPwmFrequence( 523.25);
+            ajustementPwmFrequence(523.25);
             break;
         case 73:
-            ajustementPwmFrequence( 554.36);
+            ajustementPwmFrequence(554.36);
             break;
         case 74:
-            ajustementPwmFrequence( 587.33);
+            ajustementPwmFrequence(587.33);
             break;
         case 75:
-            ajustementPwmFrequence( 622.26);
+            ajustementPwmFrequence(622.26);
             break;
         case 76:
-            ajustementPwmFrequence( 659.26);
+            ajustementPwmFrequence(659.26);
             break;
         case 77:
-            ajustementPwmFrequence( 698.456);
+            ajustementPwmFrequence(698.456);
             break;
         case 78:
-            ajustementPwmFrequence( 739.99);
+            ajustementPwmFrequence(739.99);
             break;
         case 79:
-            ajustementPwmFrequence( 784);
+            ajustementPwmFrequence(784);
             break;
         case 80:
-            ajustementPwmFrequence( 830.6);
+            ajustementPwmFrequence(830.6);
             break;
         case 81:
-            ajustementPwmFrequence( 880);
+            ajustementPwmFrequence(880);
             break;  
     }
 }

@@ -1,4 +1,10 @@
 #define F_CPU 8000000
+#include "librairieFonctions.h"
+#include "memoire_24.h"
+#include "PWM.h"
+#include <util/delay.h>
+#include <util/delay_basic.h>
+
 #define dbt 0x01
 #define att 0x02
 #define dal 0x44
@@ -13,13 +19,4 @@
 #define dbc 0xC0
 #define fbc 0xC1
 #define fin 0xff
-
-#include "librairieFonctions.h"
-#include "memoire_24.h"
-#include "PWM.h"
-#include <util/delay.h>
-#include <util/delay_basic.h>
-
-
-
 
