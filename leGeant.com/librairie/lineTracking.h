@@ -3,17 +3,17 @@
 #include <avr/io.h> 
 #include <avr/interrupt.h>
 #include <util/delay.h>
+class LineTracking : Public Capteurs {
 
-class Capteurs {
-    
 public:
-    capteurs();
-	void lecture();
-    
-private:
-    bool capteurs[5];
-    
-}
+	lineTracking();
+	void avancer();
 
+private:
+	
+
+
+
+}
 
 #endif
