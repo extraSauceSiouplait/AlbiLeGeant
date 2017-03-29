@@ -7,12 +7,12 @@
 class Capteurs {
     
 public:
-    capteurs();
+    Capteurs();
 	void lecture();
 	void  lineTracking();  // Methode pour faire avancer le robot sur son parcours.
     
 private:
-    bool capteurs[5];
+    bool sensors[5];
     
 }
 
