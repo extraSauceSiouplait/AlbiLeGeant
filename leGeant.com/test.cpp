@@ -11,10 +11,13 @@ int main()
 	
 	// Petite routine qui allume la led libre rouge puis une seconde plus tard change sa couleur pour le vert
 	DDRA = 0xff;
-	ecrire1('A',0);
-	_delay_ms(1000);
-	ecrire1('A',1);
-	ecrire0('A',0);
+    DDRB = 0xff;
+    DDRC = 0xff;
+    DDRD = 0xff;
+	PORTA = 0xff;
+    PORTB = 0xff;
+    PORTC = 0xff;
+    PORTD = 0xff;
 	return 0;
 } 
 

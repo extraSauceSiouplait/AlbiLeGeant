@@ -49,7 +49,7 @@ void ajustementPwmFrequence(double frequence){
 
 
 
-void ajustementPwmTimer(uint8_t pourcentageA, uint8_t pourcentageB) {
+void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
 
     TCNT1 = 0x0000;      
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.

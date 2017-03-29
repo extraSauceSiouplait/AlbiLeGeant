@@ -1,7 +1,12 @@
+#ifndef F_CPU
 #define F_CPU 8000000
+#endif //F_CPU
+
+
 #include "librairieFonctions.h"
 #include "memoire_24.h"
 #include "PWM.h"
+#include "capteurs.h"
 #include <util/delay.h>
 #include <util/delay_basic.h>
 
