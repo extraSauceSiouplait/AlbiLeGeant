@@ -71,7 +71,7 @@ void initialisationINT0(bool modeBit1, bool modeBit0){
     
     EIMSK |= _BV(INT0);                                         //interrupt sense control p.68
     EICRA |= (modeBit1 << ISC01) | (modeBit0 << ISC00) ;        //met un 1 au bit spécifié si modeBitN = 1 (XX | 10 = 1X) et ne fait rien si modeBitN = 0 (XX | 00 = 00).
-    EICRA &= ~(~modeBit1 << ISC01) & ~(~modeBit0 << ISC00);     //met un 0 au bit spécifié si modeBitN = 0 (XXX & 101 = X0X) et ne fait rien si modeBitN = 0 (XXX & 111 = 111).
+    EICRA &= ~(!modeBit1 << ISC01) & ~(!modeBit0 << ISC00);     //met un 0 au bit spécifié si modeBitN = 0 (XXX & 101 = X0X) et ne fait rien si modeBitN = 0 (XXX & 111 = 111).
     
     sei();          //Interruptions réactivées
 }  
@@ -81,7 +81,7 @@ void initialisationINT1(bool modeBit1, bool modeBit0){
 
     EIMSK |= _BV(INT1);
     EICRA |= (modeBit1 << ISC11) | (modeBit0 << ISC10) ; //interrupt sense control p.68
-     EICRA &= ~(~modeBit1 << ISC11) & ~(~modeBit0 << ISC10);
+    EICRA &= ~(!modeBit1 << ISC11) & ~(!modeBit0 << ISC10);
     
     sei();          //Interruptions réactivées
 }  
@@ -91,7 +91,7 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
 
     EIMSK |= _BV(INT2);
     EICRA |= (modeBit1 << ISC21) | (modeBit0 << ISC20) ;  //interrupt sense control p.68
-    EICRA &= ~(~modeBit1 << ISC21) & ~(~modeBit0 << ISC20);
+    EICRA &= ~(!modeBit1 << ISC21) & ~(!modeBit0 << ISC20);
     
     sei();          //Interruptions réactivées
 }  
@@ -102,7 +102,7 @@ void minuterie(uint16_t duree){
     OCR1A = duree;
     
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
-    TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));     //Set CTC mode on timer1 1 (part1).
+    TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
     
     TCCR1B = (1 << CS12) | (0 << CS11) | (1 << CS10);   //clk/1024 from prescaler.
     TCCR1B &= ~(1 << WGM13);
