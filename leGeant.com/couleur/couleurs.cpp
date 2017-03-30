@@ -55,6 +55,7 @@ ISR(INT0_vect){
 }
 
 ISR(INT1_vect){ 
+    
     if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
         //ETAT = ETAT_SUIVANT (IMPORTANT!!!!)
          EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
