@@ -91,7 +91,7 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
 
     EIMSK |= _BV(INT2);
     EICRA |= (modeBit1 << ISC21) | (modeBit0 << ISC20) ;  //interrupt sense control p.68
-    EICRA &= ~(!modeBit1 << ISC21) & ~(!modeBit0 << ISC20);
+    EICRA &= ~(!modeBit1 << ISC21) & ~(!modeBit0 << ISC20); // EICRA &= ~(~modeBit1 << ISC21) & ~(~modeBit0 << ISC20); Ancienne ligne
     
     sei();          //Interruptions réactivées
 }  
