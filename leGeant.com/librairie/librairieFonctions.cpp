@@ -280,7 +280,7 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
         case fbc:
             if (compteurBoucle > 0)
             {
-                compteurBoucle -= 0x01;                                                               //on est passer dans boucle donc compteurBoucle--
+                compteurBoucle -= 0x01;                                           //on est passer dans boucle donc compteurBoucle--
                 adresse = adresseBoucle;                                          //on retourne au debut de la boucle
             }
         break;
