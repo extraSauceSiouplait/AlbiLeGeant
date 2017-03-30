@@ -1,8 +1,12 @@
+#ifndef CAPTEURS_H
+#define CAPTEURS_H
+
 #define F_CPU 8000000
 
 #include <avr/io.h> 
 #include <avr/interrupt.h>
 #include <util/delay.h>
+
 
 class Capteurs {
     
@@ -14,7 +18,7 @@ public:
 private:
     bool sensors[5];
     
-}
+};
 
 
 #endif

@@ -237,39 +237,39 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
         break;
 
         case mar:
-            ajustementPwmTimer(0,0);        //Arret des moteurs
+            ajustementPwmMoteurs(0,0);        //Arret des moteurs
         break;
 
         case 0x61:
-            ajustementPwmTimer(0,0);        //Arret des moteurs
+            ajustementPwmMoteurs(0,0);        //Arret des moteurs
         break;
 
         case mav:
             ecrire0('D', 2);            //Set direction = 0
             ecrire0('D', 3);
-            ajustementPwmTimer(100 * operande/255, 100 * operande/255);     //ajustement de vitesse
+            ajustementPwmMoteurs(100 * operande/255, 100 * operande/255);     //ajustement de vitesse
         break;
 
         case mre:
             ecrire1('D', 2);        //Set direction = 1;
             ecrire1('D', 3);
-            ajustementPwmTimer(100*operande/255, 100*operande/255);     //ajustement de vitesse
+            ajustementPwmMoteurs(100*operande/255, 100*operande/255);     //ajustement de vitesse
         break;
 
         case trd:
-            ajustementPwmTimer(180, 180);           //debuter rotation droite du robot
+            ajustementPwmMoteurs(180, 180);           //debuter rotation droite du robot
             ecrire1('D', 3);
             ecrire0('D', 2);
             _delay_ms(1000);                        //ajuster pour que le robot vire de 90 degres
-            ajustementPwmTimer(0,0);                //Set vitesse = 0
+            ajustementPwmMoteurs(0,0);                //Set vitesse = 0
         break;
 
         case trg:
-            ajustementPwmTimer(180, 180);       
+            ajustementPwmMoteurs(180, 180);       
             ecrire1('D', 2);              
             ecrire0('D', 3);              //debuter rotation gauche du robot
             _delay_ms(1000);                  //ajuster pour que le robot vire de 90 degres
-            ajustementPwmTimer(0,0);            //Set vitesse =0
+            ajustementPwmMoteurs(0,0);            //Set vitesse =0
         break;
 
         case dbc:

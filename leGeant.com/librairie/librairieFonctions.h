@@ -19,7 +19,7 @@ bool verifierRebondMecanique();
 void ajustementPwmProcesseur(int duree, double pourcentage, double frequence);
 
 // Ajuster le PWM du moteur avec le compteur1.
-void ajustementPwmTimer(uint8_t pourcentageA, uint8_t pourcentageB);
+void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB);
 
 void ajustementPwmFrequence(double frequence);
 

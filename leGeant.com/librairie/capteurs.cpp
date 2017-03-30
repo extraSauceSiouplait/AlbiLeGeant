@@ -1,4 +1,5 @@
 #include "capteurs.h"
+#include "librairieFonctions.h"
 
 //Constructeur par défaut
 //Initialise la lecture des capteurs sur le port A
@@ -13,7 +14,7 @@ void Capteurs::lecture() {
         sensors[i] = PINA & (1 << i);
 }
 
-void  Capteurs:: lineTracking () {
+void  Capteurs:: lineTracking() {
     if (sensors[2] == true){
         // Le robot doit aller tout droit.
         ajustementPwmMoteurs(100, 100);
