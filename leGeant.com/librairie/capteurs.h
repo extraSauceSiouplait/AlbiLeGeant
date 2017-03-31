@@ -12,11 +12,14 @@ class Capteurs {
     
 public:
     Capteurs();
-	void lecture();
-	void  lineTracking();  // Methode pour faire avancer le robot sur son parcours.
+	void   lecture();
+	void   lineTracking();  // Methode pour faire avancer le robot sur son parcours.
+    void   lineTrackingOptimal();
     
 private:
-    bool sensors[5];
+    bool sensors_[5];
+    bool oldLigne_[5];
+    bool newLigne_[5];
     
 };
 
