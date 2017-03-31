@@ -12,14 +12,19 @@ class Capteurs {
     
 public:
     Capteurs();
+
 	void lecture();		  // Méthode permettant l'acquisition des données en provenance du capteur de ligne
 	void lineTracking();  // Methode pour faire avancer le robot sur son parcours.
 	void tourner180();	  // Methode pour exécuter le 180 degrés depuis la ligne de départ
 	void tournerGauche();
 	void tournerDroite();
+    void   lineTrackingOptimal();	
     
 private:
     bool sensors_[5];
+   // bool oldLigne_[5];
+   // bool newLigne_[5];
+
     
 };
 
