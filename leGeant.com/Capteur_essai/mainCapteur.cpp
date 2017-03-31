@@ -7,13 +7,84 @@
 #include "librairieFonctions.h"
 #include "memoire_24.h"
 #include "capteurs.h"
+#define VERT 'v'
+#define ROUGE 'r'
+
+volatile char couleurChoisie = 0; //NUL (pas encore choisi)
+volatile int etat;
+
+ISR(INT0_vect){
+    _delay_ms(30);
+    if(!(PIND & (1 << 2 ))){ //Anti-rebond pour le bouton poussoir
+        switch(couleurChoisie){
+            case VERT:
+                couleurChoisie = ROUGE; //Si la couleur précédente vert, la couleur futur devient rouge
+                ecrire1('C', 0);
+                ecrire0('C', 1);
+                break;  
+            case ROUGE: 
+                couleurChoisie = VERT; //Si la couleur précédente rouge, la couleur futur devient vert
+                ecrire1('C', 1);
+                ecrire0('C', 0);
+                break;
+            default: //Quand aucune couleur n'a encore été choisie.
+                couleurChoisie = VERT;
+                ecrire1('C', 1);
+                ecrire0('C', 0);
+                break;
+        } 
+    }
+}
+
+
+ISR(INT1_vect){ 
+	//Pas besoin d'anti-rebond pour cette interruption, car elle est d'usage unique
+    if(couleurChoisie == VERT || couleurChoisie == ROUGE){  //Ne fait rien si la couleur n'a pas encore été choisie.
+        if (etat == 0){
+			etat++;
+		}
+			
+        
+        EIMSK &= ~ (1 << INT0) & ~ (1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
+    }
+}
+
 
 int main() {
-	Capteurs capteur1;
-
-	while() { 
-		capteur1.lineTracking();
+	Capteurs capteur;
+	etat = 0; 
+	
+	while(1){
+		switch (etat) //Machine à état
+		{
+			case 0:			
+					DDRD = 0x00;        //PORT D en lecture pour lire les interruptions.
+					DDRC = 0xff;        //PORT C en écriture pour la DEL.
+					ecrire0('C', 0);    //Assure que la DEL est eteinte avant le choix de la couleur.
+					ecrire0('C', 1);    //Assure que la DEL est eteinte avant le choix de la couleur.   
+					initialisationINT0(1,0);
+					etat++;  			//A ENLEVER (permet de sauter au prochain etat)
+					while(etat == 0){}		//tant que couleur n'est pas choisi
+					break;
+			case 1:
+					DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
+					initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
+					capteur.tourner180();
+					etat++;
+					break;
+			case 2:		
+					while (1)		//a modifier... jusqu'a intersection
+					{
+						capteur.lecture();
+						capteur.lineTracking();
+					}
+					break;
+		}
 	}
+}	
+	
 
 
-}
+
+
+

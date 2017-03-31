@@ -47,19 +47,18 @@ void ajustementPwmFrequence(double frequence){
     OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
     }
 
-
-
-void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
-
-    TCNT1 = 0x0000;      
+// Configure les registres d'initialisation du timer1 pour le PWM moteur.
+void initialisationPwmMoteurs(){
+	TCNT1 = 0x0000;      
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
     TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
     TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
     TCCR1B = (1 << CS11) ; // division d'horloge par 8 - implique une frequence de PWM fixe.
     TCCR1C = 0;
+}
 
-
-    pourcentageA *= 0.92;
+void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
+    pourcentageA *= 0.92; //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
         
     OCR1A = 255 * (100 - pourcentageA)/100;
     OCR1B = 255 * (100 - pourcentageB)/100;
@@ -204,6 +203,7 @@ void readMemoryUART(uint16_t adresseDebut, uint16_t adresseFin, uint8_t* donnee,
 void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool& estDbt, bool& estFini){
     uint16_t adresseBoucle = 0;
     uint8_t compteurBoucle = 0;
+    initialisationPwmMoteurs();
     if(!estDbt){
         if(instruction == dbt)
             estDbt = true;

@@ -18,7 +18,10 @@ bool verifierRebondMecanique();
 // Ajuster le PWM du moteur avec les délais du processeur
 void ajustementPwmProcesseur(int duree, double pourcentage, double frequence);
 
-// Ajuster le PWM du moteur avec le compteur1.
+// Configure les registres d'initialisation du timer1 pour le PWM moteur.
+void initialisationPwmMoteurs();
+
+// Ajuster les registres OCR1A et OCR1B pour ajuster le PWM du moteur.
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB);
 
 void ajustementPwmFrequence(double frequence);
