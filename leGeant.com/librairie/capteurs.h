@@ -18,8 +18,11 @@ public:
 	void tourner180();	  // Methode pour exécuter le 180 degrés depuis la ligne de départ
 	void tournerGauche();
 	void tournerDroite();
-    void   lineTrackingOptimal();	
-    
+    void   lineTrackingOptimal();
+    void intersectionDroite();	//Methode qui gere une intersection de droite depuis sa detection par les capteurs
+    void intersectionGauche();	//Methode qui gere une intersection de gauche depuis sa detection par les capteurs	
+    bool estIntersection();		//Methode qui retourne vrai si les capteurs detectent une intersection
+    bool getSensor(uint8_t indice);
 private:
     bool sensors_[5];
    // bool oldLigne_[5];
