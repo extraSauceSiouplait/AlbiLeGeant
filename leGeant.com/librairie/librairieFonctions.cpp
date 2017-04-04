@@ -1,7 +1,7 @@
 
 
 #define F_CPU 8000000
-#include <avr/io.h> 
+#include <avr/io.h>
 #include <util/delay_basic.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -22,17 +22,17 @@ bool verifierRebondMecanique(){
     return false;
 }
 
-    
+
 void ajustementPwmProcesseur(int temps, double pourcentage, double frequence){       //PWM avec les ports
    for (int n = 0; n < temps * frequence; n++){
         PORTB |= 1 << 0 ;       //1 sur le bit 0 Enable du moteur   (changer le port et le bit si necessaire).
-        _delay_loop_2((pourcentage/100) * F_CPU/(4*frequence) + 1);             
+        _delay_loop_2((pourcentage/100) * F_CPU/(4*frequence) + 1);
         PORTB &= (0xfe);                                                                                                    //0 sur le bit 0.
         _delay_loop_2((F_CPU/(4*frequence)) * (1 - (pourcentage/100)) + 1);              //Lorsque l'argument est 0, c'est la valeur 65 536 qui est passee a la fonction, d'ou le +1.
     }
 }
 
-void ajustementPwmFrequence(double frequence){    
+void ajustementPwmFrequence(double frequence){
     TCNT0 = 0x00;
     TCCR0A &= ~(1 << COM0A1);                     //toggle OC0A  on compare match A for timer0.
     TCCR0A |= (1 << COM0A0);                      //toggle OC0A  on compare match A for timer0.
@@ -49,7 +49,7 @@ void ajustementPwmFrequence(double frequence){
 
 // Configure les registres d'initialisation du timer1 pour le PWM moteur.
 void initialisationPwmMoteurs(){
-	TCNT1 = 0x0000;      
+	TCNT1 = 0x0000;
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
     TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
     TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
@@ -59,7 +59,7 @@ void initialisationPwmMoteurs(){
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
     pourcentageA *= 0.92; //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
-        
+
     OCR1A = 255 * (100 - pourcentageA)/100;
     OCR1B = 255 * (100 - pourcentageB)/100;
 
@@ -67,13 +67,13 @@ void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
 
 void initialisationINT0(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
-    
+
     EIMSK |= _BV(INT0);                                         //interrupt sense control p.68
     EICRA |= (modeBit1 << ISC01) | (modeBit0 << ISC00) ;        //met un 1 au bit spécifié si modeBitN = 1 (XX | 10 = 1X) et ne fait rien si modeBitN = 0 (XX | 00 = 00).
     EICRA &= ~(!modeBit1 << ISC01) & ~(!modeBit0 << ISC00);     //met un 0 au bit spécifié si modeBitN = 0 (XXX & 101 = X0X) et ne fait rien si modeBitN = 0 (XXX & 111 = 111).
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void initialisationINT1(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
@@ -81,9 +81,9 @@ void initialisationINT1(bool modeBit1, bool modeBit0){
     EIMSK |= _BV(INT1);
     EICRA |= (modeBit1 << ISC11) | (modeBit0 << ISC10) ; //interrupt sense control p.68
     EICRA &= ~(!modeBit1 << ISC11) & ~(!modeBit0 << ISC10);
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void initialisationINT2(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
@@ -91,15 +91,15 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
     EIMSK |= _BV(INT2);
     EICRA |= (modeBit1 << ISC21) | (modeBit0 << ISC20) ;  //interrupt sense control p.68
     EICRA &= ~(!modeBit1 << ISC21) & ~(!modeBit0 << ISC20); // EICRA &= ~(~modeBit1 << ISC21) & ~(~modeBit0 << ISC20); Ancienne ligne
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void minuterie(uint16_t duree){
    // minuterieExpiree = 0;
     TCNT1 = 0x0000;
     OCR1A = duree;
-    
+
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
     TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
     
@@ -107,7 +107,7 @@ void minuterie(uint16_t duree){
     TCCR1B &= ~(1 << WGM13);
     TCCR1B |= (1 << WGM12);          //Set CTC mode on timer 1 (part2).
     TCCR1B |= (1 << ICES1);      //Event triggered on rising edge.
-    
+
     TCCR1C = 0;
     TIMSK1 |= (1 << OCIE1A);     //Timer 1, Output compare A match interrupt enable
 }
@@ -150,9 +150,9 @@ void ecrire0(char port, int broche){
 void transmissionUART (uint8_t donnee) {
 
     while (!(UCSR0A & (1<<UDRE0))){}
-    
+
     UDR0 = donnee;
-    
+
 }
 
 unsigned char receptionUART(void)
@@ -177,7 +177,7 @@ void initialisationUART () {
     // permettre la reception et la transmission par le UART0
 
     UCSR0A &= ~(1 << U2X0);
-    
+
     UCSR0B |= _BV(RXC0) | _BV(TXC0);
     UCSR0B |= (1 << RXEN0); //Receiver enable.
     UCSR0B |= (1 << TXEN0); //Transmitter enable.
@@ -211,13 +211,13 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
     else{
         switch(instruction)
         {
-        case att: 
-            for(int i = 0; i < 25 * operande; i++){                           
+        case att:
+            for(int i = 0; i < 25 * operande; i++){
                 _delay_loop_2(F_CPU/(4*1000));           //on ne peut pas faire 25 ms * operande avec _delay_ms, car la valeur doit etre connu a la compilation. _delay_loop_2(parametre) attend 4*parametre cycles du cpu donc ici, il attend 1 ms.
             }
-            break;                             
+            break;
 
-        case dal:                           
+        case dal:
             PORTA = operande;               //si les pins de PORTA sont les entrées des dels
             break;
 
@@ -265,8 +265,8 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
         break;
 
         case trg:
-            ajustementPwmMoteurs(180, 180);       
-            ecrire1('D', 2);              
+            ajustementPwmMoteurs(180, 180);
+            ecrire1('D', 2);
             ecrire0('D', 3);              //debuter rotation gauche du robot
             _delay_ms(1000);                  //ajuster pour que le robot vire de 90 degres
             ajustementPwmMoteurs(0,0);            //Set vitesse =0
@@ -294,7 +294,7 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
 
 void jouerSonorite(uint8_t operande)  {
     switch(operande) {
-        
+
         case 45:
             ajustementPwmFrequence(110);
             break;
@@ -405,6 +405,6 @@ void jouerSonorite(uint8_t operande)  {
             break;
         case 81:
             ajustementPwmFrequence(880);
-            break;  
+            break;
     }
 }
