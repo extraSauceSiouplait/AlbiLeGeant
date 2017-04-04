@@ -6,8 +6,8 @@
 #include "can.h"
 #include "header.h"
 
-#define DROIT = 'd' 
-#define GAUCHE = 'g'
+#define DROIT 'd' 
+#define GAUCHE 'g'
 
 
 //Sensor gauche @ A0
@@ -17,12 +17,16 @@ uint16_t valeurCan16bitDroit;
 uint16_t valeurCan16bitGauche;
 char cote;
 
+ISR(INT0_vect);
 
 int main()
 {   
+    DDRC = 0xff;
+    DDRD = 0xff;
     DDRA = 0x00;    //portA en lecture
+    PORTC = 0x02;
     can convertisseur;
-    initialisationINT0(1,0);   //falling edge
+    initialisationINT0(1,1);   //rising edge
     
     /* CODE POUR ARRETE DE BOUGER */ 
     
@@ -44,17 +48,17 @@ int main()
 }
 
 ISR(INT0_vect){
-    if(verifierRebondMecanique()){
-        switch(cote){
-            case DROIT:
-                //tourner a droite
-                PORTC = 0x01;
-            case GAUCHE:
-                //tourner a gauche
-                PORTC = 0x02;
-        }
-            //bouge pas
+    switch(cote){
+        case DROIT:
+            //tourner a droite
+            PORTC = 0x01;
+        case GAUCHE:
+            //tourner a gauche
+            PORTC = 0x02;
     }
+    
+    EIMSK &= ~(1 << INT0); //desactive external interrupt 0.
+            
 }
 
 

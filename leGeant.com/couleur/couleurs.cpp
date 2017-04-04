@@ -21,8 +21,8 @@ int main(){
     DDRC = 0xff;        //PORT C en écriture pour la DEL.
     ecrire0('C', 0);    //Assure que la DEL est eteinte avant le choix de la couleur.
     ecrire0('C', 1);    //Assure que la DEL est eteinte avant le choix de la couleur.
-    initialisationINT0(1,0);    //rising edge activates interrupt.
-    initialisationINT1(1,0);    //rising edge activates interrupt.
+    initialisationINT0(1,0);    //falling edge activates interrupt.
+    initialisationINT1(1,0);    //falling edge activates interrupt.
 
     for(;;){
         //Reste du code du robot.
@@ -55,7 +55,6 @@ ISR(INT0_vect){
 }
 
 ISR(INT1_vect){ 
-    
     if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
         //ETAT = ETAT_SUIVANT (IMPORTANT!!!!)
          EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
