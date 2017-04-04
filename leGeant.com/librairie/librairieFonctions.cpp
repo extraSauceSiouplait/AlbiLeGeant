@@ -22,46 +22,43 @@ bool verifierRebondMecanique(){
     return false;
 }
 
-    
-void ajustementPwmProcesseur(int temps, double pourcentage, double frequence){       //PWM avec les ports
-   for (int n = 0; n < temps * frequence; n++){
-        PORTB |= 1 << 0 ;       //1 sur le bit 0 Enable du moteur   (changer le port et le bit si necessaire).
-        _delay_loop_2((pourcentage/100) * F_CPU/(4*frequence) + 1);             
-        PORTB &= (0xfe);                                                                                                    //0 sur le bit 0.
-        _delay_loop_2((F_CPU/(4*frequence)) * (1 - (pourcentage/100)) + 1);              //Lorsque l'argument est 0, c'est la valeur 65 536 qui est passee a la fonction, d'ou le +1.
+
+void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
+    TCNT2 = 0x00;
+    TCCR2A &= ~(1 << COM2A1);                     //toggle OC2A  on compare match A.
+    TCCR2A |= (1 << COM2A0);                      //toggle OC2A  on compare match A.
+    TCCR2A &= ~(1 << COM2B1) & ~(1 << COM2B0);    //normal port operation, OC2B disconnected.
+    TCCR2A |= (1 << WGM21);                       //CTC mode.
+    TCCR2A &= ~(1 << WGM20);                      //CTC mode.
+
+    TCCR2B &= ~(1 << WGM22);                      //CTC mode.
+    TCCR2B |= (1 << CS22) | (1 << CS20);          //clk/1024 (from prescaler)
+    TCCR2B &= ~(1 << CS21);                       //clk/1024 (from prescaler)
+
+    OCR2A = uint8_t((F_CPU/1024) / (2*frequence));
     }
-}
 
-void ajustementPwmFrequence(double frequence){    
+// Configure les registres d'initialisation du timer0 pour le PWM moteur.
+void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
     TCNT0 = 0x00;
-    TCCR0A &= ~(1 << COM0A1);                     //toggle OC0A  on compare match A for timer0.
-    TCCR0A |= (1 << COM0A0);                      //toggle OC0A  on compare match A for timer0.
-    TCCR0A &= ~(1 << COM0B1) & ~(1 << COM0B0);    //normal port operation, OC0B disconnected.
-    TCCR0A |= (1 << WGM01);                       //CTC mode.
-    TCCR0A &= ~(1 << WGM00);                      //CTC mode.
-
-    TCCR0B &= ~(1 << WGM02);                      //CTC mode.
-    TCCR0B |= (1 << CS02) | (1 << CS00);          //clk/1024 (from prescaler)
-    TCCR0B &= ~(1 << CS01);                       //clk/1024 (from prescaler)
+    TCCR0A |= (1 << COM0A1) | (1 << COM0A0);      //Set output to 1 on compare match A for timer0.
+    TCCR0A |= (1 << COM0B1) | (1 << COM0B0);      //Set output to 1 on compare match B for timer0..
+   
+    TCCR0A |= (1 << WGM00);                       //PWM, Phase Correct, 8-bit, TOP 0xff
+    TCCR0A &= ~(1 << WGM01);                      //PWM, Phase Correct, 8-bit, TOP 0xff
+    TCCR0B &= ~(1 << WGM02);                      //PWM, Phase Correct, 8-bit, TOP 0xff
+    
+    TCCR0B |= (1 << CS01);                        //clk/8 (from prescaler)
+    TCCR0B &= ~(1 << CS02) & ~(1 << CS00);        //clk/8 (from prescaler)
 
     OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
-    }
-
-// Configure les registres d'initialisation du timer1 pour le PWM moteur.
-void initialisationPwmMoteurs(){
-	TCNT1 = 0x0000;      
-    TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
-    TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
-    TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
-    TCCR1B = (1 << CS11) ; // division d'horloge par 8 - implique une frequence de PWM fixe.
-    TCCR1C = 0;
 }
 
-void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {
-    pourcentageA *= 0.92; //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
+void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
+    pourcentageA *= 0.92;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
         
-    OCR1A = 255 * (100 - pourcentageA)/100;
-    OCR1B = 255 * (100 - pourcentageB)/100;
+    OCR0A = 255 * (100 - pourcentageA)/100;
+    OCR0B = 255 * (100 - pourcentageB)/100;
 
 }
 
@@ -95,7 +92,7 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
     sei();          //Interruptions réactivées
 }  
 
-void minuterie(uint16_t duree){
+void minuterie(uint16_t duree){                     //TIMER 1 (16-bits) (D5 et D4)
    // minuterieExpiree = 0;
     TCNT1 = 0x0000;
     OCR1A = duree;
