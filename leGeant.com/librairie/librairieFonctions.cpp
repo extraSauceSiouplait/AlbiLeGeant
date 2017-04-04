@@ -1,7 +1,7 @@
 
 
 #define F_CPU 8000000
-#include <avr/io.h> 
+#include <avr/io.h>
 #include <util/delay_basic.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -31,12 +31,14 @@ void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
     TCCR2A |= (1 << WGM21);                       //CTC mode.
     TCCR2A &= ~(1 << WGM20);                      //CTC mode.
 
+
     TCCR2B &= ~(1 << WGM22);                      //CTC mode.
     TCCR2B |= (1 << CS22) | (1 << CS20);          //clk/1024 (from prescaler)
     TCCR2B &= ~(1 << CS21);                       //clk/1024 (from prescaler)
 
     OCR2A = uint8_t((F_CPU/1024) / (2*frequence));
     }
+
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
@@ -64,13 +66,13 @@ void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TI
 
 void initialisationINT0(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
-    
+
     EIMSK |= _BV(INT0);                                         //interrupt sense control p.68
     EICRA |= (modeBit1 << ISC01) | (modeBit0 << ISC00) ;        //met un 1 au bit spécifié si modeBitN = 1 (XX | 10 = 1X) et ne fait rien si modeBitN = 0 (XX | 00 = 00).
     EICRA &= ~(!modeBit1 << ISC01) & ~(!modeBit0 << ISC00);     //met un 0 au bit spécifié si modeBitN = 0 (XXX & 101 = X0X) et ne fait rien si modeBitN = 0 (XXX & 111 = 111).
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void initialisationINT1(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
@@ -78,9 +80,9 @@ void initialisationINT1(bool modeBit1, bool modeBit0){
     EIMSK |= _BV(INT1);
     EICRA |= (modeBit1 << ISC11) | (modeBit0 << ISC10) ; //interrupt sense control p.68
     EICRA &= ~(!modeBit1 << ISC11) & ~(!modeBit0 << ISC10);
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void initialisationINT2(bool modeBit1, bool modeBit0){
     cli();          //Interuptions désactivées
@@ -88,15 +90,15 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
     EIMSK |= _BV(INT2);
     EICRA |= (modeBit1 << ISC21) | (modeBit0 << ISC20) ;  //interrupt sense control p.68
     EICRA &= ~(!modeBit1 << ISC21) & ~(!modeBit0 << ISC20); // EICRA &= ~(~modeBit1 << ISC21) & ~(~modeBit0 << ISC20); Ancienne ligne
-    
+
     sei();          //Interruptions réactivées
-}  
+}
 
 void minuterie(uint16_t duree){                     //TIMER 1 (16-bits) (D5 et D4)
    // minuterieExpiree = 0;
     TCNT1 = 0x0000;
     OCR1A = duree;
-    
+
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
     TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
     
@@ -104,7 +106,7 @@ void minuterie(uint16_t duree){                     //TIMER 1 (16-bits) (D5 et D
     TCCR1B &= ~(1 << WGM13);
     TCCR1B |= (1 << WGM12);          //Set CTC mode on timer 1 (part2).
     TCCR1B |= (1 << ICES1);      //Event triggered on rising edge.
-    
+
     TCCR1C = 0;
     TIMSK1 |= (1 << OCIE1A);     //Timer 1, Output compare A match interrupt enable
 }
@@ -147,9 +149,9 @@ void ecrire0(char port, int broche){
 void transmissionUART (uint8_t donnee) {
 
     while (!(UCSR0A & (1<<UDRE0))){}
-    
+
     UDR0 = donnee;
-    
+
 }
 
 unsigned char receptionUART(void)
@@ -174,7 +176,7 @@ void initialisationUART () {
     // permettre la reception et la transmission par le UART0
 
     UCSR0A &= ~(1 << U2X0);
-    
+
     UCSR0B |= _BV(RXC0) | _BV(TXC0);
     UCSR0B |= (1 << RXEN0); //Receiver enable.
     UCSR0B |= (1 << TXEN0); //Transmitter enable.
@@ -208,13 +210,13 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
     else{
         switch(instruction)
         {
-        case att: 
-            for(int i = 0; i < 25 * operande; i++){                           
+        case att:
+            for(int i = 0; i < 25 * operande; i++){
                 _delay_loop_2(F_CPU/(4*1000));           //on ne peut pas faire 25 ms * operande avec _delay_ms, car la valeur doit etre connu a la compilation. _delay_loop_2(parametre) attend 4*parametre cycles du cpu donc ici, il attend 1 ms.
             }
-            break;                             
+            break;
 
-        case dal:                           
+        case dal:
             PORTA = operande;               //si les pins de PORTA sont les entrées des dels
             break;
 
@@ -262,8 +264,8 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
         break;
 
         case trg:
-            ajustementPwmMoteurs(180, 180);       
-            ecrire1('D', 2);              
+            ajustementPwmMoteurs(180, 180);
+            ecrire1('D', 2);
             ecrire0('D', 3);              //debuter rotation gauche du robot
             _delay_ms(1000);                  //ajuster pour que le robot vire de 90 degres
             ajustementPwmMoteurs(0,0);            //Set vitesse =0
@@ -291,7 +293,7 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
 
 void jouerSonorite(uint8_t operande)  {
     switch(operande) {
-        
+
         case 45:
             ajustementPwmFrequence(110);
             break;
@@ -402,6 +404,6 @@ void jouerSonorite(uint8_t operande)  {
             break;
         case 81:
             ajustementPwmFrequence(880);
-            break;  
+            break;
     }
 }
