@@ -36,7 +36,7 @@ void initialisationINT2(bool modeBit1, bool modeBit0);
 // Initialise le timer1 pour generer une interruption on compare match
 void initialisationMinuterie();
 
-// ajuste la valeur de OCR1A qui va declancher une interruption et reset le compteur
+// reset le compteur et ajuste la valeur de OCR1A qui va declancher une interruption (duree en ms)
 void minuterie(uint16_t duree);
 
 // Ecrire 1 sur une broche quelconque d'un port quelconque

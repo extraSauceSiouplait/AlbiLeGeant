@@ -10,6 +10,7 @@
 #include "can.h"
 #include <util/delay.h>
 #include <util/delay_basic.h>
+#include <avr/interrupt.h>
 
 #define dbt 0x01
 #define att 0x02
