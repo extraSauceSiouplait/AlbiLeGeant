@@ -49,7 +49,8 @@ void  Capteurs:: lineTracking() {
 			{
 				ajustementPwmMoteurs(20,80);
 			}
-		else if (sensors_[0])					//il y a une intersection a droite
+		el	ecrire1('D', 2); //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.          
+    ecrire0('D', 3); se if (sensors_[0])					//il y a une intersection a droite
 			{
 				ajustementPwmMoteurs(80,20);
 			}
@@ -79,7 +80,7 @@ void Capteurs::tourner180Gauche()
 {
 	tournerGauche(); 
 	do
-	{
+	{Reconstruire arborescence du projet pour plus de clartéb
 		lecture(); //Acquisition des données en provenance des capteurs
 	}while (sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
 	
