@@ -19,19 +19,31 @@ int main() {
 	while(1){
 		switch (etat) //Machine à état
 	    case 1 :  
+            
+            while(( sensors_[1] || (sensors_[2] || sensors_[3] || sensors_[4] || sensors_[5])) {
 		     capteur.lecture();          // Lecture de l'information par le capteur.
 			 capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
-
-			 // Condition sur les capteurs, si tous les capteurs sont eteints ca veut dire que le robot a atteint les lignes
-			 // pointillées.
-			 if (sensors_[1] && (sensors_[2] && sensors_[3]&& sensors_[4]&& sensors_[5])) {
-			 
-			              // Le robot doit emettre un son par la fonction jouersonnerie.
-
-				                     jouerSonorite(operande);
-			 
-			 }
-
+            }
+            
+            ajustementPwmFrequence(440);
+            
+            for(uint8_t = 0; i < 4; i++){
+            
+                while(( !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4] || !sensors_[5]))
+                    ajustementPwmMoteurs(60,60);
+                
+                while(( sensors_[1] || (sensors_[2] || sensors_[3] || sensors_[4] || sensors_[5])) {
+                capteur.lecture();          // Lecture de l'information par le capteur.
+                capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
+                }
+            }
+            
+            while(( !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4] || !sensors_[5]))
+                    ajustementPwmMoteurs(60,60);
+                
+            etat++;
+    }
+}
 			                                                                               	
 	
 
