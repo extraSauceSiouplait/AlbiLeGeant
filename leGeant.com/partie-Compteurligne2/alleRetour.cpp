@@ -11,7 +11,9 @@
 #define ROUGE 'r'
 
 
- void main(){
+ void main()
+ 
+ {
      
      uint8_t triggerSwitchEtat = 0;
      capteur.intersectionGauche();

@@ -19,7 +19,7 @@
            {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
                 //du parking
-                uint8_t triggerParking = 0;
+                uint8_t triggerBonneInter = 0;
                 if(couleurChoisie == VERT)
                     triggerParking = 2;
                 else
@@ -38,7 +38,7 @@
                   ajustementPwmMoteurs(50,50);
                 }
 
-                if(compteurIntersection == triggerParking) {
+                if(compteurIntersection == triggerBonneInter) {
                     etat++;
                 }
             }

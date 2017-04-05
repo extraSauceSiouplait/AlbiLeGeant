@@ -19,12 +19,17 @@
     }
      
     ecrire1('D',2);
-	ecrire1('D',3);
+	ecrire1('D',3);        
+    
+    //
+    // On fait avancer le robot jusqu'à ce qu'il arrive au bout. Puis on le fait reculer de maniere manuelle
+    // jusqu'à ce que son centre de rotation soit au dessus de C (j'ai pas trouvé de meilleur moyen :/)
+    //
     
     ajustementPwmMoteurs(20,20);
     _delay_ms(200);
     ecrire0('D',2);
-	ecrire0('D',3);
+	ecrire0('D',3);            // Ici je fais freiner le robot pour être sur de s'arreter
     ajustementPwmMoteurs(10,10);
     _delay_ms(50);
     ajustementPwmMoteurs(0,0);
