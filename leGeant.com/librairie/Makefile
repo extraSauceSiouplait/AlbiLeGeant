@@ -13,7 +13,7 @@
 # Linux ou Unix, en utilisant l'outil AVR-GCC. 
 # Ce Makefile supporte C & C++
 
-include ../Makefile_commun.txt
+include Makefile_commun.txt
 
 #####      Details specifique a la cible       #####
 #####  Vous devez les adapter a votre projet   #####

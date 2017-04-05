@@ -52,8 +52,6 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
     
     TCCR0B |= (1 << CS01);                        //clk/8 (from prescaler)
     TCCR0B &= ~(1 << CS02) & ~(1 << CS00);        //clk/8 (from prescaler)
-
-    OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
 }
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
@@ -94,21 +92,26 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
     sei();          //Interruptions réactivées
 }
 
-void minuterie(uint16_t duree){                     //TIMER 1 (16-bits) (D5 et D4)
-   // minuterieExpiree = 0;
+
+void initialisationMinuterie(){             //TIMER 1 (16-bits) (D5 ou D4)
     TCNT1 = 0x0000;
-    OCR1A = duree;
 
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
     TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
     
     TCCR1B = (1 << CS12) | (0 << CS11) | (1 << CS10);   //clk/1024 from prescaler.
     TCCR1B &= ~(1 << WGM13);
-    TCCR1B |= (1 << WGM12);          //Set CTC mode on timer 1 (part2).
-    TCCR1B |= (1 << ICES1);      //Event triggered on rising edge.
+    TCCR1B |= (1 << WGM12);           //Set CTC mode on timer 1 (part2).
+    TCCR1B |= (1 << ICES1);           //Event triggered on rising edge.
 
     TCCR1C = 0;
-    TIMSK1 |= (1 << OCIE1A);     //Timer 1, Output compare A match interrupt enable
+    TIMSK1 |= (1 << OCIE1A);          //Timer 1, Output compare A match interrupt enable
+}
+
+void minuterie(uint16_t duree){                
+   // minuterieExpiree = 0;
+    TCNT1 = 0x0000;
+    OCR1A = duree;
 }
 
 
@@ -164,17 +167,13 @@ unsigned char receptionUART(void)
 }
 
 void initialisationUART () {
-
     // 2400 bauds. Nous vous donnons la valeur des deux
-
     // premier registres pour vous éviter des complications
-
     UBRR0H = 0;
 
     UBRR0L = 0xCF;
-
+    
     // permettre la reception et la transmission par le UART0
-
     UCSR0A &= ~(1 << U2X0);
 
     UCSR0B |= _BV(RXC0) | _BV(TXC0);
@@ -183,7 +182,6 @@ void initialisationUART () {
     UCSR0B &= ~(1 << UCSZ02); //character size 8-bit.
 
     // Format des trames: 8 bits, 1 stop bits, none parity
-
     UCSR0C &= ~(1 << UMSEL01) & ~(1 << UMSEL00); //asynchronous USART.
     UCSR0C &= ~(1 << UPM01) & ~(1 << UPM00);  //parity mode disabled.
     UCSR0C &= (1 << USBS0);        //1 stop-bits.
