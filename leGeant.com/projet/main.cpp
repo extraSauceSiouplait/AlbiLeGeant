@@ -24,7 +24,12 @@ ISR(INT1_vect);
 ISR(INT2_vect);
 ISR(TIMER1_COMPA_vect);
 
-int main(){
+
+int main() {
+    
+	Capteurs capteur;
+	etat = 0;
+
     for(;;){
         switch(etat) {
             case COULEUR:
@@ -229,10 +234,11 @@ int main(){
                     
                     while(capteurs.estPerdu()
                     capteurs.tournerGauche();
-                }S
+                }
                 etat++;                     
 
             case PHOTORESISTANCE:
+                
                 uint16_t valeurCan16bitDroit;
                 uint16_t valeurCan16bitGauche;
                 DDRC = 0xff;    /* A RETIRER */
@@ -254,7 +260,9 @@ int main(){
                         _delay_ms(50);
                     }
                 }
+                
             case INTERMITTENCE:
+                
             case TOAGC:
             case TOGAH:
             case PARKING_2:
@@ -288,12 +296,14 @@ ISR(INT0_vect){
     }
 }
 
+
 ISR(INT1_vect){ 
     if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
         EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
         etat = PHOTORESISTANCE; //etat suivant.
     }
 }
+
 
 ISR(INT2_vect){
     if(etat == COULEUR){
@@ -317,5 +327,24 @@ ISR(INT2_vect){
                     break;
             }
         } 
+    }
+}
+
+
+ISR(INT1_vect){
+	//Pas besoin d'anti-rebond pour cette interruption, car elle est d'usage unique
+    if(couleurChoisie == VERT || couleurChoisie == ROUGE){  //Ne fait rien si la couleur n'a pas encore été choisie.
+        if (etat == 0){
+			etat++;
+		}
+
+
+        EIMSK &= ~ (1 << INT0) & ~ (1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
+    }
+}
+
+ISR(TIMER1_COMPA_vect) {
+    if(etat == 5) {
+        commencerParking = true;
     }
 }
