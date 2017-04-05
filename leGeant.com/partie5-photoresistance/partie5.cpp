@@ -18,7 +18,6 @@
 uint16_t valeurCan16bitDroit;
 uint16_t valeurCan16bitGauche;
 char cote;
-bool avantINT = true;
 
 
 ISR(INT0_vect);
@@ -28,7 +27,7 @@ int main()
     DDRC = 0xff;    //portC en ecriture pour la led
     DDRA = 0x00;    //portA en lecture
     can convertisseur;
-    initialisationINT0(1,1);   //rising edge
+    initialisationINT0(0,1);   //rising edge
     
     /* CODE POUR ARRETE DE BOUGER */ 
     
@@ -38,12 +37,12 @@ int main()
         valeurCan16bitGauche = convertisseur.lecture(PINA0);    //lecture pin0 portA
         valeurCan16bitGauche >>= 2;
         
-        if(valeurCan16bitDroit > 230 && avantINT) {
+        if(valeurCan16bitDroit > 230) {
             cote = DROIT;
             _delay_ms(200);
         }
     
-        else if(valeurCan16bitGauche > 230 && avantINT) {
+        else if(valeurCan16bitGauche > 230 ) {
             cote = GAUCHE;
             _delay_ms(200);
         }
@@ -51,18 +50,19 @@ int main()
 }
 
 ISR(INT0_vect){
-    avantINT = false;
     switch(cote){
         case DROIT:
             //tourner a droite
             PORTC = ROUGE;
+            EIMSK &= ~(1 << INT0);
             break;
         case GAUCHE:
             //tourner a gauche
             PORTC = VERT;
+            EIMSK &= ~(1 << INT0);
             break;
     }
-    EIMSK &= ~(1 << INT0); //desactive external interrupt 0.
+    //desactive external interrupt 0.
     /* ETAT SUIVANT */
             
 }

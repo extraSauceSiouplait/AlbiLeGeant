@@ -21,12 +21,12 @@ include Makefile_commun.txt
 
 # Nom de votre projet
 # (utilisez un seul mot, exemple: 'monprojet')
-PROJECTNAME=rotation
+PROJECTNAME=main
 
 # Fichiers sources
 # (Listez tous les fichiers a compiler, ex: 'tp1.c, tp2.cpp'):
 # Utilisez le suffixe .cpp pour les fichiers C++
-PRJSRC= rotation.cpp
+PRJSRC= main.cpp
 
 # Inclusions additionnelles (ex: -I/path/to/mydir)
 INC= -I./../librairie 

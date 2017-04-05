@@ -10,30 +10,38 @@
     //INT1 sur D3
     //DEL sur C0(+) - C1(-)     //valeur temporaire (a changer)
     
-ISR(INT0_vect);
-ISR(INT1_vect);
+ISR(INT2_vect);
+
 
 volatile char couleurChoisie = '\0'; //null (pas encore choisi)
+bool estChoisi = false;
 
 
 int main(){
-    DDRD = 0x00;        //PORT D en lecture pour lire les interruptions.
+    DDRB = 0x00;        //PORT B en lecture pour lire les interruptions.
     DDRC = 0xff;        //PORT C en écriture pour la DEL.
     ecrire0('C', 0);    //Assure que la DEL est eteinte avant le choix de la couleur.
     ecrire0('C', 1);    //Assure que la DEL est eteinte avant le choix de la couleur.
-    initialisationINT0(1,0);    //falling edge activates interrupt.
-    initialisationINT1(1,0);    //falling edge activates interrupt.
+    initialisationINT2(1,0);    //falling edge activates interrupt.
+   // initialisationINT1(1,0);    //falling edge activates interrupt.
 
     for(;;){
+        if (!(PINB & (1<<3) && !estChoisi) ){
+             if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
+                //ETAT = ETAT_SUIVANT (IMPORTANT!!!!)
+                 estChoisi = true;
+                EIMSK &= ~(1 << INT2);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
+            }
+        }
         //Reste du code du robot.
     }
   
 }
 
 
-ISR(INT0_vect){
+ISR(INT2_vect){
     _delay_ms(30);
-    if(! (PIND & (1 << 2)) ){
+    if(! (PINB & (1 << 2)) ){
         switch(couleurChoisie){
             case VERT:
                 couleurChoisie = ROUGE;
@@ -53,10 +61,11 @@ ISR(INT0_vect){
         }
    } 
 }
-
+/*
 ISR(INT1_vect){ 
     if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
         //ETAT = ETAT_SUIVANT (IMPORTANT!!!!)
          EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
     }
 }
+*/
