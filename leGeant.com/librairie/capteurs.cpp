@@ -75,7 +75,7 @@ void Capteurs::tournerDroite()
 	ajustementPwmMoteurs(80,80);	//Débuter roation vers la droite du robot
 	
 }
-void Capteurs::tourner180()
+void Capteurs::tourner180Gauche()
 {
 	tournerGauche(); 
 	do
@@ -89,6 +89,24 @@ void Capteurs::tourner180()
 	} 
 	ajustementPwmMoteurs(0,0); //On arrête les moteurs lorsque la présente routine est terminée
 }
+
+void Capteurs::tourner180Droite()
+{
+	tournerDroite(); 
+	do
+	{
+		lecture(); //Acquisition des données en provenance des capteurs
+	}while (!estPerdu());//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+	
+	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+	{
+		lecture(); //Acquisition des données en provenance des capteurs
+	} 
+	ajustementPwmMoteurs(0,0); //On arrête les moteurs lorsque la présente routine est terminée
+}
+
+
+
 void Capteurs::intersectionGauche()
 {
 	ajustementPwmMoteurs(80,80);
@@ -124,6 +142,12 @@ bool Capteurs::estIntersection()
 {
 	return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));
 				//vrai si tous les capteurs de gauche ou/et droite sont actifs
+}
+
+
+bool Capteurs::estPerdu()
+{
+    return (( !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4] || !sensors_[5]));
 }
 
 

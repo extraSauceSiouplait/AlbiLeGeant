@@ -20,7 +20,7 @@ int main() {
 		switch (etat) //Machine à état
 	    case 1 :  
             
-            while(( sensors_[1] || (sensors_[2] || sensors_[3] || sensors_[4] || sensors_[5])) {
+            while(!capteur.estPerdu()) {
 		     capteur.lecture();          // Lecture de l'information par le capteur.
 			 capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
             }
@@ -29,16 +29,16 @@ int main() {
             
             for(uint8_t = 0; i < 4; i++){
             
-                while(( !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4] || !sensors_[5]))
+                while(capteur.EstPerdu())
                     ajustementPwmMoteurs(60,60);
                 
-                while(( sensors_[1] || (sensors_[2] || sensors_[3] || sensors_[4] || sensors_[5])) {
+                while(!capteur.estPerdu()) {
                 capteur.lecture();          // Lecture de l'information par le capteur.
                 capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
                 }
             }
             
-            while(( !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4] || !sensors_[5]))
+            while(capteur.estPerdu();)
                     ajustementPwmMoteurs(60,60);
                 
             etat++;

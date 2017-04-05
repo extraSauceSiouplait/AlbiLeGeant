@@ -119,6 +119,7 @@ int main() {
                 compteurIntersection++;
                 while(capteur.estIntersection()) {
                   capteur.lecture();
+                  ajustementPwmMoteurs(50,50);
                 }
 
                 if(compteurIntersection == triggerParking) {

@@ -23,6 +23,7 @@ public:
     void intersectionGauche();	//Methode qui gere une intersection de gauche depuis sa detection par les capteurs	
     bool estIntersection();		//Methode qui retourne vrai si les capteurs detectent une intersection
     bool getSensor(uint8_t indice);
+    bool estPerdu();
 private:
     bool sensors_[5];
    // bool oldLigne_[5];
