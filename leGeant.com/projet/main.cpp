@@ -11,10 +11,10 @@ ISR(INT1_vect);
 ISR(TIMER1_COMPA_vect);
 
 //Énumération des états de la machine à état
-enum Etats {COULEUR, UTURN, TOGA, TOGAB, COMPTEURLIGNE_1, PARKING_1, TOABC, COMPTEURLIGNE_2, ALLERETOUR, CINQ40, PHOTORESISTANCE, INTERMITTENCE, TOAGC, TOGAH, PARKING_2};
+enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PARKING_1 = 5, TOABC = 6, COMPTEURLIGNE_2 = 7, ALLERETOUR = 8, CINQ40 = 9, PHOTORESISTANCE = 10, INTERMITTENCE = 11, TOAGC = 12, TOGAH = 13, PARKING_2 = 14};
 
 volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
-volatile Etats etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
+volatile uint8_t etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
 volatile bool    commencerParking = false;
 char cote;
 
