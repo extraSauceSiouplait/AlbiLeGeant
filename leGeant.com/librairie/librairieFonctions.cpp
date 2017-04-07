@@ -22,7 +22,7 @@ bool verifierRebondMecanique(){
     return false;
 }
 
-
+// Permet l'ajustement de la fréquence pour jouer une sonorité
 void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
     TCNT2 = 0x00;
     TCCR2A &= ~(1 << COM2A1);                     //toggle OC2A  on compare match A.
@@ -36,7 +36,6 @@ void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
 
     OCR2A = uint8_t((F_CPU/1024) / (2*frequence));
     }
-
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
@@ -67,6 +66,7 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
 }
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
+  
     pourcentageA *= 0.85;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
     OCR1A = 255 * (100.0 - pourcentageA)/100.0;
     OCR1B = 255 * (100.0 - pourcentageB)/100.0;
@@ -305,6 +305,7 @@ void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bo
     }
 }
 
+//Fonction permettant de jouer une sonorité. Prend en parametre une opérande situé entre 45 et 81 décrivant une note. (Voir table associative entre notes et fréquences)
 void jouerSonorite(uint8_t operande)  {
     switch(operande) {
 
