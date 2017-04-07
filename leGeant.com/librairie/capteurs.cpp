@@ -79,8 +79,8 @@ void Capteurs::tournerDroite()
 void Capteurs::tourner180Gauche()
 {
 	tournerGauche(); 
-	do
-	{Reconstruire arborescence du projet pour plus de clartéb
+	do{
+        
 		lecture(); //Acquisition des données en provenance des capteurs
 	}while (sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
 	

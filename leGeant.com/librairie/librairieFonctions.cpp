@@ -43,24 +43,24 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
     cli();
     
     TCNT0 = 0x00;
-    TCCR0A |= (1 << COM0A1) | (1 << COM0A0);      //Set output to 1 on compare match A for timer0.
-    TCCR0A |= (1 << COM0B1) | (1 << COM0B0);      //Set output to 1 on compare match B for timer0..
+    TCCR1A |= (1 << COM0A1) | (1 << COM0A0);      //Set output to 1 on compare match A for timer0.
+    TCCR1A |= (1 << COM0B1) | (1 << COM0B0);      //Set output to 1 on compare match B for timer0..
    
-    TCCR0A |= (1 << WGM00);                       //PWM, Phase Correct, 8-bit, TOP 0xff
-    TCCR0A &= ~(1 << WGM01);                      //PWM, Phase Correct, 8-bit, TOP 0xff
-    TCCR0B &= ~(1 << WGM02);                      //PWM, Phase Correct, 8-bit, TOP 0xff
+    TCCR1A |= (1 << WGM00);                       //PWM, Phase Correct, 8-bit, TOP 0xff
+    TCCR1A &= ~(1 << WGM01);                      //PWM, Phase Correct, 8-bit, TOP 0xff
+    TCCR1B &= ~(1 << WGM02);                      //PWM, Phase Correct, 8-bit, TOP 0xff
     
-    TCCR0B |= (1 << CS01);                        //clk/8 (from prescaler)
-    TCCR0B &= ~(1 << CS02) & ~(1 << CS00);        //clk/8 (from prescaler)
+    TCCR1B |= (1 << CS01);                        //clk/8 (from prescaler)
+    TCCR1B &= ~(1 << CS02) & ~(1 << CS00);        //clk/8 (from prescaler)
     
     sei();
 }
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
     pourcentageA *= 0.92;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
-    TCNT0 = 0x00;
-    OCR0A = 255 * (100 - pourcentageA)/100;
-    OCR0B = 255 * (100 - pourcentageB)/100;
+    TCNT1 = 0x00;
+    OCR1A = 255 * (100 - pourcentageA)/100;
+    OCR1B = 255 * (100 - pourcentageB)/100;
 
 }
 
@@ -95,20 +95,20 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
 }
 
 
-void initialisationMinuterie(){             //TIMER 1 (16-bits) (D5 ou D4)
+void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
     cli();
     
-    TCNT1 = 0x0000;
+    TCNT2 = 0x0000;
 
-    TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
-    TCCR1A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
+    TCCR2A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
+    TCCR2A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
     
-    TCCR1B = (1 << CS12) | (0 << CS11) | (1 << CS10);   //clk/1024 from prescaler.
-    TCCR1B &= ~(1 << WGM13);
-    TCCR1B |= (1 << WGM12);           //Set CTC mode on timer 1 (part2).
-    TCCR1B |= (1 << ICES1);           //Event triggered on rising edge.
+    TCCR2B = (1 << CS12) | (0 << CS11) | (1 << CS10);   //clk/1024 from prescaler.
+    TCCR2B &= ~(1 << WGM13);
+    TCCR2B |= (1 << WGM12);           //Set CTC mode on timer 1 (part2).
+    TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.
 
-    TCCR1C = 0;
+    //TCCR2B = 0;
     TIMSK1 |= (1 << OCIE1A);          //Timer 1, Output compare A match interrupt enable
     
     sei();
@@ -116,8 +116,8 @@ void initialisationMinuterie(){             //TIMER 1 (16-bits) (D5 ou D4)
 
 void minuterie(uint16_t duree){                
    // minuterieExpiree = 0;
-    TCNT1 = 0x0000;
-    OCR1A = duree * (F_CPU/1024) / 1000;
+    TCNT2 = 0x0000;
+    OCR2A = duree * (F_CPU/1024) / 1000;
 }
 
 
