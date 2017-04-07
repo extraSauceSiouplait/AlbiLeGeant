@@ -10,26 +10,88 @@ ISR(INT0_vect);
 ISR(INT1_vect);
 ISR(TIMER1_COMPA_vect);
 
-enum Etats {
-    COULEUR=0, UTURN=1, TOGA=2, TOGAB=3, COMPTEURLIGNE_1=4, PARKING_1=5, TOABC=6, COMPTEURLIGNE_2=7, ALLERETOUR=8, CINQ40=9, PHOTORESISTANCE=10, INTERMITTENCE=11, TOAGC=12, TOGAH=13, PARKING_2 =14
-    };
+//Énumération des états de la machine à état
+enum Etats {COULEUR, UTURN, TOGA, TOGAB, COMPTEURLIGNE_1, PARKING_1, TOABC, COMPTEURLIGNE_2, ALLERETOUR, CINQ40, PHOTORESISTANCE, INTERMITTENCE, TOAGC, TOGAH, PARKING_2};
 
 volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
-volatile uint8_t etat = COULEUR;
+volatile Etats etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
 volatile bool    commencerParking = false;
 char cote;
 
-ISR(INT0_vect);
-ISR(INT1_vect);
-ISR(INT2_vect);
-ISR(TIMER1_COMPA_vect);
+ISR(INT0_vect){
+    if (etat == PHOTORESISTANCE){
+        switch(cote){
+            case DROIT:
+                /* etat = TOURNER_DROIT_1 */
+                
+                ecrire1('C', 0);    /* A RETIRER */
+                ecrire0('C', 1);    /* A RETIRER */
+                
+                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
+                etat++;     //passe à l'état suivant
+                break;
+            case GAUCHE:
+                /* etat = TOURNER_GAUCHE_1 */
+                
+                ecrire1('C', 1);    /* A RETIRER */
+                ecrire0('C', 0);    /* A RETIRER */
+                
+                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
+                etat++;     //passe à l'état suivant
+                break;  
+        }
+    }
+}
+
+
+ISR(INT1_vect){ 
+    if(etat==0)
+    {
+        if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
+            EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
+            etat++; //etat suivant.
+        }
+    }
+}
+
+
+ISR(INT2_vect){
+    if(etat == COULEUR){
+        _delay_ms(30);
+        if(! (PINB & (1 << 2)) ){   //anti-rebond
+            switch(couleurChoisie){
+                case VERT:
+                    couleurChoisie = ROUGE;
+                    ecrire1('C', 0);
+                    ecrire0('C', 1);
+                    break;  
+                case ROUGE: 
+                    couleurChoisie = VERT;
+                    ecrire1('C', 1);
+                    ecrire0('C', 0);
+                    break;
+                default:        //quand couleurChoisie est null.
+                    couleurChoisie = VERT;
+                    ecrire1('C', 1);
+                    ecrire0('C', 0);
+                    break;
+            }
+        } 
+    }
+}
+
+ISR(TIMER2_COMPA_vect) {
+    if(etat == 5) {
+        commencerParking = true;
+    }
+}
 
 
 int main() {
-    
-	Capteurs capteur;
-	etat = 0;
-
+	Capteurs capteur; //Création d'un objet de classe Capteur
+	etat = COULEUR;    //Assignation de l'état initiale COULEUR
+	
+    //Machine à état décrivant le parcours du robot
     for(;;){
         switch(etat) {
             case COULEUR:
@@ -280,86 +342,5 @@ int main() {
             }
         }
 
-    }
-}
-
-ISR(INT0_vect){
-    if (etat == PHOTORESISTANCE){
-        switch(cote){
-            case DROIT:
-                /* etat = TOURNER_DROIT_1 */
-                
-                ecrire1('C', 0);    /* A RETIRER */
-                ecrire0('C', 1);    /* A RETIRER */
-                
-                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
-                etat++;     //passe à l'état suivant
-                break;
-            case GAUCHE:
-                /* etat = TOURNER_GAUCHE_1 */
-                
-                ecrire1('C', 1);    /* A RETIRER */
-                ecrire0('C', 0);    /* A RETIRER */
-                
-                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
-                etat++;     //passe à l'état suivant
-                break;  
-        }
-    }
-}
-
-
-ISR(INT1_vect){ 
-    if(etat==0)
-    {
-        if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
-            EIMSK &= ~(1 << INT0) & ~(1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
-            etat++; //etat suivant.
-        }
-    }
-}
-
-
-ISR(INT2_vect){
-    if(etat == COULEUR){
-        _delay_ms(30);
-        if(! (PINB & (1 << 2)) ){   //anti-rebond
-            switch(couleurChoisie){
-                case VERT:
-                    couleurChoisie = ROUGE;
-                    ecrire1('C', 0);
-                    ecrire0('C', 1);
-                    break;  
-                case ROUGE: 
-                    couleurChoisie = VERT;
-                    ecrire1('C', 1);
-                    ecrire0('C', 0);
-                    break;
-                default:        //quand couleurChoisie est null.
-                    couleurChoisie = VERT;
-                    ecrire1('C', 1);
-                    ecrire0('C', 0);
-                    break;
-            }
-        } 
-    }
-}
-
-
-/*ISR(INT1_vect){
-	//Pas besoin d'anti-rebond pour cette interruption, car elle est d'usage unique
-    if(couleurChoisie == VERT || couleurChoisie == ROUGE){  //Ne fait rien si la couleur n'a pas encore été choisie.
-        if (etat == 0){
-			etat++;
-		}
-
-
-        EIMSK &= ~ (1 << INT0) & ~ (1 << INT1);   //interruptions désactivées pour INT0 et INT1, le choix de couleur ne peut plus être changé.
-    }
-}*/
-
-ISR(TIMER2_COMPA_vect) {
-    if(etat == 5) {
-        commencerParking = true;
     }
 }

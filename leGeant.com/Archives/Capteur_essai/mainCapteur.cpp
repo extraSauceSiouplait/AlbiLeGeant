@@ -111,10 +111,10 @@ int main() {
 
                 uint8_t compteurIntersection = 0;
 
-                while(!capteur.estI}}ntersection()){
+                while(!capteur.estIntersection()){
 
                     capteur.lecture();
-                    capteur.lineTra}cking();
+                    capteur.lineTracking();
                 }
                 compteurIntersection++;
                 while(capteur.estIntersection()) {
