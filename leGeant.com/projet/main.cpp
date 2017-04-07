@@ -40,7 +40,7 @@ int main() {
                 while(etat == COULEUR){
                     if (!(PINB & (1<<3))){
                         if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
-                            etat = UTURN;
+                            etat++;
                             EIMSK &= ~(1 << INT2);   //INT2 désactivé, le choix de couleur ne peut plus être changé.
                         }   
                     }
