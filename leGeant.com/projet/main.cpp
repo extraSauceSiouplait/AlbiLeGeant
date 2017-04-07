@@ -1,4 +1,3 @@
-#define F_CPU 8000000
 #include "header.h"
 
 #define VERT 'v'    //lors du choix de la couleur
@@ -20,13 +19,13 @@ volatile bool    commencerParking = false;
 char cote;
 
 ISR(INT0_vect);
-ISR(INT1_vect);
+//ISR(INT1_vect);
 ISR(INT2_vect);
 ISR(TIMER1_COMPA_vect);
 
 
 int main() {
-    
+
 	Capteurs capteur;
 	etat = 0;
 
@@ -34,6 +33,9 @@ int main() {
         switch(etat) {
             case COULEUR:
             {
+                
+
+
                 DDRC = 0xff;    //mode ecriture pour la DEL
                 DDRD = 0x00;    //mode lecture pour lire les interrupts
                 initialisationINT2(1,0);    //falling edge activates interrupt.
@@ -42,33 +44,35 @@ int main() {
                         if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
                             etat++;
                             EIMSK &= ~(1 << INT2);   //INT2 désactivé, le choix de couleur ne peut plus être changé.
-                        }   
+                        }
                     }
                 }
             }
             case UTURN: //tourner 180 degres
             {
                     DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
-					initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
-					capteur.tourner180Gauche();
-					etat++;
-					break;
+                    initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
+                    capteur.tourner180Gauche();
+                    etat++;
+                    break;
             }
+
             case TOGA: //linetracking() jusqu'a intersection du segment GA
             {
-					while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
-					{
-						capteur.lecture();
-						capteur.lineTracking();
-					}
-					etat++;
+              while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
+              {
+                capteur.lecture();
+                capteur.lineTracking();
+              }
+              capteur.intersectionGauche();
+              etat++;
 					break;
             }
             case TOGAB:
             {
                 //linetracking() jusqu'a l'intersection GAB et tourne a gauche sur le segment AB
-				while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
-				{
+                while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
+                {
 					capteur.lecture();
 					capteur.lineTracking();
 				}
@@ -76,7 +80,7 @@ int main() {
 				etat++;
                 break;
             }
-                
+
             case COMPTEURLIGNE_1:
             {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
@@ -103,7 +107,7 @@ int main() {
                 if(compteurIntersection == triggerParking) {
                     etat++;
                 }
-            
+
                 break;
             }
             case PARKING_1:
@@ -119,7 +123,7 @@ int main() {
                 capteur.tournerGauche();
                 _delay_ms(2000);
                 ajustementPwmMoteurs(0,0);
-    
+
 
                 do {
                     capteur.lecture();
@@ -129,7 +133,7 @@ int main() {
                 etat++;
                 break;
             }
-                
+
             case TOABC:
             {
                 //linetracking() jusqu'a l'intersection ABC et tourne a gauche sur le segment BC
@@ -142,8 +146,8 @@ int main() {
 				etat++;
                 break;
             }
-                
-                
+
+
             case COMPTEURLIGNE_2:
             {
                 //
@@ -177,12 +181,12 @@ int main() {
                 {
                     uint8_t triggerSwitchEtat = 0;
                     capteur.intersectionGauche();
-                            
+
                     while(!capteur.estPerdu()) {
                         capteur.lecture();
                         capteur.lineTracking();
                     }
-                    
+
                     if(couleurChoisie == VERT) {
                         capteur.tourner180Gauche();
                         triggerSwitchEtat = 3;
@@ -191,17 +195,17 @@ int main() {
                         capteur.tourner180Gauche();
                         triggerSwitchEtat = 1;
                     }
-                    
-        
+
+
                     while(!capteur.estIntersection()) {
                         capteur.lecture();
                         capteur.lineTracking();
                     }
-                    
+
                     capteur.intersectionGauche();
-                    
+
                     for (uint8_t i = 0; i < triggerSwitchEtat; i++){
-                    
+
                         while(!capteur.estIntersection()) {
                         capteur.lecture();
                         capteur.lineTracking();
@@ -209,26 +213,26 @@ int main() {
                         while(capteur.estIntersection())
                             ajustementPwmMoteurs(60,60);
                     }
-                    
+
                     etat++;
                 }
-                
+
             case CINQ40:
             {
-                
+
                 while(!capteur.estPerdu()){
                     capteur.lecture();
                     capteur.lineTracking();
                 }
-                
+
                 ecrire1('D',2);
-                ecrire1('D',3);        
-                
+                ecrire1('D',3);
+
                 //
                 // On fait avancer le robot jusqu'à ce qu'il arrive au bout. Puis on le fait reculer de maniere manuelle
                 // jusqu'à ce que son centre de rotation soit au dessus de C (j'ai pas trouvé de meilleur moyen :/)
                 //
-                
+
                 ajustementPwmMoteurs(20,20);
                 _delay_ms(200);
                 ecrire0('D',2);
@@ -236,16 +240,16 @@ int main() {
                 ajustementPwmMoteurs(10,10);
                 _delay_ms(50);
                 ajustementPwmMoteurs(0,0);
-                
+
                 for(uint8_t compteurLignes = 0; compteurLignes < 9; compteurLignes++) {
-                
+
                     while(!capteur.estPerdu())
                         capteur.tournerGauche();
-                    
+
                     while(capteur.estPerdu())
                     capteur.tournerGauche();
                 }
-                etat++;   
+                etat++;
             }
 
             case PHOTORESISTANCE:
@@ -261,7 +265,7 @@ int main() {
                     valeurCan16bitDroit >>= 2;
                     valeurCan16bitGauche = convertisseur.lecture(PINA0);    //lecture pin0 portA
                     valeurCan16bitGauche >>= 2;
-                    
+
                     if(valeurCan16bitDroit > 230) {
                         cote = DROIT;
                         _delay_ms(50);
@@ -271,9 +275,9 @@ int main() {
                         _delay_ms(50);
                     }
                 }
-                
+
             //case INTERMITTENCE:
-                
+
            // case TOAGC:
            // case TOGAH:
            // case PARKING_2:
@@ -288,28 +292,28 @@ ISR(INT0_vect){
         switch(cote){
             case DROIT:
                 /* etat = TOURNER_DROIT_1 */
-                
+
                 ecrire1('C', 0);    /* A RETIRER */
                 ecrire0('C', 1);    /* A RETIRER */
-                
+
                 EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
                 break;
             case GAUCHE:
                 /* etat = TOURNER_GAUCHE_1 */
-                
+
                 ecrire1('C', 1);    /* A RETIRER */
                 ecrire0('C', 0);    /* A RETIRER */
-                
+
                 EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
-                break;  
+                break;
         }
     }
 }
 
-
-ISR(INT1_vect){ 
+/*
+ISR(INT1_vect){
     if(etat==0)
     {
         if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
@@ -318,7 +322,7 @@ ISR(INT1_vect){
         }
     }
 }
-
+*/
 
 ISR(INT2_vect){
     if(etat == COULEUR){
@@ -329,8 +333,8 @@ ISR(INT2_vect){
                     couleurChoisie = ROUGE;
                     ecrire1('C', 0);
                     ecrire0('C', 1);
-                    break;  
-                case ROUGE: 
+                    break;
+                case ROUGE:
                     couleurChoisie = VERT;
                     ecrire1('C', 1);
                     ecrire0('C', 0);
@@ -341,7 +345,7 @@ ISR(INT2_vect){
                     ecrire0('C', 0);
                     break;
             }
-        } 
+        }
     }
 }
 
