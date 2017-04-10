@@ -4,6 +4,12 @@
 //Constructeur par défaut
 //Initialise la lecture des capteurs sur le port A
 
+
+/*************************************************
+*   MOTEUR DROIT: Enable = B3, Direction = B1
+*   MOTEUR GAUCHE: Enable = B4, Direction = B5
+*************************************************/
+
 bool Capteurs::getSensor(uint8_t indice) {
     return sensors_[indice];
 }
@@ -21,8 +27,8 @@ void Capteurs::lecture() {
 }
 
 void  Capteurs:: lineTracking() {
-	ecrire0('D',2);
-	ecrire0('D',3);
+    ecrire0('B',1);
+    ecrire0('B',5);
 
     if (sensors_[2] || (sensors_[1] && sensors_[3]))			//seulement le sensor du millieu = 1
     {
@@ -46,19 +52,19 @@ void  Capteurs:: lineTracking() {
 
 void Capteurs::tournerGauche()
 {
-	ecrire1('D', 2); //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
-    ecrire0('D', 3);
-  ajustementPwmMoteurs(100,100);
-  _delay_ms(50);
+    ecrire1('B',1);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
+    ecrire0('B',5);
+    ajustementPwmMoteurs(100,100);  //Sert à donner une petite inertie pour commencer la rotation du robot
+    _delay_ms(50);
 	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
-	ecrire0('D',2);	//On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
-	ecrire1('D',3);
-  ajustementPwmMoteurs(100,100);
-  _delay_ms(50);
-	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
+    ecrire0('B',1);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
+    ecrire1('B',5);
+    ajustementPwmMoteurs(100,100); //Sert à donner une petite inertie pour commencer la rotation du robot
+    _delay_ms(50);
+    ajustementPwmMoteurs(50,50);   //Débuter roation vers la droite du robot
 
 }
 void Capteurs::tourner180Gauche()
@@ -67,9 +73,9 @@ void Capteurs::tourner180Gauche()
 
 	do{
 		lecture(); //Acquisition des données en provenance des capteurs
-	}while (!estPerdu());//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+	}while (!estPerdu());//Tourne tant qu'au moins un capteur est actif, afin de s'assurer que les capteurs quittent la ligne
 
-	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de s'arrêter lorsqu'on  retrouve la ligne
 	{
 		lecture(); //Acquisition des données en provenance des capteurs
 	}
