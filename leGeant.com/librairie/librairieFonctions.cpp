@@ -56,7 +56,7 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
 }
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
-    pourcentageA *= 0.92;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
+    pourcentageA *= 0.85;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
     TCNT1 = 0x00;
     OCR1A =  uint8_t(255 * (100 - pourcentageA)/100);
     OCR1B =  uint8_t(255 * (100 - pourcentageB)/100);

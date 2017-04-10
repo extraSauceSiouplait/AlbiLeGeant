@@ -292,7 +292,7 @@ int main() {
                 //
                 
                 ajustementPwmMoteurs(20,20);
-                _delay_ms(200);
+                _delay_ms(400);
                 ecrire0('D',2);
                 ecrire0('D',3);            // Ici je fais freiner le robot pour être sur de s'arreter
                 ajustementPwmMoteurs(10,10);
@@ -311,7 +311,14 @@ int main() {
             }
 
             case PHOTORESISTANCE:
-            {
+            {   
+                //
+                // Le robot est maintenant sur le Point D et poursuit son chemin jusqu'ầ l'intersection E
+                // Il y a deux intersections intermédiaires avant le point E.
+                //
+                
+                
+                
                 uint16_t valeurCan16bitDroit;
                 uint16_t valeurCan16bitGauche;
                 DDRC = 0xff;    /* A RETIRER */
@@ -333,8 +340,31 @@ int main() {
                         _delay_ms(50);
                     }
                 }
+            }
                 
-            //case INTERMITTENCE:
+            case INTERMITTENCE:
+                while(!capteur.estPerdu()) {
+                    capteur.lecture();          // Lecture de l'information par le capteur.
+                    capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
+                }
+            
+                ajustementPwmFrequence(440);
+            
+                for(uint8_t = 0; i < 4; i++){
+            
+                    while(capteur.EstPerdu())
+                        ajustementPwmMoteurs(60,60);
+                
+                    while(!capteur.estPerdu()) {
+                        capteur.lecture();          // Lecture de l'information par le capteur.
+                        capteur.lineTracking();     // Le robot doit suivre des instructions pour avancer.
+                    }
+                }
+            
+                while(capteur.estPerdu();)
+                    ajustementPwmMoteurs(60,60);
+                
+                etat++;
                 
            // case TOAGC:
            // case TOGAH:
