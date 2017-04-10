@@ -52,17 +52,17 @@ void  Capteurs:: lineTracking() {
 
 void Capteurs::tournerGauche()
 {
-    ecrire1('B',5);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
-    ecrire0('B',1);
-    ajustementPwmMoteurs(100,100);
+    ecrire1('B',1);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
+    ecrire0('B',5);
+    ajustementPwmMoteurs(100,100);  //Sert à donner une petite inertie pour commencer la rotation du robot
     _delay_ms(50);
 	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
-    ecrire0('B',5);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
-    ecrire1('B',1);
-    ajustementPwmMoteurs(100,100);
+    ecrire0('B',1);    //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
+    ecrire1('B',5);
+    ajustementPwmMoteurs(100,100); //Sert à donner une petite inertie pour commencer la rotation du robot
     _delay_ms(50);
     ajustementPwmMoteurs(50,50);   //Débuter roation vers la droite du robot
 
@@ -73,9 +73,9 @@ void Capteurs::tourner180Gauche()
 
 	do{
 		lecture(); //Acquisition des données en provenance des capteurs
-	}while (!estPerdu());//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+	}while (!estPerdu());//Tourne tant qu'au moins un capteur est actif, afin de s'assurer que les capteurs quittent la ligne
 
-	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de s'arrêter lorsqu'on  retrouve la ligne
 	{
 		lecture(); //Acquisition des données en provenance des capteurs
 	}

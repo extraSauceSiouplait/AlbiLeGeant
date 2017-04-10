@@ -6,6 +6,10 @@
 #define DROIT 'd'   //lors du choix du coté avec la photorésistance
 
 
+//MOTEUR DROIT: E = B3, D = B1
+//MOTEUR GAUCHE: E = B4, D = B5
+
+
 //Énumération des états de la machine à état
 enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PARKING_1 = 5, TOABC = 6, COMPTEURLIGNE_2 = 7, ALLERETOUR = 8, CINQ40 = 9, PHOTORESISTANCE = 10, INTERMITTENCE = 11, TOAGC = 12, TOGAH = 13, PARKING_2 = 14};
 
@@ -75,7 +79,7 @@ ISR(TIMER2_COMPA_vect) {
 			compteurInterrupt++;
 		}
 	  else
-			commencerParking == true;
+			commencerParking = true;
 	}
 }
 
@@ -88,12 +92,11 @@ int main() {
     for(;;){
         switch(etat) {
             case COULEUR:
-            {
-                DDRC = 0xff;    //mode ecriture pour la DEL
-                DDRD = 0x00;    //mode lecture pour lire les interrupts
+                DDRB = 0x00;    //mode lecture pour sélectionner la couleur
+                DDRC = 0xFF;    //mode ecriture pour la DEL
                 initialisationINT2(1,0);    //falling edge activates interrupt.
                 while(etat == COULEUR){
-                    if (!(PINB & (1<<3))){
+                    if (!(PINB & 1)){
                         if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
                             etat++;
                             _delay_ms(2000);
@@ -101,40 +104,38 @@ int main() {
                         }   
                     }
                 }
-            }
+                break;
+        
             case UTURN: //tourner 180 degres
-            {
-                    DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
-                    initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
-                    capteur.tourner180Gauche();
-                    etat++;
-                    break;
-            }
+                DDRB = 0xFF; //PORT B en sortie pour le signal des moteurs
+                initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
+                capteur.tourner180Gauche();
+                etat++;
+                break;
 
             case TOGA: //linetracking() jusqu'a intersection du segment GA
-            {
-              while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
-              {
-                capteur.lecture();
-                capteur.lineTracking();
-              }
-              capteur.intersectionGauche();
-              etat++;
-					break;
-            }
+                while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
+                {
+                    capteur.lecture();
+                    capteur.lineTracking();
+                }
+                capteur.intersectionGauche();
+                etat++;
+                break;
+                
             case TOGAB:
-            {
+            
                 //linetracking() jusqu'a l'intersection GAB et tourne a gauche sur le segment AB
                 while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
                 {
-					capteur.lecture();
-					capteur.lineTracking();
-				}
-				capteur.intersectionGauche();
-				etat++;
+                    capteur.lecture();
+                    capteur.lineTracking();
+                }
+                capteur.intersectionGauche();
+                etat++;
 
                 break;
-            }
+        
 
             case COMPTEURLIGNE_1:
             {
@@ -169,7 +170,7 @@ int main() {
                 //linetracking() durant une minuterie prédéterminée
                 //la fin de la minuterie active commencerParking, ce qui initialise la Séquence de parking
 
-								minuterie(255);
+                minuterie(255);
 
                 while(!commencerParking) {
                 capteur.lecture();
@@ -280,8 +281,8 @@ int main() {
                     capteur.lineTracking();
                 }
 
-                ecrire1('D',2);
-                ecrire1('D',3);
+                ecrire1('B',1);
+                ecrire1('B',5);
 
                 //
                 // On fait avancer le robot jusqu'à ce qu'il arrive au bout. Puis on le fait reculer de maniere manuelle
@@ -290,8 +291,8 @@ int main() {
 
                 ajustementPwmMoteurs(20,20);
                 _delay_ms(400);
-                ecrire0('D',2);
-                ecrire0('D',3);            // Ici je fais freiner le robot pour être sur de s'arreter
+                ecrire0('B',1);
+                ecrire0('B',5);            // Ici je fais freiner le robot pour être sur de s'arreter
                 ajustementPwmMoteurs(10,10);
                 _delay_ms(50);
                 ajustementPwmMoteurs(0,0);
@@ -346,10 +347,10 @@ int main() {
                 }
             
                 ajustementPwmFrequence(440);
+                
+                for(uint8_t i= 0; i < 4; i++){
             
-                for(uint8_t = 0; i < 4; i++){
-            
-                    while(capteur.EstPerdu())
+                    while(capteur.estPerdu())
                         ajustementPwmMoteurs(60,60);
                 
                     while(!capteur.estPerdu()) {
@@ -358,16 +359,16 @@ int main() {
                     }
                 }
             
-                while(capteur.estPerdu();)
+                while(capteur.estPerdu())
                     ajustementPwmMoteurs(60,60);
                 
                 etat++;
-                
+                break;
            // case TOAGC:
            // case TOGAH:
            // case PARKING_2:
-            }
         }
-
+        
     }
+
 }
