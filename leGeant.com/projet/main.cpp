@@ -93,11 +93,12 @@ int main() {
                 DDRD = 0x00;    //mode lecture pour lire les interrupts
                 initialisationINT2(1,0);    //falling edge activates interrupt.
                 while(etat == COULEUR){
-                    if (!(PINB & (1<<3))){
+                    if (!(PINB & (1))){
                         if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
                             etat++;
                             _delay_ms(2000);
-                            EIMSK &= ~(1 << INT2);   //INT2 d«ésactivé, le choix de couleur ne peut plus être changé.
+                            EIMSK &= ~(1 << INT2);   //INT2 d«ésactivé, le choix de couleur ne peut plus être changé.<
+                            break;
                         }   
                     }
                 }
@@ -229,6 +230,7 @@ int main() {
 
                 if(compteurIntersection == triggerBonneIntersection) {
                     etat++;
+                    break;
                 }
             }
 
@@ -270,6 +272,7 @@ int main() {
                     }
 
                     etat++;
+                    break;
                 }
 
             case CINQ40:
@@ -288,11 +291,11 @@ int main() {
                 // jusqu'à ce que son centre de rotation soit au dessus de C (j'ai pas trouvé de meilleur moyen :/)
                 //
 
-                ajustementPwmMoteurs(20,20);
+                ajustementPwmMoteurs(40,40);
                 _delay_ms(400);
                 ecrire0('D',2);
                 ecrire0('D',3);            // Ici je fais freiner le robot pour être sur de s'arreter
-                ajustementPwmMoteurs(10,10);
+                ajustementPwmMoteurs(20,20);
                 _delay_ms(50);
                 ajustementPwmMoteurs(0,0);
 
@@ -304,17 +307,40 @@ int main() {
                     while(capteur.estPerdu())
                     capteur.tournerGauche();
                 }
-                etat++;
-            }
-
-            case PHOTORESISTANCE:
-            {   
+                
                 //
                 // Le robot est maintenant sur le Point D et poursuit son chemin jusqu'ầ l'intersection E
                 // Il y a deux intersections intermédiaires avant le point E.
                 //
+            
+                while(!capteur.estIntersection()) {
+                     capteur.lecture();
+                    capteur.lineTracking();
+                    }
+                capteur.intersectionDroite();
                 
+                while(!capteur.estIntersection()) {
+                    capteur.lecture();
+                    capteur.lineTracking();
+                    }
+                capteur.intersectionGauche();
                 
+
+                
+                bool premierePasse = true;
+                etat++;
+                break;
+
+            case PHOTORESISTANCE:
+
+                while(!capteur.estIntersection()) {
+                    capteur.lecture();
+                    capteur.lineTracking();
+                    
+                }
+                
+                capteur.freiner();
+                ajustementPwmMoteurs(0,0);
                 
                 uint16_t valeurCan16bitDroit;
                 uint16_t valeurCan16bitGauche;
@@ -337,7 +363,38 @@ int main() {
                         _delay_ms(50);
                     }
                 }
-            }
+                
+                if(cote == GAUCHE) {
+                    while(!sensors_[0] && !sensors_[1] && sensors_[2] && !sensors_[3] && !sensors_[4])
+                        capteur.tournerGauche();
+                    while(!capteur.estPerdu()){
+                        capteur.lecture();
+                        capteur.lineTracking();
+                    }
+                    while(capteur.estPerdu())
+                        ajustementPwmMoteurs(60,30);
+                }
+                
+                else if(cote == DROIT) {
+                    while(!sensors_[0] && !sensors_[1] && sensors_[2] && !sensors_[3] && !sensors_[4])
+                        capteur.tournerDroite();
+                    while(!capteur.estPerdu()){
+                        capteur.lecture();
+                        capteur.lineTracking();
+                    }
+                    while(capteur.estPerdu())
+                        ajustementPwmMoteurs(30,60);
+                }
+                    
+
+               if(premierePasse == true) {
+                   premierePasse = false;
+                   etat = PHOTORESISTANCE;
+               }
+               else
+                   etat++;
+               
+               break;
                 
             case INTERMITTENCE:
                 while(!capteur.estPerdu()) {
@@ -358,12 +415,14 @@ int main() {
                     }
                 }
             
-                while(capteur.estPerdu();)
+                while(capteur.estPerdu())
                     ajustementPwmMoteurs(60,60);
                 
                 etat++;
                 
-           // case TOAGC:
+            case TOAGC:
+                while(!capteur.estIntersection()) {
+                    
            // case TOGAH:
            // case PARKING_2:
             }

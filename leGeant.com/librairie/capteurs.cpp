@@ -111,7 +111,7 @@ void Capteurs::intersectionGauche()
 }
 void Capteurs::intersectionDroite()
 {
-	ajustementPwmMoteurs(80,80);
+	ajustementPwmMoteurs(60,60);
 	_delay_ms(800);					//la ligne perpendiculaire au robot croise son axe de rotation
 
 
