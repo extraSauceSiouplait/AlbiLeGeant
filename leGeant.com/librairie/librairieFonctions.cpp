@@ -66,7 +66,7 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
 }
 
 void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
-  
+
     pourcentageA *= 0.85;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
     OCR1A = 255 * (100.0 - pourcentageA)/100.0;
     OCR1B = 255 * (100.0 - pourcentageB)/100.0;
@@ -110,26 +110,25 @@ void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
 
     TCNT2 = 0x0000;
 
-    TCCR2A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match for timer1.
-    TCCR2A &= (~(1 << WGM11) & ~(1 << WGM10));    //Set CTC mode on timer1 1 (part1).
+    TCCR2A |= ((1 << COM2A1) | (1 << COM2A0));    //Set output to 1 on compare match for timer1.
+    TCCR2A &= (~(1 << WGM21) & ~(1 << WGM20));    //Set CTC mode on timer1 1 (part1).
 
-    TCCR2B = (1 << CS12) | (0 << CS11) | (1 << CS10);   //clk/1024 from prescaler.
-    TCCR2B &= ~(1 << WGM13);
-    TCCR2B |= (1 << WGM12);           //Set CTC mode on timer 1 (part2).
-    TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.
+    TCCR2B = (1 << CS22) | (0 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
+    TCCR2B &= ~(1 << WGM23);
+    TCCR2B |= (1 << WGM22);           //Set CTC mode on timer 1 (part2).
+    TCCR2B |= (1 << ICES2);           //Event triggered on rising edge.
 
     //TCCR2B = 0;
-    TIMSK1 |= (1 << OCIE1A);          //Timer 1, Output compare A match interrupt enable
+    TIMSK2 |= (1 << OCIE2A);          //Timer 1, Output compare A match interrupt enable
 
     sei();
 }
 
-void minuterie(uint16_t duree){
+void minuterie(uint8_t duree){
    // minuterieExpiree = 0;
     TCNT2 = 0x0000;
-    OCR2A = duree * (F_CPU/1024) / 1000;
+    OCR2A = duree;
 }
-
 
 void ecrire1(char port, int broche){
     switch (port){

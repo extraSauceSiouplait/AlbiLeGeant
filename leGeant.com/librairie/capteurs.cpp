@@ -27,19 +27,19 @@ void  Capteurs:: lineTracking() {
     if (sensors_[2] || (sensors_[1] && sensors_[3]))			//seulement le sensor du millieu = 1
     {
         // Le robot doit aller tout droit.
-        ajustementPwmMoteurs(70,70);
+        ajustementPwmMoteurs(60,60);
     }
 
     else if ((sensors_[1]||sensors_[0]) && !(sensors_[3]))		//sensor de gauche et/ou du centre = 1
     {
         // Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(70, 40);
+        ajustementPwmMoteurs(65, 45);
     }
 
     else if ((sensors_[3]||sensors_[4]) && !(sensors_[1]))
     {
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(40, 70);
+        ajustementPwmMoteurs(45, 65);
     }
 
 }
@@ -50,7 +50,7 @@ void Capteurs::tournerGauche()
     ecrire0('D', 3);
   ajustementPwmMoteurs(100,100);
   _delay_ms(50);
-	ajustementPwmMoteurs(60, 60);	//Débuter rotation vers la gauche du robot
+	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
@@ -58,7 +58,7 @@ void Capteurs::tournerDroite()
 	ecrire1('D',3);
   ajustementPwmMoteurs(100,100);
   _delay_ms(50);
-	ajustementPwmMoteurs(60,60);	//Débuter roation vers la droite du robot
+	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
 
 }
 void Capteurs::tourner180Gauche()
@@ -96,7 +96,7 @@ void Capteurs::tourner180Droite()
 void Capteurs::intersectionGauche()
 {
 	ajustementPwmMoteurs(60,60);
-	_delay_ms(1200);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
+	_delay_ms(800);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
 
 
 	tournerGauche();			//debuter rotation
@@ -112,7 +112,7 @@ void Capteurs::intersectionGauche()
 void Capteurs::intersectionDroite()
 {
 	ajustementPwmMoteurs(80,80);
-	_delay_ms(1200);					//la ligne perpendiculaire au robot croise son axe de rotation
+	_delay_ms(800);					//la ligne perpendiculaire au robot croise son axe de rotation
 
 
 	tournerDroite();				//debuter rotation

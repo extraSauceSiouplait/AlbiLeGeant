@@ -12,7 +12,9 @@ enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PA
 volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
 volatile uint8_t etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
 volatile bool    commencerParking = false;
+volatile uint8_t compteurIntersection = 0;
 char cote;
+uint8_t compteurInterrupt = 0;
 
 
 ISR(INT0_vect){
@@ -67,9 +69,14 @@ ISR(INT2_vect){
 }
 
 ISR(TIMER2_COMPA_vect) {
-    if(etat == 5) {
-        commencerParking = true;
-    }
+	if(etat == PARKING_1){
+	  if(compteurInterrupt < 50){
+			minuterie(255);
+			compteurInterrupt++;
+		}
+	  else
+			commencerParking == true;
+	}
 }
 
 
@@ -124,6 +131,7 @@ int main() {
 				}
 				capteur.intersectionGauche();
 				etat++;
+
                 break;
             }
 
@@ -131,13 +139,11 @@ int main() {
             {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
                 //du parking
-                uint8_t triggerParking = 0;
-                if(couleurChoisie == VERT)
-                    triggerParking = 3;
-                else
-                    triggerParking = 6;
-
-                uint8_t compteurIntersection = 0;
+								uint8_t triggerParking = 0;
+								if(couleurChoisie == VERT)
+										triggerParking = 3;
+								else
+										triggerParking = 6;
 
                 while(!capteur.estIntersection()){
 
@@ -150,8 +156,9 @@ int main() {
                   ajustementPwmMoteurs(50,50);
                 }
 
-                if(compteurIntersection == triggerParking) {
+                if(compteurIntersection >= triggerParking) {
                     etat++;
+										initialisationMinuterie();
                 }
 
                 break;
@@ -160,8 +167,9 @@ int main() {
             {
                 //linetracking() durant une minuterie prédéterminée
                 //la fin de la minuterie active commencerParking, ce qui initialise la Séquence de parking
-                initialisationMinuterie();
-                minuterie(255);
+
+								minuterie(255);
+
                 while(!commencerParking) {
                 capteur.lecture();
                 capteur.lineTracking();
