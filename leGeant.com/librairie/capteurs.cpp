@@ -23,67 +23,71 @@ void Capteurs::lecture() {
 void  Capteurs:: lineTracking() {
 	ecrire0('D',2);
 	ecrire0('D',3);
-						
+
     if (sensors_[2] || (sensors_[1] && sensors_[3]))			//seulement le sensor du millieu = 1
     {
         // Le robot doit aller tout droit.
         ajustementPwmMoteurs(60,60);
     }
 
-    else if ((sensors_[1]||sensors_[0]) && !(sensors_[3]))		//sensor de gauche et/ou du centre = 1 
+    else if ((sensors_[1]||sensors_[0]) && !(sensors_[3]))		//sensor de gauche et/ou du centre = 1
     {
         // Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(70, 40);
+        ajustementPwmMoteurs(65, 45);
     }
 
     else if ((sensors_[3]||sensors_[4]) && !(sensors_[1]))
     {
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(40, 70);
+        ajustementPwmMoteurs(45, 65);
     }
 
 }
 
 void Capteurs::tournerGauche()
 {
-	ecrire1('D', 2); //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.          
-    ecrire0('D', 3); 
-	ajustementPwmMoteurs(30, 30);	//Débuter rotation vers la gauche du robot 
+	ecrire1('D', 2); //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
+    ecrire0('D', 3);
+  ajustementPwmMoteurs(100,100);
+  _delay_ms(50);
+	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
-	ecrire0('D',2);	//On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot. 
+	ecrire0('D',2);	//On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
 	ecrire1('D',3);
-	ajustementPwmMoteurs(30,30);	//Débuter roation vers la droite du robot
-	
+  ajustementPwmMoteurs(100,100);
+  _delay_ms(50);
+	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
+
 }
 void Capteurs::tourner180Gauche()
 {
-	tournerGauche(); 
+	tournerGauche();
+
 	do{
-        
 		lecture(); //Acquisition des données en provenance des capteurs
 	}while (!estPerdu());//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
-	
+
 	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
 	{
 		lecture(); //Acquisition des données en provenance des capteurs
-	} 
+	}
 	ajustementPwmMoteurs(0,0); //On arrête les moteurs lorsque la présente routine est terminée
 }
 
 void Capteurs::tourner180Droite()
 {
-	tournerDroite(); 
+	tournerDroite();
 	do
 	{
 		lecture(); //Acquisition des données en provenance des capteurs
 	}while (!estPerdu());//Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
-	
+
 	while (!sensors_[2]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
 	{
 		lecture(); //Acquisition des données en provenance des capteurs
-	} 
+	}
 	ajustementPwmMoteurs(0,0); //On arrête les moteurs lorsque la présente routine est terminée
 }
 
@@ -91,34 +95,34 @@ void Capteurs::tourner180Droite()
 
 void Capteurs::intersectionGauche()
 {
-	ajustementPwmMoteurs(80,80);
-	_delay_ms(2000);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
-	
-	
+	ajustementPwmMoteurs(60,60);
+	_delay_ms(800);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
+
+
 	tournerGauche();			//debuter rotation
-	lecture();					
+	lecture();
 	while (!sensors_[2])
 	{
 		lecture();
 	}
 	ajustementPwmMoteurs(0,0);		//on arrete les moteurs lorsque le robot est parallele a la ligne
-	
-	
+
+
 }
 void Capteurs::intersectionDroite()
 {
 	ajustementPwmMoteurs(80,80);
-	_delay_ms(2000);					//la ligne perpendiculaire au robot croise son axe de rotation
-	
-	
-	tournerDroite();				//debuter rotation	
+	_delay_ms(800);					//la ligne perpendiculaire au robot croise son axe de rotation
+
+
+	tournerDroite();				//debuter rotation
 	while (!sensors_[2])
 	{
 		lecture();
 	}
 	ajustementPwmMoteurs(0,0);		//on arrete les moteurs lorsque le robot est parallele a la ligne
-	
-	
+
+
 }
 bool Capteurs::estIntersection()
 {
@@ -129,5 +133,11 @@ bool Capteurs::estIntersection()
 
 bool Capteurs::estPerdu()
 {
-    return (( !sensors_[0] || !sensors_[1] || !sensors_[2] || !sensors_[3] || !sensors_[4]));
+    bool temp = false;
+    if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
+        _delay_ms(100);
+        lecture();
+        temp = !(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);
+    }
+    return temp;
 }
