@@ -7,6 +7,7 @@
 #include "memoire_24.h"
 #include "capteurs.h"
 #include "can.h"
+#include "Moteurs.h"
 #include <util/delay.h>
 #include <util/delay_basic.h>
 #include <avr/interrupt.h>

@@ -48,16 +48,16 @@ void Capteurs::tournerGauche()
 {
 	ecrire1('D', 2); //On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
     ecrire0('D', 3);
-  ajustementPwmMoteurs(100,100);
-  _delay_ms(50);
+    ajustementPwmMoteurs(100,100);
+    _delay_ms(50);
 	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
 	ecrire0('D',2);	//On fixe les directions de rotation des roues, afin qu'elles tournent en sens inverse l'une par rapport à l'autre. Ainsi, l'axe de rotation est approximativement le centre du robot.
 	ecrire1('D',3);
-  ajustementPwmMoteurs(100,100);
-  _delay_ms(50);
+    ajustementPwmMoteurs(100,100);
+    _delay_ms(50);
 	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
 
 }
