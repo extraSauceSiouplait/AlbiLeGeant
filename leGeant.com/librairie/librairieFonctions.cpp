@@ -108,15 +108,15 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
 void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
     cli();
 
-    TCNT2 = 0x0000;
+    TCNT2 = 0x00;
 
     TCCR2A |= ((1 << COM2A1) | (1 << COM2A0));    //Set output to 1 on compare match for timer1.
     TCCR2A &= (~(1 << WGM21) & ~(1 << WGM20));    //Set CTC mode on timer1 1 (part1).
 
-    TCCR2B = (1 << CS22) | (0 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
-    TCCR2B &= ~(1 << WGM23);
+    TCCR2B |= (1 << CS22) | (0 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
+    TCCR2B &= ~(1 << WGM13);
     TCCR2B |= (1 << WGM22);           //Set CTC mode on timer 1 (part2).
-    TCCR2B |= (1 << ICES2);           //Event triggered on rising edge.
+    TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.
 
     //TCCR2B = 0;
     TIMSK2 |= (1 << OCIE2A);          //Timer 1, Output compare A match interrupt enable
@@ -126,8 +126,27 @@ void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
 
 void minuterie(uint8_t duree){
    // minuterieExpiree = 0;
-    TCNT2 = 0x0000;
+     
+     cli();
+
+    TCNT2 = 0x00;
+
+    TCCR2A |= ((1 << COM2A1) | (1 << COM2A0));    //Set output to 1 on compare match for timer1.
+    TCCR2A &= (~(1 << WGM21) & ~(1 << WGM20));    //Set CTC mode on timer1 1 (part1).
+
+    TCCR2B |= (1 << CS22) | (0 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
+    TCCR2B &= ~(1 << WGM13);
+    TCCR2B |= (1 << WGM22);           //Set CTC mode on timer 1 (part2).
+    TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.
+
+    //TCCR2B = 0;
+    TIMSK2 |= (1 << OCIE2A);          //Timer 1, Output compare A match interrupt enable
+    
     OCR2A = duree;
+    
+    sei();
+    
+    
 }
 
 void ecrire1(char port, int broche){
