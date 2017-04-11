@@ -8,6 +8,7 @@
 #include "capteurs.h"
 #include "can.h"
 #include "Moteurs.h"
+#include <avr/io.h> 
 #include <util/delay.h>
 #include <util/delay_basic.h>
 #include <avr/interrupt.h>
@@ -27,3 +28,8 @@
 #define fbc 0xC1
 #define fin 0xff
 
+
+
+//initialisation des attirbuts statiques de la classe moteurs a l'exterieur du main
+bool Moteurs::directionDroit_;
+bool Moteurs::directionGauche_;

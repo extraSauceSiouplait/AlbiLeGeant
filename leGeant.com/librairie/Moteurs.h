@@ -9,7 +9,6 @@ public:
     Moteurs() {}
     ~Moteurs() {}
     static void setDirections(bool droit, bool gauche);
-    static void setPourcentages(uint8_t droit, uint8_t gauche);
     static void reculer();
     static void avancer();
     static void tournerGauche();
@@ -19,9 +18,6 @@ public:
 private:
     static bool directionDroit_;
     static bool directionGauche_;
-    static uint8_t pourcentageDroit_;
-    static uint8_t pourcentageGauche_;
-
 };
 
 
