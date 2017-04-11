@@ -140,52 +140,37 @@ int main() {
             {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
                 //du parking
-                uint8_t triggerParking = 0;
-                if(couleurChoisie == VERT)
-                    triggerParking = 3;
-				else
-					triggerParking = 6;
 
+                //Tant qu'on ne se retrouve pas sur l'intersection, on suit la ligne.
                 while(!capteur.estIntersection()){
-
                     capteur.lecture();
                     capteur.lineTracking();
                 }
                 compteurIntersection++;
+                //Tant qu'on se trouve sur l'intersection, on avance tout droit.
                 while(capteur.estIntersection()) {
                   capteur.lecture();
-                  ajustementPwmMoteurs(50,50);
+                  ajustementPwmMoteurs(50,50); 
                 }
-
-                if(compteurIntersection >= triggerParking) {
-                    etat++;
-										initialisationMinuterie();
+                
+                //Selon la couleurChoisie au début, on vérifie si on a dépasser le bon nombre de ligne avant de passer à l'état suivant (le stationnement du robot)
+                switch (couleurChoisie){
+                    case VERT:
+                        if (compteurIntersection == 3)
+                            etat++;
+                        break;
+                    
+                    case ROUGE:
+                        if (compteurIntersection == 6)
+                            etat++;
+                        break;
                 }
 
                 break;
             }
             case PARKING_1:
             {
-                //linetracking() durant une minuterie prédéterminée
-                //la fin de la minuterie active commencerParking, ce qui initialise la Séquence de parking
-
-                minuterie(255);
-                while(!commencerParking) {
-                capteur.lecture();
-                capteur.lineTracking();
-                }
-                capteur.tournerGauche();
-                _delay_ms(2000);
-                ajustementPwmMoteurs(0,0);
-
-
-                do {
-                    capteur.lecture();
-                    capteur.tournerDroite();
-                } while(!capteur.getSensor(2));
-
-                etat++;
-                break;
+              _delay_ms(9999999999);
             }
 
             case TOABC:
