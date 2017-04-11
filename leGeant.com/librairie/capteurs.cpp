@@ -27,19 +27,19 @@ void  Capteurs:: lineTracking() {
     if (sensors_[2] || (sensors_[1] && sensors_[3]))			//seulement le sensor du millieu = 1
     {
         // Le robot doit aller tout droit.
-        ajustementPwmMoteurs(70,70);
+        ajustementPwmMoteurs(80,80);
     }
 
     else if ((sensors_[1]||sensors_[0]) && !(sensors_[3]))		//sensor de gauche et/ou du centre = 1
     {
         // Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(65, 45);
+        ajustementPwmMoteurs(80, 40);
     }
 
     else if ((sensors_[3]||sensors_[4]) && !(sensors_[1]))
     {
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(45, 65);
+        ajustementPwmMoteurs(40, 80);
     }
 
 }
@@ -50,7 +50,7 @@ void Capteurs::tournerGauche()
     ecrire0('D', 3);
   ajustementPwmMoteurs(80,80);
   _delay_ms(150);
-	ajustementPwmMoteurs(60,60);	//Débuter rotation vers la gauche du robot
+	ajustementPwmMoteurs(50,50);	//Débuter rotation vers la gauche du robot
 }
 void Capteurs::tournerDroite()
 {
@@ -58,7 +58,7 @@ void Capteurs::tournerDroite()
 	ecrire1('D',3);
   ajustementPwmMoteurs(80,80);
   _delay_ms(150);
-	ajustementPwmMoteurs(60,60);	//Débuter roation vers la droite du robot
+	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
 
 }
 void Capteurs::tourner180Gauche()
@@ -126,7 +126,19 @@ void Capteurs::intersectionDroite()
 }
 bool Capteurs::estIntersection()
 {
-	return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));
+   /* bool temp = ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));
+    if (!temp)
+    {
+    _delay_ms(50);
+    }*/
+    return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));
+    /*bool temp = false;
+    if((sensors_[0] && sensors_[1]) || (sensors_[3] && sensors_[4]))
+        {
+            _delay_ms(200);
+            temp = (sensors_[0] && sensors_[1] ) || (sensors_[3] && sensors_[4]);
+        }
+    return temp;*/
 }
 
 

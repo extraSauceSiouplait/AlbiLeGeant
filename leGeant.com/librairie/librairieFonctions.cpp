@@ -65,11 +65,21 @@ void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
     sei();
 }
 
-void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB) {     //TIMER 0 (B3 et B4)
-
-    pourcentageA *= 0.85;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
+void ajustementPwmMoteurs(float a, float b) {     //TIMER 0 (B3 et B4)
+   
+  /*  pourcentageA *= 0.7;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
     OCR1A = 255 * (100.0 - pourcentageA)/100.0;
-    OCR1B = 255 * (100.0 - pourcentageB)/100.0;
+    OCR1B = 255 * (100.0 - pourcentageB)/100.0;*/
+    //a*= 0.8;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
+    OCR1A = 255 * (100.0 - a)/100.0;
+    OCR1B = 255 * (100.0 - b)/100.0;
+
+}
+void ajustementPwmMoteursTEST(float a, float b) {     //TIMER 0 (B3 et B4)
+   
+    a*= 0.7;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
+    OCR1A = a;
+    OCR1B = b;
 
 }
 

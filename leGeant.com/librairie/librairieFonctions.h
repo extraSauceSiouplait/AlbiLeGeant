@@ -19,10 +19,11 @@ bool verifierRebondMecanique();
 void initialisationPwmMoteurs();
 
 // Ajuste les registres OCR0A et OCR0B pour ajuster le PWM du moteur.
-void ajustementPwmMoteurs(uint8_t pourcentageA, uint8_t pourcentageB);
+void ajustementPwmMoteurs(float pourcentageA, float pourcentageB);
 
 // Initialise le timer2 en mode pwm (onde carrée) et ajuste la frequence  de celui-ci 
 void ajustementPwmFrequence(double frequence);
+
 
 // Initialise external interrupt request 0 
 void initialisationINT0(bool modeBit1, bool modeBit0);

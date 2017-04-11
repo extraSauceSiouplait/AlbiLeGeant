@@ -53,7 +53,7 @@ int main() {
                     
                         capteur.tournerGauche();
                     
-                        while (capteur.getSensor(2))        //le capteur du centre erst encore sur le segment
+                        while (!capteur.estPerdu())        //le capteur du centre est encore sur le segment
                         {
                             capteur.lecture();
                         }
@@ -80,7 +80,7 @@ int main() {
                             capteur.lineTracking();
                         }                               //les capteurs detectent la fin de la ligne
                         ajustementPwmMoteurs(60,60);
-                        _delay_ms(1000);               //a ajuster pour que axe de rotation du robot soit au bout de la ligne
+                        _delay_ms(700);               //a ajuster pour que axe de rotation du robot soit au bout de la ligne
                         
                         if (couleurChoisie == VERT)
                         {
