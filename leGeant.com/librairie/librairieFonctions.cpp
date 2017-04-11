@@ -104,7 +104,6 @@ void initialisationINT2(bool modeBit1, bool modeBit0){
     sei();          //Interruptions réactivées
 }
 
-
 void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
     cli();
 
@@ -127,7 +126,7 @@ void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
 void minuterie(uint8_t duree){
    // minuterieExpiree = 0;
      
-     cli();
+    cli();
 
     TCNT2 = 0x00;
 

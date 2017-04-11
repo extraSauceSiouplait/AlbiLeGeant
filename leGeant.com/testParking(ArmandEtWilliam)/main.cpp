@@ -1,20 +1,22 @@
 #include "header.h"
-#define VERT 'v'     //lors du choix de la couleur
-#define ROUGE 'r'   //lors du choix de la couleur
-#define GAUCHE 'g'  //lors du choix du coté avec la photorésistance
-#define DROIT 'd'   //lors du choix du coté avec la photorésistance
+#define VERT 'v'    //lors du choix de la couleur
+#define ROUGE 'r'  //lors du choix de la couleur
+#define GAUCHE 'g' //lors du choix du coté avec la photorésistance
+#define DROIT 'd'  //lors du choix du coté avec la photorésistance
 
 
 //Énumération des états de la machine à état
 enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PARKING_1 = 5, TOABC = 6, COMPTEURLIGNE_2 = 7, ALLERETOUR = 8, CINQ40 = 9, PHOTORESISTANCE = 10, INTERMITTENCE = 11, TOAGC = 12, TOGAH = 13, PARKING_2 = 14};
 
 //Variables globales
-volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
-volatile uint8_t etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
+
+volatile char    couleurChoisie = '\0';    //NUL (pas encore choisi)
+volatile uint8_t etat = 0;       //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
 volatile bool    commencerParking = false; 
-volatile uint8_t compteurIntersection = 0;
 char cote;
-uint8_t compteurInterrupt = 0;
+volatile uint8_t repetitionsMinuterie = 0;    //Compte le nombre de fois que la minuterie atteint la valeur OCR2A
+volatile bool minuterieActive = false ;     // indique la minuterie est active.
+
 
 
 ISR(INT0_vect){
@@ -69,21 +71,19 @@ ISR(INT2_vect){
     }
 }
 
+
 ISR(TIMER2_COMPA_vect) {
-	if(etat == PARKING_1){
-	  if(compteurInterrupt < 50){
-			minuterie(255);
-			compteurInterrupt++;
-		}
-	  else
-			commencerParking = true;
-	}
+    //Lorsque la minuterie atteint la valeur OCR2A, on incrémente le compteur repetitionsMinuterie.
+    repetitionsMinuterie++;
+    minuterieActive = false;
+    
 }
 
 
 int main() {
 	Capteurs capteur;  //Création d'un objet de classe Capteur
 	etat = COULEUR;   //Assignation de l'état initiale COULEUR
+	uint8_t compteurIntersection = 0;
 
      //Machine à état décrivant le parcours du robot
     for(;;){
@@ -140,52 +140,51 @@ int main() {
             {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
                 //du parking
-                uint8_t triggerParking = 0;
-                if(couleurChoisie == VERT)
-                    triggerParking = 3;
-				else
-					triggerParking = 6;
 
+                //Tant qu'on ne se retrouve pas sur l'intersection, on suit la ligne.
                 while(!capteur.estIntersection()){
-
                     capteur.lecture();
                     capteur.lineTracking();
                 }
                 compteurIntersection++;
+                //Tant qu'on se trouve sur l'intersection, on avance tout droit.
                 while(capteur.estIntersection()) {
                   capteur.lecture();
-                  ajustementPwmMoteurs(50,50);
+                  ajustementPwmMoteurs(50,50); 
                 }
-
-                if(compteurIntersection >= triggerParking) {
-                    etat++;
-										initialisationMinuterie();
+                
+                //Selon la couleurChoisie au début, on vérifie si on a dépasser le bon nombre de ligne avant de passer à l'état suivant (le stationnement du robot)
+                switch (couleurChoisie){
+                    case VERT:
+                        if (compteurIntersection == 3)
+                            etat++;
+                        break;
+                    
+                    case ROUGE:
+                        if (compteurIntersection == 6)
+                            etat++;
+                        break;
                 }
 
                 break;
             }
             case PARKING_1:
             {
-                //linetracking() durant une minuterie prédéterminée
-                //la fin de la minuterie active commencerParking, ce qui initialise la Séquence de parking
-
-                minuterie(255);
-                while(!commencerParking) {
-                capteur.lecture();
-                capteur.lineTracking();
-                }
-                capteur.tournerGauche();
-                _delay_ms(2000);
-                ajustementPwmMoteurs(0,0);
-
-
-                do {
+                //LineTracking tant qu'on a pas compté 45 fois le temps que minuterie atteigne la valeur OCR2A.
+                while(repetitionsMinuterie < 500){
                     capteur.lecture();
-                    capteur.tournerDroite();
-                } while(!capteur.getSensor(2));
-
+                    capteur.lineTracking();
+                    if (!minuterieActive){
+                        minuterieActive = true;
+                        minuterie(255);
+                    }
+                }
+                ajustementPwmMoteurs(0,0);
+                _delay_ms(100);
+                capteur.tournerGauche();
+                _delay_ms(1200);
+                ajustementPwmMoteurs(0,0);
                 etat++;
-                break;
             }
 
             case TOABC:
@@ -204,7 +203,7 @@ int main() {
 
             case COMPTEURLIGNE_2:
             {
-                //
+//                 //
                 // Compte le nombre d'intersection en fonction de la couleur choisie
                 //
                 uint8_t triggerBonneIntersection = 0;
