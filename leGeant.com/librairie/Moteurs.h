@@ -20,10 +20,7 @@ private:
     static bool directionGauche_;
 };
 
-
-
-
-
-
-
 #endif //MOTEURS_H
+
+
+

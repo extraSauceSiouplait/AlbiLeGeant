@@ -22,15 +22,15 @@ void  Capteurs:: lineTracking() {
 	Moteurs::avancer();
     if (sensors_[2] || (sensors_[1] && sensors_[3])){       //seulement le sensor du millieu = 1
         // Le robot doit aller tout droit.
-        ajustementPwmMoteurs(80,80);
+        ajustementPwmMoteurs(75,75);
     }
     else if ((sensors_[1] || sensors_[0]) && !(sensors_[3])){    //sensor de gauche et/ou du centre = 1
         // Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(80, 40);
+        ajustementPwmMoteurs(75, 50);
     }
     else if ((sensors_[3] || sensors_[4]) && !(sensors_[1])){
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(40, 80);
+        ajustementPwmMoteurs(50, 75);
     }
 }
 
@@ -38,8 +38,8 @@ void Capteurs::tournerGauche()
 {
 	Moteurs::tournerGauche();
     ajustementPwmMoteurs(80,80);
-    _delay_ms(1`50);
-	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
+    _delay_ms(150);
+	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot
 }
 
 void Capteurs::tournerDroite()
@@ -47,7 +47,7 @@ void Capteurs::tournerDroite()
 	Moteurs::tournerDroit();
     ajustementPwmMoteurs(80,80);
     _delay_ms(150);
-	ajustementPwmMoteurs(50,50);	//Débuter roation vers la droite du robot
+	ajustementPwmMoteurs(45,45);	//Débuter roation vers la droite du robot
 
 }
 void Capteurs::tourner180Gauche()
@@ -85,7 +85,7 @@ void Capteurs::tourner180Droite()
 void Capteurs::intersectionGauche()
 {
 	ajustementPwmMoteurs(60,60);
-	_delay_ms(800);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
+	_delay_ms(1100);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
 
 	tournerGauche();			//debuter rotation
 	lecture();
@@ -100,7 +100,7 @@ void Capteurs::intersectionGauche()
 void Capteurs::intersectionDroite()
 {
 	ajustementPwmMoteurs(80,80);
-	_delay_ms(800);					//la ligne perpendiculaire au robot croise son axe de rotation
+	_delay_ms(1100);					//la ligne perpendiculaire au robot croise son axe de rotation
 
 
 	tournerDroite();				//debuter rotation
@@ -123,9 +123,43 @@ bool Capteurs::estPerdu()
 {
     bool temp = false;
     if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
-        _delay_ms(200);
+        _delay_ms(50);
         lecture();
-        temp = !(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);
+        
+        if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]))
+            {
+                _delay_ms(50);
+                lecture();
+            if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]))
+                {
+                _delay_ms(50);
+                lecture();
+                
+                
+                if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]))
+                    {
+                    _delay_ms(50);
+                    lecture();
+                   
+                        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]))
+                            { 
+                            _delay_ms(50);
+                            lecture();
+                            
+                            
+                            if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]))
+                                {
+                                _delay_ms(75);
+                                lecture();
+                                temp = !(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);
+                                }
+                            }
+                    
+                            
+                    }
+                }
+               
+            }
     }
     return temp;
 }
