@@ -85,7 +85,7 @@ void Capteurs::tourner180Droite()
 void Capteurs::intersectionGauche()
 {
     ajustementPwmMoteurs(60,65);
-    _delay_ms(1100);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
+    _delay_ms(1000);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
 
     tournerGauche();			//debuter rotation
     lecture();
