@@ -1,7 +1,5 @@
-#ifndef F_CPU
-#define F_CPU 8000000
-#endif //F_CPU
-
+#ifndef HEADER_H
+#define HEADER_H
 
 #include "librairieFonctions.h"
 #include "memoire_24.h"
@@ -13,6 +11,7 @@
 #include <util/delay_basic.h>
 #include <avr/interrupt.h>
 
+#define F_CPU 8000000
 #define dbt 0x01
 #define att 0x02
 #define dal 0x44
@@ -28,6 +27,10 @@
 #define fbc 0xC1
 #define fin 0xff
 
+#define VERT 'v'    //lors du choix de la couleur
+#define ROUGE 'r'   //lors du choix de la couleur
+#define GAUCHE 'g'  //lors du choix du coté avec la photorésistance
+#define DROIT 'd'   //lors du choix du coté avec la photorésistance
 
-
+#endif //HEADER_H
 

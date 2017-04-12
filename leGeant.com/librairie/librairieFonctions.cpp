@@ -134,7 +134,7 @@ void minuterie(uint8_t duree){
     TCCR2A |= ((1 << COM2A1) | (1 << COM2A0));    //Set output to 1 on compare match for timer1.
     TCCR2A &= (~(1 << WGM21) & ~(1 << WGM20));    //Set CTC mode on timer1 1 (part1).
 
-    TCCR2B |= (1 << CS22) | (0 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
+    TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);   //clk/1024 from prescaler.
     TCCR2B &= ~(1 << WGM13);
     TCCR2B |= (1 << WGM22);           //Set CTC mode on timer 1 (part2).
     TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.

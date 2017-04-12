@@ -1,8 +1,7 @@
-#ifndef MOTEURS_H
-#define MOTEURS_H
-
 #define F_CPU 8000000
 
+#ifndef MOTEURS_H
+#define MOTEURS_H
 
 class Moteurs{
 public:

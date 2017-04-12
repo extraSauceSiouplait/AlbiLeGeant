@@ -33,3 +33,7 @@ void Moteurs::tournerGauche(){
     setDirections(false, true);
     ecrire();
 }
+
+//initialisation des attirbuts statiques de la classe moteurs a l'exterieur du main
+bool Moteurs::directionDroit_;
+bool Moteurs::directionGauche_;
