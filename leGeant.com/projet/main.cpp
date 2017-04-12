@@ -61,6 +61,16 @@ ISR(INT2_vect){
     }
 }
 
+ISR(PCINT1_vect){
+    if(etat == COULEUR){
+        if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
+            EIMSK &= ~_BV(INT2);   //INT2 désactivé, le choix de couleur ne peut plus être changé.
+            PCMSK1 &= ~_BV(PCINT8);
+            etat = UTURN;
+        }
+    }
+}
+
 ISR(TIMER2_COMPA_vect) {
     if (etat == CINQ40){
         compteurInterrupt++;
@@ -80,17 +90,8 @@ int main() {
                 DDRC = 0xff;    //mode ecriture pour la DEL
                 DDRD = 0x00;    //mode lecture pour lire les interrupts
                 initialisationINT2(1,0);    //falling edge activates interrupt.
-                while(etat == COULEUR){
-                    if (!(PINB & 1)){
-                        if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
-                           // etat++;
-                            DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
-                            initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
-                            etat = TOABC;
-                            EIMSK &= ~(1 << INT2);   //INT2 désactivé, le choix de couleur ne peut plus être changé.
-                        }
-                    }
-                }
+                initialisationPCINT8();
+                while(etat == COULEUR);
             }
             break;
             

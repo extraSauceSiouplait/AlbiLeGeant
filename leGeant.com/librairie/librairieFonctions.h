@@ -33,6 +33,9 @@ void initialisationINT1(bool modeBit1, bool modeBit0);
 // Initialise external interrupt request 2 
 void initialisationINT2(bool modeBit1, bool modeBit0);
 
+//  Initialise le pin-change interrupt sur la broche B0.
+void initialisationPCINT8();
+
 // Initialise le timer1 pour generer une interruption on compare match
 void initialisationMinuterie();
 
