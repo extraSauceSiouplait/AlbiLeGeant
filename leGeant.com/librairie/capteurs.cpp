@@ -39,7 +39,7 @@ void Capteurs::tournerGauche()
 	Moteurs::tournerGauche();
     ajustementPwmMoteurs(90,90);
     _delay_ms(150);
-	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot
+	ajustementPwmMoteurs(53, 53);	//Débuter rotation vers la gauche du robot
 }
 
 void Capteurs::tournerDroite()
@@ -47,7 +47,7 @@ void Capteurs::tournerDroite()
 	Moteurs::tournerDroit();
     ajustementPwmMoteurs(90,90);
     _delay_ms(150);
-	ajustementPwmMoteurs(45,45);	//Débuter roation vers la droite du robot
+	ajustementPwmMoteurs(53,53);	//Débuter roation vers la droite du robot
 
 }
 

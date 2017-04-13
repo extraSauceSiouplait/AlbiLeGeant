@@ -6,10 +6,14 @@ enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PA
 volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
 volatile uint8_t etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
 volatile bool    commencerParking = false;
-volatile uint8_t compteurIntersection = 0;
 volatile uint8_t triggerBonneIntersection;
+volatile uint16_t repetitionMinuterie = 0; 
+volatile float uniteTempsDistance = 0;
+volatile uint8_t compteurIntersection2;
 uint16_t compteurInterrupt = 0;
 char cote;
+bool minuterieActive = false;            //bool qui indique si la minuterie est active
+volatile bool peutRepartir = false;
 
 ISR(INT0_vect){
     if (etat == PHOTORESISTANCE){
@@ -34,6 +38,7 @@ ISR(INT0_vect){
                 break;
         }
     }
+    
 }
 
 ISR(INT2_vect){
@@ -71,19 +76,28 @@ ISR(PCINT1_vect){
     }
 }
 
+
+
 ISR(TIMER2_COMPA_vect) {
-    if (etat == CINQ40){
-        compteurInterrupt++;
-        minuterie(250);
+    if ((etat == COMPTEURLIGNE_1) || (etat ==PARKING_1)){
+        if (minuterieActive)
+        {
+            repetitionMinuterie++;
+            minuterie(250);
+            
+            
+        }
+        
     }
+   
 }
 
 
 int main() {
 	Capteurs capteur; //Création d'un objet de classe Capteur
 	etat = COULEUR;    //Assignation de l'état initiale COULEUR
-
     //Machine à état décrivant le parcours du robot
+    
     for(;;){
         switch(etat) {
             case COULEUR: {
@@ -91,6 +105,7 @@ int main() {
                 DDRD = 0x00;    //mode lecture pour lire les interrupts
                 initialisationINT2(1,0);    //falling edge activates interrupt.
                 initialisationPCINT8();
+                
                 while(etat == COULEUR);
             }
             break;
@@ -129,64 +144,103 @@ int main() {
                 //linetracking() intermittent avec un compteur d'intersection jusqu'a l'emplacement (rouge ou vert) theorique
                 //du parking
                 uint8_t triggerParking = 0;
+                const float DISTANCE_CM_INTERSECTION = 15.3;
+                uint8_t compteurIntersection = 0;
+                
                 if(couleurChoisie == VERT)
                         triggerParking = 3;
+                        
                 else
                         triggerParking = 6;
+                       
+                while (compteurIntersection < triggerParking)
+                {
+                    while(!capteur.estIntersection()){
 
-                while(!capteur.estIntersection()){
-
-                    capteur.lecture();
-                    capteur.lineTracking();
+                        capteur.lecture();
+                        capteur.lineTracking();
+                    }
+                    compteurIntersection++;
+                    if (compteurIntersection == (triggerParking-2)){
+                        minuterieActive = true;
+                        minuterie(250);
+                    
+                    }
+                
+                    if (compteurIntersection == triggerParking){
+                
+                        minuterieActive = false;
+                        uniteTempsDistance = repetitionMinuterie/DISTANCE_CM_INTERSECTION;
+                    
+                    }
+                    
+                        while(capteur.estIntersection()){
+                            capteur.lecture();
+                            ajustementPwmMoteurs(50,50);
+                    }
                 }
-                compteurIntersection++;
-                while(capteur.estIntersection()) {
-                  capteur.lecture();
-                  ajustementPwmMoteurs(50,50);
-                }
-
-                if(compteurIntersection >= triggerParking) {
-                    etat++;
-                    initialisationMinuterie();
-                }
+                repetitionMinuterie = 0;
+                etat++;
+                        
+                
             }
             break;
             
             case PARKING_1: {
-                //skip
-                uint8_t compteurInter = 0;
-                while (compteurInter < 6)
-                {
-                    capteur.lecture();
-                    if (capteur.estIntersection())
-                    {
-                        ajustementPwmMoteurs(80,80);
-                        compteurInter++;
-                        while (capteur.estIntersection())
-                        {
-                            capteur.lecture();
-                        }
-                    }
-                    capteur.lineTracking();
-                    
-                    
-                    
-                }
-                while(!capteur.estIntersection())
+                
+                const float DISTANCE_PARKING  = 26;
+                minuterieActive = true;
+                minuterie(250);
+                
+                while (repetitionMinuterie < (DISTANCE_PARKING * uniteTempsDistance))
                 {
                     capteur.lecture();
                     capteur.lineTracking();
-                    
                 }
-                capteur.intersectionGauche();
+                minuterieActive = false;
+                capteur.tournerGauche();
+                _delay_ms(1180);
+                Moteurs::reculer();
+                ajustementPwmMoteurs(50,50);
+                _delay_ms(1500);
+                ajustementPwmMoteurs(0,0);
+                DDRC &= ~(1<<2);
+                while (!(PINC & 0x04)){}
+                capteur.tourner180Droite();
+                
+                
+                if (couleurChoisie == VERT)
+                {
+                    triggerBonneIntersection = 4;
+                }
+                else
+                {
+                    triggerBonneIntersection = 1;
+                }
+               
+                
+                
                 etat++;
-                
-                
             }
             break;
 
             case TOABC: {
                 //linetracking() jusqu'a l'intersection ABC et tourne a gauche sur le segment BC
+               for (uint8_t i = 0; i < triggerBonneIntersection - 1; i++)
+               {
+                   while (!capteur.estIntersection())
+                   {
+                       capteur.lecture();
+                       capteur.lineTracking();
+                   }
+                   ajustementPwmMoteurs(50,50); 
+                   while (capteur.estIntersection()){
+                       capteur.lecture();
+                       
+                    }
+                   
+               }
+    
                 while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
                 {
                     capteur.lecture();
@@ -206,33 +260,32 @@ int main() {
             case COMPTEURLIGNE_2: {
                while(!capteur.estIntersection()){
 
-                        capteur.lecture();
-                        capteur.lineTracking();
-                        }
-                        compteurIntersection++;                     //les capteurs detectent une intersection
-                
-                    if(compteurIntersection == triggerBonneIntersection+1) {        //l'axe de rotation du robot est sur la ligne de sa couleur
-                    
-                        capteur.tournerGauche();
-                    
-                        while (!capteur.estPerdu())        //le capteur du centre est encore sur le segment
-                        {
-                            capteur.lecture();
-                        }
-                        while (!capteur.getSensor(2))       //le capteur du centre est entre les deux lignes
-                        {
-                            capteur.lecture();
-                        }
-                        ajustementPwmMoteurs(0,0); //le capteur du centre est sur la nouvelle ligne
-                        etat++;
+                    capteur.lecture();
+                    capteur.lineTracking();
                     }
+                    compteurIntersection2++;                     //les capteurs detectent une intersection
+            
+                if(compteurIntersection2 == triggerBonneIntersection+1) {        //l'axe de rotation du robot est sur la ligne de sa couleur
+                
+                    capteur.tournerGauche();
+                
+                    while (!capteur.estPerdu()) {       //le capteur du centre est encore sur le segment
+                        capteur.lecture();
+                    }
+                    while (!capteur.getSensor(2))       //le capteur du centre est entre les deux lignes
+                    {
+                        capteur.lecture();
+                    }
+                    ajustementPwmMoteurs(0,0); //le capteur du centre est sur la nouvelle ligne
+                    etat++;
+                }
 
-                    while(capteur.estIntersection()) {      //le robot est sur l'intersection
-                        capteur.lecture();                    
-                        ajustementPwmMoteurs(50,50); 
-                        
-                            }
-                  
+                while(capteur.estIntersection()) {      //le robot est sur l'intersection
+                    capteur.lecture();                    
+                    ajustementPwmMoteurs(50,50); 
+                    
+                        }
+                
             }
             break;
             
@@ -265,6 +318,7 @@ int main() {
                     capteur.lecture();
                     ajustementPwmMoteurs(70,50);
                 }
+                compteur
                 compteurInterrupt = 1;
                 etat++;
                

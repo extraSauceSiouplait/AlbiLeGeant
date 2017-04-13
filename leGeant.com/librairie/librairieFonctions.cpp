@@ -113,6 +113,15 @@ void initialisationPCINT8(){
     sei();
     
 }
+void initialisationPCINT12(){
+    cli();
+    
+    PCICR |= _BV(PCIE1);
+    PCMSK1 |= _BV(PCINT12);
+    
+    sei();
+    
+}
 
 
 void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
