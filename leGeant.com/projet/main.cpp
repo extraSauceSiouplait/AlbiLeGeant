@@ -1,44 +1,37 @@
 #include "header.h"
 
 //Énumération des états de la machine à état
-enum Etats {COULEUR = 0, UTURN = 1, TOGA = 2, TOGAB = 3, COMPTEURLIGNE_1 = 4, PARKING_1 = 5, TOABC = 6, COMPTEURLIGNE_2 = 7, ALLERETOUR = 8, CINQ40 = 9, PHOTORESISTANCE = 10, INTERMITTENCE = 11, TOAGC = 12, TOGAH = 13, PARKING_2 = 14};
+enum Etats {
+    COULEUR, UTURN, TOGA, TOGAB, COMPTEURLIGNE_1, PARKING_1, TOABC, COMPTEURLIGNE_2, ALLERETOUR, CINQ40, PHOTORESISTANCE, INTERMITTENCE, TOAGC, TOGAH, PARKING_2
+};
 
-volatile char    couleurChoisie = '\0'; //NUL (pas encore choisi)
-volatile uint8_t etat = 0; //Initialisation de la variable etat permettant de décrire l'état présent de la machine à états
+volatile char    couleurChoisie = '\0';       //=null (pas encore choisi)
+volatile uint8_t etat = COULEUR;              //Initialisation de la variable etat à l'état initial.
 volatile bool    commencerParking = false;
 volatile uint8_t triggerBonneIntersection;
 volatile uint16_t repetitionMinuterie = 0; 
-volatile float uniteTempsDistance = 0;
-volatile uint8_t compteurIntersection2;
-uint16_t compteurInterrupt = 0;
-char cote;
-bool minuterieActive = false;            //bool qui indique si la minuterie est active
-volatile bool peutRepartir = false;
+volatile float    uniteTempsDistance = 0;
+volatile uint8_t  compteurIntersection2;
+volatile bool     peutRepartir = false;
+char cote;          //Variable pour le choix du coté lors de l'étape avec les photorésitances.
+bool minuterieActive = false;       //bool qui indique si la minuterie est active
 
 ISR(INT0_vect){
     if (etat == PHOTORESISTANCE){
         switch(cote){
             case DROIT:
-                /* etat = TOURNER_DROIT_1 */
-
-                ecrire1('C', 0);    /* A RETIRER */
-                ecrire0('C', 1);    /* A RETIRER */
-
                 EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
                 break;
             case GAUCHE:
-                /* etat = TOURNER_GAUCHE_1 */
-
-                ecrire1('C', 1);    /* A RETIRER */
-                ecrire0('C', 0);    /* A RETIRER */
-
                 EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
                 break;
         }
     }
-    
+    if(etat == PARKING_1){
+        
+    }
 }
 
 ISR(INT2_vect){
@@ -48,18 +41,15 @@ ISR(INT2_vect){
             switch(couleurChoisie){
                 case VERT:
                     couleurChoisie = ROUGE;
-                    ecrire1('C', 0);
-                    ecrire0('C', 1);
+                    PORTC = 0x01;
                     break;
                 case ROUGE:
                     couleurChoisie = VERT;
-                    ecrire1('C', 1);
-                    ecrire0('C', 0);
+                    PORTC = 0x02;
                     break;
                 default:        //quand couleurChoisie est null.
                     couleurChoisie = VERT;
-                    ecrire1('C', 1);
-                    ecrire0('C', 0);
+                    PORTC = 0x02;
                     break;
             }
         }
@@ -68,49 +58,43 @@ ISR(INT2_vect){
 
 ISR(PCINT1_vect){
     if(etat == COULEUR){
-        if(couleurChoisie){  //ne fait rien si la couleur n'a pas encore été choisie.
-            EIMSK &= ~_BV(INT2);   //INT2 désactivé, le choix de couleur ne peut plus être changé.
-            PCMSK1 &= ~_BV(PCINT8);
+        if(couleurChoisie){         //Ne fait rien si la couleur n'a pas encore été choisie.
+            EIMSK &= ~_BV(INT2);    //INT2 désactivé, le choix de couleur ne peut plus être changé.
+            PCMSK1 &= ~_BV(PCINT8); //
             etat = UTURN;
         }
     }
 }
 
-
-
 ISR(TIMER2_COMPA_vect) {
-    if ((etat == COMPTEURLIGNE_1) || (etat ==PARKING_1)){
-        if (minuterieActive)
-        {
+    if ((etat == COMPTEURLIGNE_1) || (etat == PARKING_1)){
+        if (minuterieActive){
             repetitionMinuterie++;
             minuterie(250);
-            
-            
         }
-        
     }
-   
 }
 
 
 int main() {
-	Capteurs capteur; //Création d'un objet de classe Capteur
-	etat = COULEUR;    //Assignation de l'état initiale COULEUR
-    //Machine à état décrivant le parcours du robot
+	Capteurs capteur;   //Création d'un objet de classe Capteur
+	etat = COULEUR;     //Assignation de l'état initiale COULEUR
+    uint16_t compteurInterrupt = 0;     //variable qui compte 
     
+    
+    //Machine à état décrivant le parcours du robot
     for(;;){
         switch(etat) {
-            case COULEUR: {
-                DDRC = 0xff;    //mode ecriture pour la DEL
-                DDRD = 0x00;    //mode lecture pour lire les interrupts
+            case COULEUR: {       //CHOIX DE LA COULEUR
+                DDRC = 0xff;                //mode ecriture pour la DEL.
+                DDRD = 0x00;                //mode lecture pour lire les interrupts.
                 initialisationINT2(1,0);    //falling edge activates interrupt.
-                initialisationPCINT8();
-                
-                while(etat == COULEUR);
+                initialisationPCINT8();     //pin change interrupt activé sur B0.
+                while(etat == COULEUR);     //attend le interrupt pour la confirmation de la couleur.
             }
             break;
             
-            case UTURN:{ //tourner 180 degres
+            case UTURN:{        //ROTATION 180 DEGRÉS
                     DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
                     initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
                     capteur.tourner180Gauche();
@@ -118,7 +102,7 @@ int main() {
             }
             break;
             
-            case TOGA: { //linetracking() jusqu'a intersection du segment GA
+            case TOGA: {        //LINETRACKING JUSQU'À L'INTERSECTION GA
               while (!capteur.estIntersection()){       //tant qu'on ne detecte pas d'intersection
                 capteur.lecture();
                 capteur.lineTracking();
@@ -128,10 +112,8 @@ int main() {
             }
             break;
             
-            case TOGAB: {
-                //linetracking() jusqu'a l'intersection GAB et tourne a gauche sur le segment AB
-                while (!capteur.estIntersection())		//tant qu'on ne detecte pas d'intersection
-                {
+            case TOGAB: {       //LINETRACKING JUSQU'À L'INTERSECTION GAB 
+                while (!capteur.estIntersection()){      //linetracking tant que l'intersection n'est pas détecté
                     capteur.lecture();
                     capteur.lineTracking();
                 }
@@ -209,12 +191,10 @@ int main() {
                 capteur.tourner180Droite();
                 
                 
-                if (couleurChoisie == VERT)
-                {
+                if (couleurChoisie == VERT){
                     triggerBonneIntersection = 4;
                 }
-                else
-                {
+                else {
                     triggerBonneIntersection = 1;
                 }
                
@@ -272,8 +252,8 @@ int main() {
                     while (!capteur.estPerdu()) {       //le capteur du centre est encore sur le segment
                         capteur.lecture();
                     }
-                    while (!capteur.getSensor(2))       //le capteur du centre est entre les deux lignes
-                    {
+                    while (!capteur.getSensor(2)){     //le capteur du centre est entre les deux lignes
+                    
                         capteur.lecture();
                     }
                     ajustementPwmMoteurs(0,0); //le capteur du centre est sur la nouvelle ligne
@@ -297,28 +277,23 @@ int main() {
                 ajustementPwmMoteurs(60,60);
                 _delay_ms(700);               //a ajuster pour que axe de rotation du robot soit au bout de la ligne
                 
-                if (couleurChoisie == VERT)
-                {
+                if (couleurChoisie == VERT){
                     capteur.tourner180Gauche();
                 }
-                else
-                {
+                else{
                     capteur.tourner180Droite();     
                 }                               //le robot a fait un 180 sur la ligne
-                while (!capteur.estIntersection())
-                {
+                while (!capteur.estIntersection()){
                     capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
                 
                 capteur.lecture();
-                while(capteur.estIntersection())
-                {
+                while(capteur.estIntersection()){
                     capteur.lecture();
                     ajustementPwmMoteurs(70,50);
                 }
-                compteur
                 compteurInterrupt = 1;
                 etat++;
                

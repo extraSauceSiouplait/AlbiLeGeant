@@ -12,8 +12,8 @@
 
 //************FONCTIONS************//
 
+/*
 bool verifierRebondMecanique(){
-    DDRD = 0xff;
     if(PIND == 0x04){                    // On appelle la fonction après qu'un signal du bouton-poussoir soit détecté. Elle s'assure que celui-ci (le signal)
         _delay_ms(10);                   //est encore present 10ms plus tard pour etre sur que le contact soit vrai.
        if (PIND == 0x04)
@@ -21,6 +21,7 @@ bool verifierRebondMecanique(){
     }
     return false;
 }
+*/
 
 // Permet l'ajustement de la fréquence pour jouer une sonorité
 void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
@@ -35,42 +36,28 @@ void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
     TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20); //clk/1024 (from prescaler)
 
     OCR2A = uint8_t((F_CPU/1024) / (2*frequence));
-    }
+}
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
     cli();
-/*
-    TCNT1 = 0x00;
-    TCCR1A |= (1 << COM0A1) | (1 << COM0A0);      //Set output to 1 on compare match A for timer0.
-    TCCR1A |= (1 << COM0B1) | (1 << COM0B0);      //Set output to 1 on compare match B for timer0..
-
-    TCCR1A |= (1 << WGM00);                       //PWM, Phase Correct, 8-bit, TOP 0xff
-    TCCR1A &= ~(1 << WGM01);                      //PWM, Phase Correct, 8-bit, TOP 0xff
-    TCCR1B &= ~(1 << WGM02);                      //PWM, Phase Correct, 8-bit, TOP 0xff
-
-    TCCR1B |= (1 << CS01);                        //clk/8 (from prescaler)
-    TCCR1B &= ~(1 << CS02) & ~(1 << CS00);        //clk/8 (from prescaler)
-
-    TCCR1C = 0;
-    */
 
     TCNT1 = 0x0000;
     TCCR1A |= ((1 << COM1A1) | (1 << COM1A0));    //Set output to 1 on compare match A for timer1.
     TCCR1A |= ((1 << COM1B1) | (1 << COM1B0));    //Set output to 1 on compare match B for timer1.
     TCCR1A |= (1 << WGM10);                       //Set to PWM, Phase Correct, 8-bit, TOP 0xff.
     TCCR1B = (1 << CS11) ; // division d'horloge par 8 - implique une frequence de PWM fixe.
+    TCCR1B &= ~(1 << CS12) & ~(1 << CS10);        //clk/8 (from prescaler)
+    
     TCCR1C = 0;
 
     sei();
 }
 
 void ajustementPwmMoteurs(float pourcentageA, float pourcentageB) {     //TIMER 0 (B3 et B4)
-
     //pourcentageA *= 0.85;       //Coefficient de vitesse de la roue gauche (ajustement, afin que les roues tournent à la même vitesse).
     OCR1A = 255 * (100.0 - pourcentageA)/100.0;
     OCR1B = 255 * (100.0 - pourcentageB)/100.0;
-
 }
 
 
@@ -113,6 +100,7 @@ void initialisationPCINT8(){
     sei();
     
 }
+
 void initialisationPCINT12(){
     cli();
     
@@ -122,7 +110,6 @@ void initialisationPCINT12(){
     sei();
     
 }
-
 
 void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
     cli();
@@ -137,7 +124,6 @@ void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
     TCCR2B |= (1 << WGM22);           //Set CTC mode on timer 1 (part2).
     TCCR2B |= (1 << ICES1);           //Event triggered on rising edge.
 
-    //TCCR2B = 0;
     TIMSK2 |= (1 << OCIE2A);          //Timer 1, Output compare A match interrupt enable
 
     sei();
@@ -145,7 +131,6 @@ void initialisationMinuterie(){             //TIMER 2 (8-bits) (D6 ou D7)
 
 void minuterie(uint8_t duree){
    // minuterieExpiree = 0;
-     
      cli();
 
     TCNT2 = 0x00;
@@ -164,10 +149,9 @@ void minuterie(uint8_t duree){
     OCR2A = duree;
     
     sei();
-    
-    
 }
 
+/*
 void ecrire1(char port, int broche){
     switch (port){
         case 'A':{
@@ -201,13 +185,11 @@ void ecrire0(char port, int broche){
         } break;
     }
 }
+*/
 
 void transmissionUART (uint8_t donnee) {
-
     while (!(UCSR0A & (1<<UDRE0))){}
-
     UDR0 = donnee;
-
 }
 
 unsigned char receptionUART(void)
@@ -243,13 +225,14 @@ void initialisationUART () {
 }
 
 void readMemoryUART(uint16_t adresseDebut, uint16_t adresseFin, uint8_t* donnee, Memoire24CXXX& memoire){
-       while (adresseDebut < adresseFin){
-              memoire.lecture(adresseDebut++, donnee);
-              _delay_ms(5);
-              transmissionUART(*donnee);
-       }
+    while (adresseDebut < adresseFin){
+        memoire.lecture(adresseDebut++, donnee);
+        _delay_ms(5);
+        transmissionUART(*donnee);
+    }
 }
 
+/*
 void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool& estDbt, bool& estFini){
     uint16_t adresseBoucle = 0;
     uint8_t compteurBoucle = 0;
@@ -459,3 +442,4 @@ void jouerSonorite(uint8_t operande)  {
             break;
     }
 }
+*/

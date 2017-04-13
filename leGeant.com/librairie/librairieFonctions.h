@@ -13,7 +13,7 @@
 
 // Test antirebond pour le boutonPoussoir
 // Retourne l'état
-bool verifierRebondMecanique();
+//bool verifierRebondMecanique();
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 void initialisationPwmMoteurs();
@@ -43,10 +43,10 @@ void initialisationMinuterie();
 void minuterie(uint8_t duree);
 
 // Ecrire 1 sur une broche quelconque d'un port quelconque
-void ecrire1(char port, int broche);
+//void ecrire1(char port, int broche);
 
 // Ecrire 0 sur une broche quelconque d'un port quelconque
-void ecrire0(char port, int broche);
+//void ecrire0(char port, int broche);
 
 // Initialise le UART pour recevoir et transmettre des donnees
 void initialisationUART();
@@ -61,9 +61,9 @@ unsigned char receptionUART(void);
 void readMemoryUART(uint16_t adresseDebut, uint16_t adresseFin, uint8_t* donnee, Memoire24CXXX&);
 
 // Switch-case pour le byteCode (tp9)
-void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool estDbt, bool estFini);
+//void decodeurByteCode(uint8_t instruction,uint8_t operande, uint8_t& adresse, bool estDbt, bool estFini);
 
 // Switch-case pour toutes les frequences de son pour le byteCode (tp9)
-void jouerSonorite(uint8_t operande);
+//void jouerSonorite(uint8_t operande);
 
 

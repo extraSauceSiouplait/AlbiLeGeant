@@ -26,24 +26,55 @@ void  Capteurs:: lineTracking() {
     }
     else if ((sensors_[1] || sensors_[0]) && !(sensors_[3])){    //sensor de gauche et/ou du centre = 1
         // Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(75, 50);
+        ajustementPwmMoteurs(50, 75);
     }
     else if ((sensors_[3] || sensors_[4]) && !(sensors_[1])){
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(50, 75);
+        ajustementPwmMoteurs(75, 50);
     }
 }
 
-void Capteurs::tournerGauche()
-{
+void  Capteurs:: lineTrackingTranquille() {
+	Moteurs::avancer();
+    if (sensors_[0]){      
+        // Le robot doit aller a gauche toute.
+        ajustementPwmMoteurs(40,90);
+    }
+    else if (sensors_[1]){   
+        // Le robot doit tourner un peu a gauche.
+        ajustementPwmMoteurs(40, 70);
+    }
+    else if (sensors_[2]){
+        // Le robot va tout droit.
+        ajustementPwmMoteurs(60, 60);
+    }
+    else if(sensors_[3]) {
+        //Le robot doit tourner un peu a droite
+        ajustementPwmMoteurs(70,40);
+    }
+    else if(sensors_[4]) {
+        //Le robot doit aller a droite toute!
+        ajustementPwmMoteurs(90,40);
+    }
+}
+
+void Capteurs::tournerGauche(){
 	Moteurs::tournerGauche();
     ajustementPwmMoteurs(90,90);
     _delay_ms(150);
 	ajustementPwmMoteurs(53, 53);	//Débuter rotation vers la gauche du robot
 }
 
-void Capteurs::tournerDroite()
-{
+
+void Capteurs::tournerGaucheTranquille(){
+	Moteurs::tournerGauche();
+    ajustementPwmMoteurs(60,60);
+    _delay_ms(100);
+	ajustementPwmMoteurs(35, 35);	//Débuter rotation vers la gauche du robot
+}
+
+
+void Capteurs::tournerDroite(){
 	Moteurs::tournerDroit();
     ajustementPwmMoteurs(90,90);
     _delay_ms(150);
@@ -51,8 +82,7 @@ void Capteurs::tournerDroite()
 
 }
 
-void Capteurs::tourner180Gauche()
-{
+void Capteurs::tourner180Gauche(){
     tournerGauche();
 
     do {
@@ -65,8 +95,7 @@ void Capteurs::tourner180Gauche()
     ajustementPwmMoteurs(0,0); //On arrête les moteurs lorsque la présente routine est terminée
 }
 
-void Capteurs::tourner180Droite()
-{
+void Capteurs::tourner180Droite(){
     tournerDroite();
     do
     {
@@ -82,8 +111,7 @@ void Capteurs::tourner180Droite()
 
 
 
-void Capteurs::intersectionGauche()
-{
+void Capteurs::intersectionGauche(){
     ajustementPwmMoteurs(60,65);
     _delay_ms(1000);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
 
@@ -97,8 +125,7 @@ void Capteurs::intersectionGauche()
 
 
 }
-void Capteurs::intersectionDroite()
-{
+void Capteurs::intersectionDroite(){
     ajustementPwmMoteurs(60,65);
     _delay_ms(1100);            //la ligne perpendiculaire au robot croise son axe de rotation
 
@@ -111,14 +138,12 @@ void Capteurs::intersectionDroite()
     ajustementPwmMoteurs(0,0);  //on arrete les moteurs lorsque le robot est parallele a la ligne
 }
 
-bool Capteurs::estIntersection()
-{
+bool Capteurs::estIntersection(){
     return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));       //vrai si tous les capteurs de gauche ou/et droite sont actifs
 }
 
 
-bool Capteurs::estPerdu()
-{
+bool Capteurs::estPerdu(){
     for(uint8_t i = 0; i < 200; i++){
         if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
             _delay_ms(2);
@@ -126,37 +151,9 @@ bool Capteurs::estPerdu()
         }
         else
             return false;
-        
     }
     return true;
 }
         
-        /*
-        
-        if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
-                _delay_ms(50);
-                lecture();
-            if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])){
-                _delay_ms(50);
-                lecture();
-                
-                if(!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
-                    _delay_ms(50);
-                    lecture();
-                    if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])){ 
-                        _delay_ms(50);
-                        lecture();
-                        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])){
-                            _delay_ms(75);
-                            lecture();
-                            temp = !(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4]);
-                        }
-                    }                            
-                }
-            }
-        }
-    }
-    return temp;
-}
-*/
+   
 
