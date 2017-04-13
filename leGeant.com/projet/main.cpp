@@ -2,7 +2,7 @@
 
 //Énumération des états de la machine à état
 enum Etats {
-    COULEUR, UTURN, TOGA, TOGAB, COMPTEURLIGNE_1, PARKING_1, TOABC, COMPTEURLIGNE_2, ALLERETOUR, CINQ40, PHOTORESISTANCE, INTERMITTENCE, TOAGC, TOGAH, PARKING_2
+    COULEUR, UTURN, TO_GA, TO_GAB, COMPTEURLIGNE_1, PARKING_1, TO_ABC, COMPTEURLIGNE_2, ALLERETOUR, CINQ40, PHOTORESISTANCE, INTERMITTENCE, TO_AGC, TO_GAH, PARKING_2
 };
 
 
@@ -22,19 +22,18 @@ ISR(INT0_vect){
     if (etat == PHOTORESISTANCE){
         switch(cote){
             case DROIT:
-                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
+                EIMSK &= ~_BV(INT0);  //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
                 break;
             case GAUCHE:
-                EIMSK &= ~(1 << INT0);  //désactive INT0 si le coté a été choisi
+                EIMSK &= ~_BV(INT0); //désactive INT0 si le coté a été choisi
                 etat++;     //passe à l'état suivant
                 break;
         }
     }
     if(etat == PARKING_1){
-
-        etat = COMPTEURLIGNE_2;
-
+        etat = TO_ABC;
+        EIMSK &= ~_BV(INT0);
     }
 }
 
@@ -103,21 +102,21 @@ int main() {
                 DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
                 initialisationPwmMoteurs(); // Configure les registres d'initialisation du timer1 pour le PWM moteur.
                 capteur.tourner180Gauche();
-                etat = TOGA;
+                etat = TO_GA;
                 break;
             }
             
-            case TOGA: {        //LINETRACKING JUSQU'À L'INTERSECTION GA
+            case TO_GA: {        //LINETRACKING JUSQU'À L'INTERSECTION GA
                 while (!capteur.estIntersection()){       //tant qu'on ne detecte pas d'intersection
                     capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
-                etat = TOGAB;
+                etat = TO_GAB;
                 break;
             }
             
-            case TOGAB: {       //LINETRACKING JUSQU'À L'INTERSECTION GAB 
+            case TO_GAB: {       //LINETRACKING JUSQU'À L'INTERSECTION GAB 
                 while (!capteur.estIntersection()){      //linetracking tant que l'intersection n'est pas détecté
                     capteur.lecture();
                     capteur.lineTracking();
@@ -180,22 +179,22 @@ int main() {
                 ajustementPwmMoteurs(50,50);
                 _delay_ms(1500);
                 ajustementPwmMoteurs(0,0);
-                DDRC &= ~(1 << 2);
-                while (!(PINC & 0x04));
-                etat = TOABC;
+                initialisationINT0(1,1);    //rising edge.
+                while(etat == PARKING_1);
                 break;
             }
         
-            case TOABC: {        //linetracking() jusqu'a l'intersection ABC et tourne a gauche sur le segment BC
+            case TO_ABC: {        //linetracking() jusqu'a l'intersection ABC et tourne a gauche sur le segment BC
                
                 capteur.tourner180Droite();
-                switch(couleurChoisie)
+                switch(couleurChoisie){
                     case VERT: 
                         triggerBonneIntersection = 4;
                         break;
                     case ROUGE:
                         triggerBonneIntersection = 1;
-                        break;{
+                        break;
+                }
                     
                 for (uint8_t i = 0; i < triggerBonneIntersection - 1; i++){
                     while (!capteur.estIntersection()){
@@ -213,17 +212,20 @@ int main() {
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
-                etat++;
-                
-                if(couleurChoisie == VERT)             //utile pour le prochain etat
-                    triggerBonneIntersection = 2;
-                else
-                    triggerBonneIntersection = 4;
+                etat = COMPTEURLIGNE_2;
                 break;
             }
             
 
             case COMPTEURLIGNE_2: {
+                switch(couleurChoisie){
+                    case VERT: 
+                        triggerBonneIntersection = 2;
+                        break;
+                    case ROUGE:
+                        triggerBonneIntersection = 4;
+                        break;
+                }
                 while(!capteur.estIntersection()){
                     capteur.lecture();
                     capteur.lineTracking();
@@ -340,8 +342,8 @@ int main() {
 
             //case INTERMITTENCE:
 
-           // case TOAGC:
-           // case TOGAH:
+           // case TO_AGC:
+           // case TO_GAH:
            // case PARKING_2:
             }
         }
