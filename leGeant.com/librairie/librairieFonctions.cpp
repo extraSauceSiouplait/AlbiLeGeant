@@ -39,7 +39,7 @@ void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
 }
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
-void initialisationPwmMoteurs(){                        //TIMER 0 (B3 et B4)
+void initialisationPwmMoteurs(){                       
     cli();
 
     TCNT1 = 0x0000;
