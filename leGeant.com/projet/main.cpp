@@ -100,7 +100,8 @@ int main() {
                 DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
                 initialisationPwmMoteurs();     // Configure les registres d'initialisation du timer1 pour le PWM moteur.
                 capteur.tourner180Gauche();
-                etat = TO_GA;
+               // etat = TO_GA;
+                etat = PHOTORESISTANCE;
                 break;
             }
             
@@ -414,8 +415,8 @@ int main() {
             case INTERMITTENCE:
             {
                 Moteurs::avancer();
-               // ajustementPwmMoteurs(50,50);
-               // _delay_ms(600);
+               ajustementPwmMoteurs(50,50);
+               _delay_ms(600);
                 if (cote == GAUCHE)
                 {
                     capteur.intersectionGauche();
@@ -429,6 +430,8 @@ int main() {
                 
                 while (!capteur.estPerdu()){
                     capteur.lecture();
+                    capteur.lineTracking();
+                    
                     
                 }
                 if (cote == GAUCHE){
