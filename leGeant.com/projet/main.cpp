@@ -15,7 +15,8 @@ volatile bool commencerParking = false;
 volatile bool peutRepartir = false;
 float uniteTempsDistance;
 char cote;                                    //Variable pour le choix du coté lors de l'étape avec les photorésitances.
-bool minuterieActive = false;                 //bool qui indique si la minuterie est active
+bool minuterieActive = false;   //bool qui indique si la minuterie est active
+volatile uint8_t compteurPhoto = 0;
 
 
 ISR(INT0_vect){
@@ -67,13 +68,12 @@ ISR(PCINT1_vect){
 }
 
 ISR(TIMER2_COMPA_vect) {
-    if ((etat == COMPTEURLIGNE_1) || (etat == PARKING_1) || (etat == CINQ40)){
+   // if ((etat == COMPTEURLIGNE_1) || (etat == PARKING_1) || (etat == CINQ40)){
         if (minuterieActive){
             repetitionMinuterie++;
             minuterie(250);
         }
-    }
-    
+  
 }
 
 
@@ -100,8 +100,8 @@ int main() {
                 DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
                 initialisationPwmMoteurs();     // Configure les registres d'initialisation du timer1 pour le PWM moteur.
                 capteur.tourner180Gauche();
-               // etat = TO_GA;
-                etat = PHOTORESISTANCE;
+                etat = TO_GA;
+               // etat = INTERSECTION_PHOTO;
                 break;
             }
             
@@ -173,10 +173,10 @@ int main() {
                 }
                 minuterieActive = false;
                 capteur.tournerGauche();
-                _delay_ms(1180);
+                _delay_ms(1500);
                 Moteurs::reculer();
                 ajustementPwmMoteurs(50,50);
-                _delay_ms(1500);
+                _delay_ms(1700);
                 ajustementPwmMoteurs(0,0);
                 DDRC &= ~_BV(2);
                
@@ -346,37 +346,37 @@ int main() {
             case INTERSECTION_PHOTO:
             {
                 
-                    while (!capteur.estPerdu())
+                    while (!capteur.estIntersection())
                     {
+                        
                         capteur.lecture();
+                        
+                        if (capteur.estPerdu())
+                        {
+                            capteur.tourner180Droite();
+                        }
+                        
                         capteur.lineTracking();
                     }
-                    capteur.intersectionDroite();
-                    while (capteur.estIntersection())
-                    {
-                        capteur.tournerDroite();
-                        capteur.lecture();}
+                    
+                    capteur.intersectionDroite();  
+                   
                     while (!capteur.estIntersection())
                     {
                         capteur.lecture();
                         capteur.lineTracking();
                     }
                     capteur.intersectionGauche();
-                    while (capteur.estIntersection()){
-                        capteur.tournerGauche();
-                        capteur.lecture();
-                        
-                        
-                    }
+                    
+                   
                     while (!capteur.estIntersection())
                     {
                         capteur.lecture();
                         capteur.lineTracking();
                     }
-                    ajustementPwmMoteurs(50,50);
-                    _delay_ms(900);
+                    
                                                                     
-                ajustementPwmMoteurs(0,0);
+                ajustementPwmMoteurs(0,0);      //le robot est a l'intersection du choix de photoresistance
                 etat = PHOTORESISTANCE;
                 break;
                 
@@ -396,18 +396,24 @@ int main() {
                     valeurCan16bitGauche = convertisseur.lecture(PINA0);    //lecture pin0 portA
                     valeurCan16bitGauche >>= 2;
 
-                    if(valeurCan16bitDroit > 230) {
+                    if(valeurCan16bitDroit > 240 && (valeurCan16bitDroit > valeurCan16bitGauche)) {
                         cote = DROIT;
                         _delay_ms(50);
                     }
-                    else if(valeurCan16bitGauche > 230 ) {
+                    else if(valeurCan16bitGauche > 240 ) {
                         cote = GAUCHE;
                         _delay_ms(50);
                     }
                 }
-        
-                etat = INTERMITTENCE;
-                
+                if (cote == DROIT || cote == GAUCHE)
+                {
+                    etat = INTERMITTENCE;
+                }
+              /*  else
+                {
+                    cote = DROIT;
+                    etat = INTERMITTENCE;
+                }*/
                 break;
                 
             }
@@ -415,86 +421,190 @@ int main() {
             case INTERMITTENCE:
             {
                 Moteurs::avancer();
-               ajustementPwmMoteurs(50,50);
-               _delay_ms(600);
+               ajustementPwmMoteurs(53,53);
+               while (!capteur.estPerdu())
+                   capteur.lecture();
+                
+               _delay_ms(100);
+               ajustementPwmMoteurs(0,0);
+               _delay_ms(1000);
+                   
                 if (cote == GAUCHE)
                 {
-                    capteur.intersectionGauche();
+                    capteur.tournerGauche();
                     
+                    //ajustementPwmMoteurs(85,50);
+                    while (!capteur.getSensor(4))
+                        capteur.lecture();
                         
                 }
-                else 
+                else if(cote == DROIT)
                 {
-                    capteur.intersectionDroite();
+                    capteur.tournerDroite();
+                    while (!capteur.getSensor(0))
+                        capteur.lecture();
+                    //ajustementPwmMoteurs(50,85);
+                
                 }
                 
-                while (!capteur.estPerdu()){
-                    capteur.lecture();
-                    capteur.lineTracking();
-                    
-                    
-                }
-                if (cote == GAUCHE){
-                    capteur.intersectionDroite();
-                }
-                else
+               
+                ajustementPwmMoteurs(0,0);
+                _delay_ms(1500);
+                Moteurs::avancer();
+                ajustementPwmMoteurs(63,63);
+                while (!capteur.estPerdu())
                 {
-                    capteur.intersectionGauche();
+                    //capteur.lineTracking();
+                    capteur.lecture();
                 }
+                ajustementPwmMoteurs(0,0);
+                _delay_ms(1000);
+                
+                
+                if (cote == GAUCHE){
+                    
+                    capteur.tournerDroite();
+                  //  ajustementPwmMoteurs(50,65);
+                }
+                else if(cote == DROIT)
+                {
+                    capteur.tournerGauche();
+                    
+                    
+                  //  ajustementPwmMoteurs(65,50);
+                }
+                while (!capteur.getSensor(2))
+                        capteur.lecture();
+                
                 while (!capteur.estPerdu())
                 {
                     capteur.lecture();
                     capteur.lineTracking();
                 }
-                
-                if (cote == GAUCHE)
-                    ajustementPwmMoteurs(40,60);
-                
-                else
-                    ajustementPwmMoteurs(60,40);
-                
-                while (capteur.estPerdu()){
+                _delay_ms(200);
+                ajustementPwmMoteurs(0,0);
+                 if (cote == GAUCHE){
+                    capteur.tournerDroite();
+                }
+                else if(cote == DROIT)
+                {
+                   capteur.tournerGauche();
+                   
+                }
+                _delay_ms(500);
+                ajustementPwmMoteurs(0,0);
+                _delay_ms(1000);
+                Moteurs::avancer();
+                ajustementPwmMoteurs(60,60);
+                while (capteur.estPerdu())
+                {
                     capteur.lecture();
                 }
                 
+                if (compteurPhoto < 1)
+                {
+                    while (!capteur.estIntersection())
+                    {
+                        capteur.lecture();
+                        capteur.lineTracking();
+                    }
+                    ajustementPwmMoteurs(0,0);
+                    etat = PHOTORESISTANCE;
+                    compteurPhoto++;
+                    break;
+                }
+                etat = TO_AGC;
+                break;
+            }
+
+            case TO_AGC:{
+                
+                for (uint8_t compteurBlanc = 0; compteurBlanc < 5; compteurBlanc++){
+                    while (!capteur.estPerdu())
+                    {
+                        capteur.lecture();
+                        capteur.lineTracking();
+                    }
+                    ajustementPwmMoteurs(50,50);
+                    while (capteur.estPerdu())
+                    {
+                        capteur.lecture();
+                    }
+                }
                 while (!capteur.estIntersection())
                 {
                     capteur.lecture();
                     capteur.lineTracking();
                 }
-                ajustementPwmMoteurs(0,0);
+                capteur.intersectionGauche();
+                etat = TO_GAH;
+                break;
+            }
                 
+           case TO_GAH:
+           {
+               while (!capteur.estIntersection())
+               {
+                   capteur.lecture();
+                   capteur.lineTracking();
+               }
+               capteur.intersectionGauche();
+               while (!capteur.estPerdu())
+               {
+                   capteur.lecture();
+                   capteur.lineTracking();
+               }
+               ajustementPwmMoteurs(0,0);
+               etat = PARKING_2;
+               break;
+           }
+            case PARKING_2:
+            {
+                const uint8_t SEGMENT_PARALLELE = 15;
+                const uint8_t SEGMENT_PERPENDICULAIRE = 12   ;
                 
+                repetitionMinuterie = 0;
+                minuterieActive = true;
+                minuterie(250);
+                ajustementPwmMoteurs(60,60);
+                while (repetitionMinuterie < (uniteTempsDistance * SEGMENT_PARALLELE)){}
                 
-                    
-                    
-              /*  while (!capteur.estIntersection())
-                {
-                    capteur.lecture();
-                    capteur.lineTracking();
-                }
-                if (cote == GAUCHE)
-                {
-                    capteur.intersectionDroite();
-                }
+                minuterieActive = false;
+                
+                if (couleurChoisie == VERT)
+                    capteur.tournerGauche();
                 else
-                {
-                    capteur.intersectionDroite();
-                }
-                while (!capteur.estPerdu())
-                {
-                    capteur.lecture();
-                    capteur.lineTracking();
-                }
-                ajustementPwmMoteurs(50,50);
-                for (;;){}*/
+                    capteur.tournerDroite();
+                
+                _delay_ms(1500);
+                
+                
+                
+                Moteurs::avancer();
+                repetitionMinuterie = 0;
+                minuterieActive = true;
+                minuterie(250);
+                ajustementPwmMoteurs(60,60);
+                while (repetitionMinuterie < (uniteTempsDistance * SEGMENT_PERPENDICULAIRE)){}
+                
+                minuterieActive = false;
+                
+                
+                
+                capteur.tournerDroite();
+                _delay_ms(1500);
+                ajustementPwmMoteurs(0,0);
+                for(;;){}
+                
+                
+                
+                
+                    
+                
             }
-
-           // case TO_AGC:
-           // case TO_GAH:
-           // case PARKING_2:
-            }
+            
         }
 
     }
+}
 

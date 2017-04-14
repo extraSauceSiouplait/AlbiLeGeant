@@ -116,7 +116,7 @@ void Capteurs::intersectionGauche(){
     _delay_ms(900);//MODIFIER VALEUR					//la ligne perpendiculaire au robot croise son axe de rotation
 
     tournerGauche();			//debuter rotation
-    lecture();
+    lecture();                  //pour signaler que les capteurs sont eteints
     while (!sensors_[2])
     {
         lecture();
@@ -131,6 +131,7 @@ void Capteurs::intersectionDroite(){
 
 
     tournerDroite();            //debuter rotation
+    lecture();                  //pour signaler que les capteurs sont eteints
     while (!sensors_[2])
     {
         lecture();
