@@ -12,7 +12,7 @@ public:
     static void avancer();
     static void freiner();
     static void tournerGauche();
-    static void tournerDroit();
+    static void tournerDroite();
     static void ecrire();
     
     

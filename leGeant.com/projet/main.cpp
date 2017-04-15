@@ -306,11 +306,7 @@ int main() {
                     capteur.lecture();
                     capteur.lineTracking();
                 }
-                Moteurs::reculer();
-                ajustementPwmMoteurs(50,50);
-                _delay_ms(75);
-                Moteurs::avancer();
-                ajustementPwmMoteurs(0,0);
+                Moteurs::freiner();
                 _delay_ms(1000);
                 
                 
@@ -344,10 +340,7 @@ int main() {
                     while(!capteur.getSensor(2))
                         capteur.lecture();
                 }
-                  Moteurs::tournerDroit(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
-                ajustementPwmMoteurs(70,70);
-                _delay_ms(120);
-                ajustementPwmMoteurs(0,0);
+                 Moteurs::freiner();
                 etat = INTERSECTION_PHOTO;
                 break;
             }

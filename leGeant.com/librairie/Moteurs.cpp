@@ -30,7 +30,7 @@ void Moteurs::freiner(){
     ajustementPwmMoteurs(0,0);
 }
 
-void Moteurs::tournerDroit(){
+void Moteurs::tournerDroite(){
     setDirections(true, false);
 }
 
