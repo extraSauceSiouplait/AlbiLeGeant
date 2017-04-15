@@ -13,9 +13,9 @@ volatile uint16_t repetitionMinuterie = 0;
 volatile char couleurChoisie = '\0';          //=null (pas encore choisi)
 volatile bool commencerParking = false;
 volatile bool peutRepartir = false;
-float uniteTempsDistance;
-char cote;                                    //Variable pour le choix du coté lors de l'étape avec les photorésitances.
-bool minuterieActive = false;   //bool qui indique si la minuterie est active
+volatile float uniteTempsDistance;
+volatile  char cote;                                    //Variable pour le choix du coté lors de l'étape avec les photorésitances.
+volatile bool minuterieActive = false;   //bool qui indique si la minuterie est active
 volatile uint8_t compteurPhoto = 0;
 
 
@@ -571,8 +571,10 @@ int main() {
            }
             case PARKING_2:
             {
+                /*
                 const uint8_t SEGMENT_PARALLELE = 15;
                 const uint8_t SEGMENT_PERPENDICULAIRE = 12   ;
+                
                 
                 repetitionMinuterie = 0;
                 minuterieActive = true;
@@ -606,16 +608,67 @@ int main() {
                 _delay_ms(1500);
                 ajustementPwmMoteurs(0,0);
                 for(;;){}
+                */
                 
                 
                 
+                while(!(PINC & 0x04)){}
                 
+                if(couleurChoisie == VERT) {
                     
-                
+                    capteur.tourner180GaucheFinal();
+                    Moteurs::reculer();
+                    
+                    repetitionMinuterie = 0;
+                    minuterieActive = true;
+                    minuterie(250);
+                    ajustementPwmMoteurs(65,62);
+                    while (repetitionMinuterie < (uniteTempsDistance * 19.2)){}
+                    minuterieActive = false;
+
+                    Moteurs::freiner();
+                    
+                    capteur.tournerDroit();
+                    _delay_ms(600);
+                    Moteurs::freiner();
+                    
+                    Moteurs::reculer();
+                    ajustementPwmMoteurs(70,70);
+                    
+                    _delay_ms(500);
+                    Moteurs::freiner();
+                    
+                  else {
+                    
+                    capteur.tourner180DroiteFinal();
+                    Moteurs::reculer();
+                    
+                    repetitionMinuterie = 0;
+                    minuterieActive = true;
+                    minuterie(250);
+                    ajustementPwmMoteurs(62,65);
+                    while (repetitionMinuterie < (uniteTempsDistance * 19.2)){}
+                    minuterieActive = false;
+
+                    Moteurs::freiner();
+                    
+                    capteur.tournerGauche();
+                    _delay_ms(600);
+                    Moteurs::freiner();
+                    
+                    Moteurs::reculer();
+                    ajustementPwmMoteurs(70,70);
+                    
+                    _delay_ms(500);
+                    Moteurs::freiner();
+                    
+                    }  
+                }
+                while(1);
             }
             
         }
-
+        
     }
 }
 

@@ -98,6 +98,24 @@ void Capteurs::tourner180Gauche(){
     _delay_ms(75);
 }
 
+void Capteurs::tourner180GaucheFinal(){
+    tournerGauche();
+
+    do {
+        lecture(); //Acquisition des données en provenance des capteurs
+    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+
+    while (!sensors_[5]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+        lecture(); //Acquisition des données en provenance des capteurs
+
+    while (sensor_[5]) 
+        lecture;
+    
+    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
+    ajustementPwmMoteurs(70,70);
+    _delay_ms(75);
+}
+
 void Capteurs::tourner180Droite(){
     tournerDroite();
     do
@@ -114,6 +132,23 @@ void Capteurs::tourner180Droite(){
     _delay_ms(75);
 }
 
+void Capteurs::tourner180DroiteFinal(){
+    tournerDroite();
+
+    do {
+        lecture(); //Acquisition des données en provenance des capteurs
+    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+
+    while (!sensors_[0]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+        lecture(); //Acquisition des données en provenance des capteurs
+
+    while (sensor_[0]) 
+        lecture;
+    
+    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
+    ajustementPwmMoteurs(70,70);
+    _delay_ms(75);
+}
 
 
 void Capteurs::intersectionGauche(){
