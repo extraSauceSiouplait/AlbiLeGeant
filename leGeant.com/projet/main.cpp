@@ -295,7 +295,7 @@ int main() {
             case CINQ40:{
                 //DDRD = 0xff;
                 Moteurs::avancer();
-                while(!capteur.estPerdu()){ //avance jusqu'a la fin de la ligne.
+                while(!(capteur.estPerdu())){ //avance jusqu'a la fin de la ligne.
                     if (capteur.estIntersection())
                     {
                         while (capteur.estIntersection()){ //On souhaite passer tout droit l'intersection restante
@@ -306,7 +306,12 @@ int main() {
                     capteur.lecture();
                     capteur.lineTracking();
                 }
+                Moteurs::reculer();
+                ajustementPwmMoteurs(50,50);
+                _delay_ms(75);
+                Moteurs::avancer();
                 ajustementPwmMoteurs(0,0);
+                _delay_ms(1000);
                 
                 
                // capteur.tourner180Droite();
@@ -339,6 +344,9 @@ int main() {
                     while(!capteur.getSensor(2))
                         capteur.lecture();
                 }
+                  Moteurs::tournerDroit(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
+                ajustementPwmMoteurs(70,70);
+                _delay_ms(120);
                 ajustementPwmMoteurs(0,0);
                 etat = INTERSECTION_PHOTO;
                 break;
@@ -351,10 +359,10 @@ int main() {
                         
                         capteur.lecture();
                         
-                        if (capteur.estPerdu())
-                            capteur.tourner180Droite();
+                       // if (capteur.estPerdu())
+                        //    capteur.tourner180Droite();
                         
-                        capteur.lineTracking();
+                        capteur.lineTrackingTranquille();
                     }
                     
                     capteur.intersectionDroite();  
@@ -378,6 +386,7 @@ int main() {
                 _delay_ms(75);
                 
                 Moteurs::avancer();
+                ajustementPwmMoteurs(0,0);
                 etat = PHOTORESISTANCE;
                 break;
                 
@@ -470,7 +479,7 @@ int main() {
                 ajustementPwmMoteurs(50,50);
                 
                 if (cote == GAUCHE)
-                    while(!capteur.getSensor(4))
+                    while(!capteur.getSensor(3))
                         capteur.lecture();
                   
                 else if(cote == DROIT)
@@ -480,9 +489,6 @@ int main() {
                 ajustementPwmMoteurs(0,0);
                 Moteurs::avancer();
                 
-                
-                while (!capteur.getSensor(2))
-                        capteur.lecture();
                 
                 while (!capteur.estPerdu())
                 {
@@ -499,7 +505,7 @@ int main() {
                    capteur.tournerGauche();
                    
                 }
-                _delay_ms(500);                 //on ajuste l'angle du robot pour qu'il soit face au prochain segment
+                _delay_ms(350);                 //on ajuste l'angle du robot pour qu'il soit face au prochain segment
                 ajustementPwmMoteurs(0,0);
                 _delay_ms(1000);
                 Moteurs::avancer();

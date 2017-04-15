@@ -38,11 +38,11 @@ void  Capteurs:: lineTrackingTranquille() {
 	Moteurs::avancer();
     if (sensors_[0]){      
         // Le robot doit aller a gauche toute.
-        ajustementPwmMoteurs(40,90);
+        ajustementPwmMoteurs(90,40);
     }
     else if (sensors_[1]){   
         // Le robot doit tourner un peu a gauche.
-        ajustementPwmMoteurs(40, 70);
+        ajustementPwmMoteurs(70, 40);
     }
     else if (sensors_[2]){
         // Le robot va tout droit.
@@ -50,11 +50,11 @@ void  Capteurs:: lineTrackingTranquille() {
     }
     else if(sensors_[3]) {
         //Le robot doit tourner un peu a droite
-        ajustementPwmMoteurs(70,40);
+        ajustementPwmMoteurs(40,70);
     }
     else if(sensors_[4]) {
         //Le robot doit aller a droite toute!
-        ajustementPwmMoteurs(90,40);
+        ajustementPwmMoteurs(40,90);
     }
 }
 
@@ -68,13 +68,10 @@ void Capteurs::tournerGauche(){
 
 void Capteurs::tournerGaucheTranquille(){
 	Moteurs::tournerGauche();
-    ajustementPwmMoteurs(90,90);
-    _delay_ms(100);
-	ajustementPwmMoteurs(57, 57);	//Débuter rotation vers la gauche du robot
-    
-    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
     ajustementPwmMoteurs(70,70);
-    _delay_ms(90);
+    _delay_ms(100);
+	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot
+    
 }
 
 
@@ -158,7 +155,7 @@ bool Capteurs::estIntersection(){
 
 
 bool Capteurs::estPerdu(){
-    for(uint8_t i = 0; i < 130; i++){
+    for(uint8_t i = 0; i < 160; i++){
         if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
             _delay_ms(2);
             lecture();
