@@ -22,7 +22,10 @@ void initialisationPwmMoteurs();
 void ajustementPwmMoteurs(float pourcentageA, float pourcentageB);
 
 // Initialise le timer2 en mode pwm (onde carrée) et ajuste la frequence  de celui-ci 
-void ajustementPwmFrequence(double frequence);
+void ajustementPwmPiezo(double frequence);
+
+//Réinitialise les ports du piezo à leurs utilisations normales.
+void arretPiezo();
 
 // Initialise external interrupt request 0 
 void initialisationINT0(bool modeBit1, bool modeBit0);

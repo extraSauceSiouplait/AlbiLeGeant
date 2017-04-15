@@ -24,7 +24,7 @@ bool verifierRebondMecanique(){
 */
 
 // Permet l'ajustement de la fréquence pour jouer une sonorité
-void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
+void ajustementPwmPiezo(double frequence){          //TIMER 2 (D7 et D6)
     TCNT2 = 0x00;
     TCCR2A &= ~(1 << COM2A1);                     //toggle OC2A  on compare match A.
     TCCR2A |= (1 << COM2A0);                      //toggle OC2A  on compare match A.
@@ -37,6 +37,13 @@ void ajustementPwmFrequence(double frequence){          //TIMER 2 (D7 et D6)
 
     OCR2A = uint8_t((F_CPU/1024) / (2*frequence));
 }
+
+void arretPiezo() {     
+    
+    TCCR0A &= ~(1 << COM0A0);                    //normal port utilisation
+    TCCR0A &= ~(1 << COM0A1);                     //normal port utilisation
+}
+
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 void initialisationPwmMoteurs(){                       
