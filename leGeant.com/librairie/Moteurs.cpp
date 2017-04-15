@@ -1,11 +1,11 @@
 #define F_CPU 8000000
 
-#include <avr/io.h> 
-#include "Moteurs.h"
+#include "header.h"
 
 void Moteurs::setDirections(bool droit, bool gauche){
     directionDroit_ = droit;
-    directionGauche_ = gauche;    
+    directionGauche_ = gauche;  
+    ecrire();
 }
 
 
@@ -16,22 +16,26 @@ void Moteurs::ecrire(){
 
 void Moteurs::reculer(){
     setDirections(true, true);  
-    ecrire();
 }
 
 void Moteurs::avancer(){
     setDirections(false, false);
-    ecrire();
+}
+
+void Moteurs::freiner(){
+    setDirections(!directionDroit_, !directionGauche_); 
+    ajustementPwmMoteurs(70,70);
+    _delay_ms(70);
+    setDirections(!directionDroit_, !directionGauche_);
+    ajustementPwmMoteurs(0,0);
 }
 
 void Moteurs::tournerDroit(){
     setDirections(true, false);
-    ecrire();
 }
 
 void Moteurs::tournerGauche(){
     setDirections(false, true);
-    ecrire();
 }
 
 //initialisation des attirbuts statiques de la classe moteurs a l'exterieur du main
