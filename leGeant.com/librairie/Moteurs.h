@@ -10,9 +10,11 @@ public:
     static void setDirections(bool droit, bool gauche);
     static void reculer();
     static void avancer();
+    static void freiner();
     static void tournerGauche();
     static void tournerDroit();
     static void ecrire();
+    
     
 private:
     static bool directionDroit_;
