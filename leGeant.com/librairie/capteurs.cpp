@@ -72,7 +72,7 @@ void Capteurs::tournerGaucheTranquille(){
     _delay_ms(100);
 	ajustementPwmMoteurs(57, 57);	//Débuter rotation vers la gauche du robot
     
-    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
+    Moteurs::tournerDroit(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
     ajustementPwmMoteurs(70,70);
     _delay_ms(90);
 }
