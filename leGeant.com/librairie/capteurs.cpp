@@ -72,7 +72,7 @@ void Capteurs::tournerGaucheTranquille(){
     _delay_ms(100);
 	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot
     
-}
+
 
 
 void Capteurs::tournerDroite(){
