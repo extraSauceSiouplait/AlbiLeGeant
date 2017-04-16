@@ -23,6 +23,7 @@ public:
     bool estIntersection();		//Methode qui retourne vrai si les capteurs detectent une intersection
     bool getSensor(uint8_t indice);
     bool estPerdu();
+    bool estPerduLong();
     void tourner180Gauche();
     void tourner180Droite();
     

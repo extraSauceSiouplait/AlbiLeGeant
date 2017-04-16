@@ -14,7 +14,7 @@ public:
     static void tournerGauche();
     static void tournerDroite();
     static void ecrire();
-    
+    static void boost();
     
 private:
     static bool directionDroit_;

@@ -19,6 +19,7 @@ void Capteurs::lecture() {
 }
 
 void  Capteurs:: lineTracking() {
+    lecture();
 	Moteurs::avancer();
     if (sensors_[2] || (sensors_[1] && sensors_[3])){       //seulement le sensor du millieu = 1
         // Le robot doit aller tout droit.
@@ -35,6 +36,7 @@ void  Capteurs:: lineTracking() {
 }
 
 void  Capteurs:: lineTrackingTranquille() {
+    lecture();
 	Moteurs::avancer();
     if (sensors_[0]){      
         // Le robot doit aller a gauche toute.
@@ -155,7 +157,19 @@ bool Capteurs::estIntersection(){
 
 
 bool Capteurs::estPerdu(){
-    for(uint8_t i = 0; i < 75; i++){
+    for(uint8_t i = 0; i < 200; i++){
+        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
+            _delay_ms(1);
+            lecture();
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+bool Capteurs::estPerduLong(){
+    for(uint16_t i = 0; i < 297; i++){
         if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
             _delay_ms(2);
             lecture();
@@ -165,7 +179,5 @@ bool Capteurs::estPerdu(){
     }
     return true;
 }
-
         
-   
 

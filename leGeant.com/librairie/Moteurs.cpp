@@ -8,12 +8,6 @@ void Moteurs::setDirections(bool droit, bool gauche){
     ecrire();
 }
 
-
-void Moteurs::ecrire(){
-    PORTD |= (directionDroit_ << 3) | (directionGauche_ << 2);
-    PORTD &= ~(!directionDroit_ << 3) & ~(!directionGauche_ << 2);
-}
-
 void Moteurs::reculer(){
     setDirections(true, true);  
 }
@@ -37,6 +31,17 @@ void Moteurs::tournerDroite(){
 void Moteurs::tournerGauche(){
     setDirections(false, true);
 }
+
+void Moteurs::ecrire(){
+    PORTD |= (directionDroit_ << 3) | (directionGauche_ << 2);
+    PORTD &= ~(!directionDroit_ << 3) & ~(!directionGauche_ << 2);
+}
+
+void Moteurs::boost(){
+    ajustementPwmMoteurs(90, 90);
+    _delay_ms(50);
+}
+
 
 //initialisation des attirbuts statiques de la classe moteurs a l'exterieur du main
 bool Moteurs::directionDroit_;
