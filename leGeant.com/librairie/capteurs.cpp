@@ -95,6 +95,22 @@ void Capteurs::tourner180Gauche(){
     Moteurs::freiner();
 }
 
+void Capteurs::tourner180GaucheFinal(){
+    tournerGauche();
+
+    do {
+        lecture(); //Acquisition des données en provenance des capteurs
+    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+
+    while (!sensors_[5]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+        lecture(); //Acquisition des données en provenance des capteurs
+
+    while (sensors_[5]) 
+        lecture();
+    
+    Moteurs::freiner();
+}
+
 void Capteurs::tourner180Droite(){
     tournerDroite();
     do
@@ -109,6 +125,21 @@ void Capteurs::tourner180Droite(){
     Moteurs::freiner();
 }
 
+void Capteurs::tourner180DroiteFinal(){
+    tournerDroite();
+
+    do {
+        lecture(); //Acquisition des données en provenance des capteurs
+    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
+
+    while (!sensors_[0]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+        lecture(); //Acquisition des données en provenance des capteurs
+
+    while (sensors_[0]) 
+        lecture();
+    
+    Moteurs::freiner();
+}
 
 
 void Capteurs::intersectionGauche(){

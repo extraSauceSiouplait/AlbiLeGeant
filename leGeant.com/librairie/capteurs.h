@@ -27,6 +27,9 @@ public:
     void tourner180Gauche();
     void tourner180Droite();
     
+    void tourner180DroiteFinal();
+    void tourner180GaucheFinal();
+        
     void lineTrackingTranquille();
     void tournerGaucheTranquille();
 private:
