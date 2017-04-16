@@ -94,7 +94,6 @@ int main() {
             
             case TO_GAB: {       //LINETRACKING JUSQU'À L'INTERSECTION GAB 
                 while (!capteur.estIntersection()){      //linetracking tant que l'intersection n'est pas détecté
-                    //capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
@@ -118,7 +117,6 @@ int main() {
                 
                 while (compteurIntersection < triggerParking){
                     while(!capteur.estIntersection()){
-                        //capteur.lecture();
                         capteur.lineTracking();
                     }
                     compteurIntersection++;
@@ -145,7 +143,6 @@ int main() {
                 minuterieActive = true;
                 minuterie(250);
                 while (repetitionMinuterie < (DISTANCE_PARKING * uniteTempsDistance)){
-                    //capteur.lecture();
                     capteur.lineTracking();
                 }
                 minuterieActive = false;
@@ -174,7 +171,6 @@ int main() {
                     
                 for (uint8_t i = 0; i < triggerBonneIntersection - 1; i++){
                     while (!capteur.estIntersection()){
-                       // capteur.lecture();
                         capteur.lineTracking();
                     }
                     ajustementPwmMoteurs(50,50); 
@@ -184,7 +180,6 @@ int main() {
                 }
     
                 while (!capteur.estIntersection()){		//tant qu'on ne detecte pas d'intersection
-                  //  capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
@@ -203,7 +198,6 @@ int main() {
                         break;
                 }
                 while(!capteur.estIntersection()){
-                 //   capteur.lecture();
                     capteur.lineTracking();
                 }
                 compteurIntersection2++;                     //les capteurs detectent une intersection
@@ -211,7 +205,7 @@ int main() {
                 if(compteurIntersection2 == triggerBonneIntersection) {        //l'axe de rotation du robot est sur la ligne de sa couleur
                 
                     capteur.tournerGauche();
-                
+                    
                     while (!capteur.estPerdu()) {       //le capteur du centre est encore sur le segment
                         capteur.lecture();
                     } 
@@ -219,7 +213,7 @@ int main() {
                     while (!capteur.getSensor(2)){     //le capteur du centre est entre les deux lignes
                         capteur.lecture();
                     }
-                    ajustementPwmMoteurs(0,0); //le capteur du centre est sur la nouvelle ligne
+                    Moteurs::freiner();
                     etat = ALLERETOUR;
                 }
 
@@ -238,9 +232,7 @@ int main() {
                     capteur.lineTracking();
                 }     
                 Moteurs::freiner();
-                _delay_ms(1000);
-               // ajustementPwmMoteurs(60,60);
-              //  _delay_ms(7.00);                 //a ajuster pour que axe de rotation du robot soit au bout de la ligne
+                _delay_ms(500);
                 
                 switch(couleurChoisie){
                     case VERT:
@@ -277,11 +269,10 @@ int main() {
                             capteur.lecture();
                         }
                     }
-                   // capteur.lecture();
                     capteur.lineTracking();
                 }
                 Moteurs::freiner();
-                _delay_ms(1000);
+                _delay_ms(100);
                 
                 capteur.tournerDroite();
                 while (capteur.getSensor(2))
@@ -298,7 +289,6 @@ int main() {
                 minuterie(255);
                 while (repetitionMinuterie < 16)
                 {
-                    //capteur.lecture();
                     capteur.lineTracking();
                 }
                 minuterieActive = false;
@@ -327,15 +317,13 @@ int main() {
                 capteur.intersectionDroite();  
                 
                 while (!capteur.estIntersection())
-                {
-                    //  capteur.lecture();
+                {;
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
                 
                 while (!capteur.estIntersection())
                 {
-                    //  capteur.lecture();
                     capteur.lineTracking();
                 }
                 
@@ -366,8 +354,7 @@ int main() {
                         _delay_ms(50);
                     }
                 }
-                if (cote == DROIT || cote == GAUCHE)
-                {
+                if (cote == DROIT || cote == GAUCHE) {
                     etat = GUIDAGEFOURCHE;
                 }
                 break;
@@ -377,6 +364,7 @@ int main() {
             case GUIDAGEFOURCHE:
             {
                Moteurs::avancer();
+               Moteurs::boost();
                ajustementPwmMoteurs(50,50);
                
                do {     //on attent que le capteur se perde
@@ -401,20 +389,18 @@ int main() {
                    
                
                 Moteurs::freiner();
-                _delay_ms(1000);
+                _delay_ms(100);
                 Moteurs::avancer();
                 ajustementPwmMoteurs(50,50);
                 while (!capteur.estPerdu()){
                     capteur.lecture();
                 }
                 
-
                 Moteurs::freiner();
-                _delay_ms(1000);
+                _delay_ms(100);
                 
                 Moteurs::reculer();
               
-                
                 switch(cote){
                     case GAUCHE:
                         ajustementPwmMoteurs(60,50);
@@ -448,11 +434,11 @@ int main() {
                         break;
                     case DROIT:
                         capteur.tournerGauche();                //on ajuste l'angle du robot pour qu'il soit face au prochain segment
-                        _delay_ms(450);
+                        _delay_ms(420);
                         break;
                 }
                 Moteurs::freiner();
-                _delay_ms(400);
+                _delay_ms(100);
                 
                 Moteurs::avancer();
                 ajustementPwmMoteurs(60,60);
@@ -465,7 +451,6 @@ int main() {
                 {
                     while (!capteur.estIntersection())
                     {
-                       // capteur.lecture();
                         capteur.lineTracking();
                     }
                     Moteurs::freiner();
@@ -479,11 +464,9 @@ int main() {
             }
 
             case INTERMITTENCE:{
-                
                 for (uint8_t compteurBlanc = 0; compteurBlanc < 5; compteurBlanc++){
                     while (!capteur.estPerdu())
                     {
-                       // capteur.lecture();
                         capteur.lineTracking();
                     }                                   //si compteur = 0, on commence les pointillé
                     ajustementPwmMoteurs(50,50);
@@ -497,7 +480,6 @@ int main() {
                 
                 while (!capteur.estIntersection())
                 {
-                   // capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
@@ -509,13 +491,11 @@ int main() {
            {
                while (!capteur.estIntersection())
                {
-                 //  capteur.lecture();
                    capteur.lineTracking();
                }
                capteur.intersectionGauche();
                while (!capteur.estPerdu())
                {
-                   //capteur.lecture();
                    capteur.lineTracking();
                }
                ajustementPwmMoteurs(0,0);
@@ -557,13 +537,7 @@ int main() {
                 
                 capteur.tournerDroite();
                 _delay_ms(1500);
-                ajustementPwmMoteurs(0,0);
-                for(;;){}
-                
-                
-                
-                
-                    
+                Moteurs::freiner();
                 
             }
             
