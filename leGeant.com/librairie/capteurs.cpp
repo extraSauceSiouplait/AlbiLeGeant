@@ -62,8 +62,7 @@ void  Capteurs:: lineTrackingTranquille() {
 
 void Capteurs::tournerGauche(){
 	Moteurs::tournerGauche();
-    ajustementPwmMoteurs(90,90);
-    _delay_ms(75);
+    Moteurs::boost();
 	ajustementPwmMoteurs(50, 50);	//Débuter rotation vers la gauche du robot
 }
 
@@ -79,15 +78,13 @@ void Capteurs::tournerGaucheTranquille(){
 
 void Capteurs::tournerDroite(){
 	Moteurs::tournerDroite();
-    ajustementPwmMoteurs(70,70);
-    _delay_ms(150);
+    Moteurs::boost();
 	ajustementPwmMoteurs(50, 50);	//Débuter roation vers la droite du robot
 
 }
 
 void Capteurs::tourner180Gauche(){
     tournerGauche();
-
     do {
         lecture(); //Acquisition des données en provenance des capteurs
     }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
@@ -95,9 +92,7 @@ void Capteurs::tourner180Gauche(){
     while (!sensors_[2]) {//Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
         lecture(); //Acquisition des données en provenance des capteurs
     }
-    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
-    ajustementPwmMoteurs(70,70);
-    _delay_ms(75);
+    Moteurs::freiner();
 }
 
 void Capteurs::tourner180Droite(){
@@ -111,9 +106,7 @@ void Capteurs::tourner180Droite(){
     {
         lecture(); //Acquisition des données en provenance des capteurs
     }
-    Moteurs::tournerGauche(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
-    ajustementPwmMoteurs(70,70);
-    _delay_ms(75);
+    Moteurs::freiner();
 }
 
 
@@ -128,13 +121,9 @@ void Capteurs::intersectionGauche(){
     {
         lecture();
     }
-    
-    Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
-    ajustementPwmMoteurs(70,70);
-    _delay_ms(75);		//on arrete les moteurs lorsque le robot est parallele a la ligne
-
-
+    Moteurs::freiner();
 }
+
 void Capteurs::intersectionDroite(){
     ajustementPwmMoteurs(60,60);
     _delay_ms(600);            //la ligne perpendiculaire au robot croise son axe de rotation
@@ -142,13 +131,10 @@ void Capteurs::intersectionDroite(){
 
     tournerDroite();            //debuter rotation
     lecture();                  //pour signaler que les capteurs sont eteints
-    while (!sensors_[2])
-    {
+    while (!sensors_[2]){
         lecture();
     }
-    Moteurs::tournerGauche(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
-    ajustementPwmMoteurs(70,70);
-    _delay_ms(75);  //on arrete les moteurs lorsque le robot est parallele a la ligne
+    Moteurs::freiner();
 }
 
 bool Capteurs::estIntersection(){

@@ -7,33 +7,15 @@ enum Etats {
 
 
 volatile uint8_t etat = COULEUR;              //Initialisation de la variable etat à l'état initial.
-volatile uint8_t triggerBonneIntersection;
-volatile uint8_t  compteurIntersection2;
 volatile uint16_t repetitionMinuterie = 0; 
 volatile char couleurChoisie = '\0';          //=null (pas encore choisi)
-volatile bool commencerParking = false;
-volatile bool peutRepartir = false;
 float uniteTempsDistance;
-char cote;                                    //Variable pour le choix du coté lors de l'étape avec les photorésitances.
+uint8_t triggerBonneIntersection;
+uint8_t  compteurIntersection2;
+char cote;                      //Variable pour le choix du coté lors de l'étape avec les photorésitances.
 bool minuterieActive = false;   //bool qui indique si la minuterie est active
-volatile uint8_t compteurPhoto = 0;
+uint8_t compteurPhoto = 0;
 
-/*
-ISR(INT0_vect){
-   if (etat == PHOTORESISTANCE){
-        switch(cote){
-            case DROIT:
-                EIMSK &= ~_BV(INT0);  //désactive INT0 si le coté a été choisi
-                etat++;     //passe à l'état suivant
-                break;
-            case GAUCHE:
-                EIMSK &= ~_BV(INT0); //désactive INT0 si le coté a été choisi
-                etat++;     //passe à l'état suivant
-                break;
-        }
-    }
-   
-}*/
 
 ISR(INT2_vect){
     if(etat == COULEUR){
@@ -68,28 +50,25 @@ ISR(PCINT1_vect){
 }
 
 ISR(TIMER2_COMPA_vect) {
-   // if ((etat == COMPTEURLIGNE_1) || (etat == PARKING_1) || (etat == CINQ40)){
-        if (minuterieActive){
-            repetitionMinuterie++;
-            minuterie(250);
-        }
-  
+    if (minuterieActive){
+        repetitionMinuterie++;
+        minuterie(250);
+    }
+
 }
 
 
 int main() {
-	Capteurs capteur;   //Création d'un objet de classe Capteur
-	etat = COULEUR;     //Assignation de l'état initiale COULEUR
-	
+	DDRB = 0x00;                //mode lecture pour lire les interrupts.
+	DDRC = 0x03;                //mode ecriture pour la DEL.
 	DDRD = 0xFF; //PORT D en sortie pour le signal des moteurs
-    initialisationPwmMoteurs();
+	
+	Capteurs capteur;   //Création d'un objet de classe Capteurs.
     
     //Machine à état décrivant le parcours du robot
     for(;;){
         switch(etat) {
-            case COULEUR: {       //CHOIX DE LA COULEUR
-                DDRC = 0xff;                //mode ecriture pour la DEL.
-                DDRB = 0x00;                //mode lecture pour lire les interrupts.
+            case COULEUR: {       //CHOIX DE LA COULEUR                
                 initialisationINT2(1,0);    //falling edge activates interrupt.
                 initialisationPCINT8();     //pin change interrupt activé sur B0.
                 while(etat == COULEUR);     //attend le interrupt pour la confirmation de la couleur.
@@ -97,6 +76,7 @@ int main() {
             }
             
             case UTURN:{        //ROTATION 180 DEGRÉS
+                initialisationPwmMoteurs();
                 capteur.tourner180Gauche();
                 etat = TO_GA;
                 //etat = COMPTEURLIGNE_2;
@@ -174,17 +154,14 @@ int main() {
                 Moteurs::reculer();
                 ajustementPwmMoteurs(50,50);
                 _delay_ms(1200);
-                ajustementPwmMoteurs(0,0);
-                DDRC &= ~_BV(2);
-               
+                Moteurs::freiner();            
                 
                 while(!(PINC & 0x04)){}
-                etat++;               //remet en écriture pour les moteurs.
+                etat = TO_ABC;               //remet en écriture pour les moteurs.
                 break;
             }
         
             case TO_ABC: {        //linetracking() jusqu'a l'intersection ABC et tourne a gauche sur le segment BC
-               
                 capteur.tourner180Droite();
                 switch(couleurChoisie){
                     case VERT: 
@@ -276,7 +253,6 @@ int main() {
                 }
                                     
                 while (!capteur.estIntersection()){
-                    //capteur.lecture();
                     capteur.lineTracking();
                 }
                 capteur.intersectionGauche();
@@ -292,9 +268,8 @@ int main() {
             }
             
             case CINQ40:{
-                //DDRD = 0xff;
                 Moteurs::avancer();
-                while(!(capteur.estPerdu())){ //avance jusqu'a la fin de la ligne.
+                while(!(capteur.estPerdu())){       //avance jusqu'a la fin de la ligne.
                     if (capteur.estIntersection())
                     {
                         while (capteur.estIntersection()){ //On souhaite passer tout droit l'intersection restante
@@ -308,8 +283,6 @@ int main() {
                 Moteurs::freiner();
                 _delay_ms(1000);
                 
-                
-               // capteur.tourner180Droite();
                 capteur.tournerDroite();
                 while (capteur.getSensor(2))
                     capteur.lecture();

@@ -39,7 +39,7 @@ void Moteurs::ecrire(){
 
 void Moteurs::boost(){
     ajustementPwmMoteurs(90, 90);
-    _delay_ms(50);
+    _delay_ms(100);
 }
 
 
