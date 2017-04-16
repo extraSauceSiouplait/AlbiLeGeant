@@ -78,8 +78,7 @@ int main() {
             case UTURN:{        //ROTATION 180 DEGRÉS
                 initialisationPwmMoteurs();
                 capteur.tourner180Gauche();
-                etat = TO_GA;
-                //etat = COMPTEURLIGNE_2;
+                etat = PARKING_2;
                 break;
             }
             
@@ -363,29 +362,68 @@ int main() {
 
             case GUIDAGEFOURCHE:
             {
-               Moteurs::avancer();
-               Moteurs::boost();
-               ajustementPwmMoteurs(50,50);
-               
-               do {     //on attent que le capteur se perde
-                   capteur.lecture();
-               } while (!capteur.estPerdu());
-               _delay_ms(200);
-               Moteurs::freiner();
-               _delay_ms(1000);
-               
-               switch(cote){
+                Moteurs::avancer();
+                Moteurs::boost();
+                ajustementPwmMoteurs(50,50);
+                while(!capteur.estPerdu()){
+                    capteur.lecture();
+                }
+                Moteurs::freiner();
+                _delay_ms(1000);
+                
+                switch(cote){
                     case GAUCHE:
-                        capteur.tournerGauche();                //on tourne le robot pour qu'il revienne sur l'intersection
-                        while(!capteur.getSensor(4))
+                        capteur.tournerGauche();
+                        while(!capteur.getSensor(3))
                             capteur.lecture();
+                        while(!capteur.estPerdu()){
+                            capteur.lineTrackingTranquille();
+                        }
+                        Moteurs::freiner();
+                        capteur.tournerDroite();
+                        _delay_ms(200);
+                        Moteurs::avancer();
+                        ajustementPwmMoteurs(50,50);
+                        while(capteur.estPerdu())
+                            capteur.lecture();
+                            
                         break;
+                        
                     case DROIT:
-                        capteur.tournerDroite();                //on tourne le robot pour qu'il revienne sur l'intersection
-                        while (!capteur.getSensor(0))
+                        capteur.tournerDroite();
+                        while(!capteur.getSensor(1))
                             capteur.lecture();
+                        while(!capteur.estPerdu())
+                            capteur.lineTrackingTranquille();
+                        Moteurs::freiner();
+                        capteur.tournerGauche();
+                        _delay_ms(200);
+                        Moteurs::avancer();
+                        ajustementPwmMoteurs(50,50);
+                        while(capteur.estPerdu())
+                            capteur.lecture();
+                        
                         break;
                 }
+                                                //le robot a atteint le prochain segment
+                if (compteurPhoto < 1)           //doit passer par un autre T ou est rendu au pointillé
+                {
+                    while (!capteur.estIntersection())
+                    {
+                        capteur.lineTracking();
+                    }
+                    Moteurs::freiner();
+                    etat = PHOTORESISTANCE;
+                    cote = '\0';
+                    compteurPhoto++;
+                }
+                else
+                    etat = INTERMITTENCE;
+                break;
+                
+                
+                
+           /*
                    
                
                 Moteurs::freiner();
@@ -434,7 +472,7 @@ int main() {
                         break;
                     case DROIT:
                         capteur.tournerGauche();                //on ajuste l'angle du robot pour qu'il soit face au prochain segment
-                        _delay_ms(420);
+                        _delay_ms(350);
                         break;
                 }
                 Moteurs::freiner();
@@ -460,7 +498,7 @@ int main() {
                 }
                 else
                     etat = INTERMITTENCE;
-                break;
+                break;*/
             }
 
             case INTERMITTENCE:{
@@ -504,45 +542,6 @@ int main() {
            }
             case PARKING_2:
             {
-				/*
-                const uint8_t SEGMENT_PARALLELE = 15;
-                const uint8_t SEGMENT_PERPENDICULAIRE = 12   ;
-                
-                repetitionMinuterie = 0;
-                minuterieActive = true;
-                minuterie(250);
-                ajustementPwmMoteurs(60,60);
-                while (repetitionMinuterie < (uniteTempsDistance * SEGMENT_PARALLELE)){}
-                
-                minuterieActive = false;
-                
-                if (couleurChoisie == VERT)
-                    capteur.tournerGauche();
-                else
-                    capteur.tournerDroite();
-                
-                _delay_ms(1500);
-                
-                
-                
-                Moteurs::avancer();
-                repetitionMinuterie = 0;
-                minuterieActive = true;
-                minuterie(250);
-                ajustementPwmMoteurs(60,60);
-                while (repetitionMinuterie < (uniteTempsDistance * SEGMENT_PERPENDICULAIRE)){}
-                
-                minuterieActive = false;
-                
-                
-                
-                capteur.tournerDroite();
-                _delay_ms(1500);
-
-                ajustementPwmMoteurs(0,0);
-                for(;;){}
-                */
-                
                 while(!(PINC & 0x04)){}
                 
                 switch(couleurChoisie){
@@ -553,48 +552,42 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(65,62);
-                        while (repetitionMinuterie < (uniteTempsDistance * 19.2)){}
+                        ajustementPwmMoteurs(68,60);
+                        while (repetitionMinuterie < (100)){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
-                        
-                        capteur.tournerDroite();
-                        _delay_ms(600);
-                        Moteurs::freiner();
+                        /*
                         
                         Moteurs::reculer();
                         ajustementPwmMoteurs(70,70);
                         
                         _delay_ms(500);
                         Moteurs::freiner();
+                        */
                         break;
                     
-                    case ROUGE:{
+                    case ROUGE:
                         capteur.tourner180DroiteFinal();
                         Moteurs::reculer();
                         
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(62,65);
-                        while (repetitionMinuterie < (uniteTempsDistance * 19.2)){}
+                        ajustementPwmMoteurs(72,65);
+                        while (repetitionMinuterie < (85)){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
                         
                         capteur.tournerGauche();
-                        _delay_ms(600);
+                        _delay_ms(700);
                         Moteurs::freiner();
                         
-                        Moteurs::reculer();
-                        ajustementPwmMoteurs(70,70);
-                        
-                        _delay_ms(500);
-                        Moteurs::freiner();
+
                         break;
-                    }  
-                }
+                     
+        
                 while(1){};
                 }
                 

@@ -42,22 +42,23 @@ void  Capteurs:: lineTrackingTranquille() {
         // Le robot doit aller a gauche toute.
         ajustementPwmMoteurs(90,40);
     }
+     else if(sensors_[4]) {
+        //Le robot doit aller a droite toute!
+        ajustementPwmMoteurs(40,90);
+    }   
     else if (sensors_[1]){   
         // Le robot doit tourner un peu a gauche.
         ajustementPwmMoteurs(70, 40);
-    }
-    else if (sensors_[2]){
-        // Le robot va tout droit.
-        ajustementPwmMoteurs(60, 60);
     }
     else if(sensors_[3]) {
         //Le robot doit tourner un peu a droite
         ajustementPwmMoteurs(40,70);
     }
-    else if(sensors_[4]) {
-        //Le robot doit aller a droite toute!
-        ajustementPwmMoteurs(40,90);
+    else if (sensors_[2]){
+        // Le robot va tout droit.
+        ajustementPwmMoteurs(60, 60);
     }
+
 }
 
 void Capteurs::tournerGauche(){
@@ -97,18 +98,15 @@ void Capteurs::tourner180Gauche(){
 
 void Capteurs::tourner180GaucheFinal(){
     tournerGauche();
-
-    do {
-        lecture(); //Acquisition des données en provenance des capteurs
-    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
-
-    while (!sensors_[5]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
-        lecture(); //Acquisition des données en provenance des capteurs
-
-    while (sensors_[5]) 
-        lecture();
     
-    Moteurs::freiner();
+    
+    while (!sensors_[4]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
+        lecture(); //Acquisition des données en provenance des capteurs
+
+    while (sensors_[4]) 
+        lecture();
+    _delay_ms(200);
+
 }
 
 void Capteurs::tourner180Droite(){
@@ -122,15 +120,10 @@ void Capteurs::tourner180Droite(){
     {
         lecture(); //Acquisition des données en provenance des capteurs
     }
-    Moteurs::freiner();
 }
 
 void Capteurs::tourner180DroiteFinal(){
     tournerDroite();
-
-    do {
-        lecture(); //Acquisition des données en provenance des capteurs
-    }  while (!estPerdu()); //Tourne tant que les capteurs sont actifs, afin de s'assurer que les capteurs quittent la ligne
 
     while (!sensors_[0]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
         lecture(); //Acquisition des données en provenance des capteurs
