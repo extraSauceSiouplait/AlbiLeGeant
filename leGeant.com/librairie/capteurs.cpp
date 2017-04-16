@@ -70,7 +70,7 @@ void Capteurs::tournerGaucheTranquille(){
 	Moteurs::tournerGauche();
     ajustementPwmMoteurs(70,70);
     _delay_ms(100);
-	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot
+	ajustementPwmMoteurs(45, 45);	//Débuter rotation vers la gauche du robot               
     
 }
 
@@ -108,8 +108,8 @@ void Capteurs::tourner180GaucheFinal(){
     while (!sensors_[5]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
         lecture(); //Acquisition des données en provenance des capteurs
 
-    while (sensor_[5]) 
-        lecture;
+    while (sensors_[5]) 
+        lecture();
     
     Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
     ajustementPwmMoteurs(70,70);
@@ -142,8 +142,8 @@ void Capteurs::tourner180DroiteFinal(){
     while (!sensors_[0]) //Continuer de tourner tant que le capteur du milieu n'est pas actif, afin de retrouver la ligne
         lecture(); //Acquisition des données en provenance des capteurs
 
-    while (sensor_[0]) 
-        lecture;
+    while (sensors_[0]) 
+        lecture();
     
     Moteurs::tournerDroite(); //On inverse la rotation pour freiner lorsque la présente routine est terminée
     ajustementPwmMoteurs(70,70);

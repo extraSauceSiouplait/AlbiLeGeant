@@ -628,7 +628,7 @@ int main() {
 
                     Moteurs::freiner();
                     
-                    capteur.tournerDroit();
+                    capteur.tournerDroite();
                     _delay_ms(600);
                     Moteurs::freiner();
                     
@@ -637,6 +637,7 @@ int main() {
                     
                     _delay_ms(500);
                     Moteurs::freiner();
+                }
                     
                   else {
                     
@@ -665,7 +666,6 @@ int main() {
                     }  
                 }
                 while(1);
-            }
             
         }
         
