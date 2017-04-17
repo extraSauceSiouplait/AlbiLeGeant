@@ -12,17 +12,6 @@
 
 //************FONCTIONS************//
 
-/*
-bool verifierRebondMecanique(){
-    if(PIND == 0x04){                    // On appelle la fonction après qu'un signal du bouton-poussoir soit détecté. Elle s'assure que celui-ci (le signal)
-        _delay_ms(10);                   //est encore present 10ms plus tard pour etre sur que le contact soit vrai.
-       if (PIND == 0x04)
-            return true;
-    }
-    return false;
-}
-*/
-
 // Permet l'ajustement de la fréquence pour jouer une sonorité
 void ajustementPwmPiezo(double frequence){          //TIMER 2 (D7 et D6)
     TCNT0 = 0x00;
@@ -37,7 +26,7 @@ void ajustementPwmPiezo(double frequence){          //TIMER 2 (D7 et D6)
     TCCR0B &= ~(1 << CS01);
   
 
-    OCR0A = uint8_t((F_CPU/1024) / (2*frequence));
+    OCR0A = ((F_CPU/1024) / (2*frequence));
 }
 
 void arretPiezo() {     
@@ -158,4 +147,84 @@ void minuterie(uint8_t duree){
     
     sei();
 }
+void jouerFrequence (int frequence){
+    int periode = 1000000 / frequence;
+    PORTB = 0x01;
+    for(int i = 0; i < periode; i += 2)
+        _delay_us(1);
+    PORTB = 0x00;
+    for(int i = 0; i < periode; i += 2)
+        _delay_us(1);
+}
 
+void jouerNote(int frequence, float temps){
+    const int DUREE_TEMPS = 650;
+    float duree = DUREE_TEMPS * temps;
+    duree *= 1000;
+    float periode = 1000000 / frequence;
+    for(float i = 0; i < duree / periode; i++)
+        jouerFrequence(frequence);
+}
+
+/*************************************
+ * PacMan mesdames et messieurs
+ * Author: Tōru Iwatani
+ * Interpreted by: William Harvey et Samuel Meilleur
+ ***********************************/ 
+bool jouerPacMan(){
+
+    const float RONDE = 2;
+    const float BLANCHE = RONDE/2;
+    const float NOIRE = BLANCHE/2;
+    const float CROCHE = NOIRE/2;
+    const float DOUBLE_CROCHE = CROCHE/2;
+    const float TRIPLE_CROCHE = DOUBLE_CROCHE/2;    
+
+    jouerNote(494,DOUBLE_CROCHE);    //Si (0)
+    jouerNote(988,DOUBLE_CROCHE);    //Si (+1)
+    jouerNote(740,DOUBLE_CROCHE);    //Fa# (+1)
+    jouerNote(623,DOUBLE_CROCHE);    //Mib (+1)
+    
+    jouerNote(988,TRIPLE_CROCHE);    //Si (+1)
+    jouerNote(740,TRIPLE_CROCHE*1.5);    //Fa# (+1)
+    jouerNote(622,CROCHE);    //Mib (+1)
+    
+    
+    jouerNote(523,DOUBLE_CROCHE);    //Do (+1)
+    jouerNote(1046,DOUBLE_CROCHE); //Do (+2)
+    jouerNote(784,DOUBLE_CROCHE);    //Sol (+1)
+    jouerNote(659,DOUBLE_CROCHE);    //Mi (+1)
+    
+    jouerNote(1046,TRIPLE_CROCHE); //Do (+2)
+    jouerNote(784,TRIPLE_CROCHE*1.5);    //Sol (+1)
+    jouerNote(659,CROCHE);    //Mi (+1)
+    
+    
+    jouerNote(494,DOUBLE_CROCHE);    //Si (0)
+    jouerNote(990,DOUBLE_CROCHE);    //Si (+1)
+    jouerNote(740,DOUBLE_CROCHE);    //Fa# (+1)
+    jouerNote(622,DOUBLE_CROCHE);    //Mib (+1)
+    
+    jouerNote(988,TRIPLE_CROCHE);    //Si (+1)
+    jouerNote(740,TRIPLE_CROCHE*1.5);    //Fa# (+1)
+    jouerNote(622,CROCHE);    //Mib (+1)    
+    
+    jouerNote(622,TRIPLE_CROCHE);    //Mib (+1)
+    jouerNote(659,TRIPLE_CROCHE);    //Mi (+1)
+    jouerNote(698,DOUBLE_CROCHE*0.9);  //Fa (+1)
+    
+    _delay_ms(20); //Silence pour staccato
+    
+    jouerNote(698,TRIPLE_CROCHE);  //Fa (+1)
+    jouerNote(740,TRIPLE_CROCHE);    //Fa# (+1)
+    jouerNote(784,DOUBLE_CROCHE*0.9);    //Sol (+1)
+    
+    _delay_ms(20); //Silence pour staccato
+    jouerNote(784,TRIPLE_CROCHE);   //Sol (+1)
+    jouerNote(830,TRIPLE_CROCHE);   //lab (+1)
+    jouerNote(880,DOUBLE_CROCHE);   //la (+1)
+    jouerNote(988,DOUBLE_CROCHE);   //la (+1)
+    
+    return true; //Retourne un bool pour signifier au robot que la chanson est terminée
+    
+}
