@@ -20,6 +20,10 @@ bool Capteurs::getSensor(uint8_t indice) {
     return sensors_[indice];
 }
 
+bool Capteurs::estIntersection(){
+    return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));       //vrai si tous les capteurs de gauche ou/et droite sont actifs
+}
+
 bool Capteurs::estPerdu(){
     for(uint8_t i = 0; i < 200; i++){
         if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
@@ -45,13 +49,9 @@ bool Capteurs::estPerduLong(){
 }
 
 
+bool Capteurs::sensors_[5];
 
-
-
-
-
-
-
+ /*
 
 void Capteurs::attendreIntersection(){
     while(!estIntersection ())
@@ -202,10 +202,7 @@ void Capteurs::intersectionDroite(){
     }
     Moteurs::freiner();
 }
-
-bool Capteurs::estIntersection(){
-    return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));       //vrai si tous les capteurs de gauche ou/et droite sont actifs
-}
+*/
 
 
    
