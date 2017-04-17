@@ -171,7 +171,7 @@ int main() {
              */
             case PARKING_1: {  
                 
-                const float DISTANCE_PARKING = 26.0;
+                const float DISTANCE_PARKING = 27.0;
                 repetitionMinuterie = 0;
                 minuterieActive = true;
                 minuterie(250);
@@ -180,14 +180,14 @@ int main() {
                 }
                 minuterieActive = false;
                 Moteurs::tournerGauche();
-                _delay_ms(1300);
+                _delay_ms(900);
                 Moteurs::reculer();
                 ajustementPwmMoteurs(50,50);
                 _delay_ms(1200);
                 Moteurs::freiner();            
                 
                 while(!(PINC & 0x04)){}
-                etat = TO_ABC;               //remet en écriture pour les moteurs.
+                etat = TO_ABC;               
                 break;
             }
             
@@ -207,7 +207,7 @@ int main() {
                     
                 for (uint8_t i = 0; i < triggerBonneIntersection - 1; i++){
                     Moteurs::attendreIntersection();
-                    ajustementPwmMoteurs(50,50); 
+                    ajustementPwmMoteurs(45,45); 
                     while (Capteurs::estIntersection()){
                         Capteurs::lecture();
                     }
@@ -252,7 +252,7 @@ int main() {
 
                 while(Capteurs::estIntersection()) {      //le robot est sur l'intersection
                     Capteurs::lecture();                    
-                    ajustementPwmMoteurs(50,50); 
+                    ajustementPwmMoteurs(45,45); 
 
                 }
                 break;
@@ -351,9 +351,12 @@ int main() {
                 while (!Capteurs::estIntersection()){
                     Moteurs::lineTrackingTranquille();
                 }
-                
-                Moteurs::intersectionDroite();  
-                
+                Moteurs::freiner();
+                _delay_ms(1000);
+                Moteurs::intersectionDroite(); 
+                Moteurs::freiner();
+                _delay_ms(1000);
+
                 Moteurs::attendreIntersection();
                 Moteurs::intersectionGauche();
                 
@@ -422,7 +425,7 @@ int main() {
                         Moteurs::freiner();
                         
                         Moteurs::tournerDroite();
-                        _delay_ms(200);
+                        _delay_ms(63);
                         Moteurs::avancer();
                         ajustementPwmMoteurs(50,50);
                         while(Capteurs::estPerdu())
@@ -438,7 +441,7 @@ int main() {
                             Moteurs::lineTrackingTranquille();
                         Moteurs::freiner();
                         Moteurs::tournerGauche();
-                        _delay_ms(200);
+                        _delay_ms(70);
                         Moteurs::avancer();
                         ajustementPwmMoteurs(50,50);
                         while(Capteurs::estPerdu())
@@ -512,19 +515,11 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(68,60);
+                        ajustementPwmMoteurs(50,50);
                         while (repetitionMinuterie < (100)){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
-                        /*
-                        
-                        Moteurs::reculer();
-                        ajustementPwmMoteurs(70,70);
-                        
-                        _delay_ms(500);
-                        Moteurs::freiner();
-                        */
                         break;
                     
                     case ROUGE:
@@ -534,20 +529,17 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(72,65);
+                        ajustementPwmMoteurs(50,50);
                         while (repetitionMinuterie < (85)){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
                         
                         Moteurs::tournerGauche();
-                        _delay_ms(700);
+                        _delay_ms(500);
                         Moteurs::freiner();
-                        
-
                         break;
                      
-        
                 while(1){};
                 }
                 
