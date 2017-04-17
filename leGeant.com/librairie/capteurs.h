@@ -15,7 +15,7 @@ public:
     
     /*
      * Stocke les valeurs des capteurs IR.
-     * --> sesors_[]
+     * --> sensors_[]
      */
 	void lecture();		  // Méthode permettant l'acquisition des données en provenance du capteur de ligne
     
@@ -95,13 +95,17 @@ public:
      */
     void tourner180GaucheFinal();
     
-
     
     /*
      * Pour le CINQ40
      * Version plus précise de tournerGauche()
      */
     void tournerGaucheTranquille();
+    
+    /*
+     * Fait du line tracking tant que les capteurs ne détectent pas une intersetction.
+     */
+    void attendreIntersection();
     
 private:
     bool sensors_[5];

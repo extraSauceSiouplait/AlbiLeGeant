@@ -4,10 +4,6 @@
 //Initialise la lecture des capteurs sur le port A
 
 
-bool Capteurs::getSensor(uint8_t indice) {
-    return sensors_[indice];
-}
-
 Capteurs::Capteurs() {
     DDRA = 0x00; //Port A en entrée pour permettre lecture des capteurs
     for (int i = 0; i < 5; i++)
@@ -18,6 +14,51 @@ void Capteurs::lecture() {
     for (int i = 0; i < 5; i++)
         sensors_[i] = (PINA >> (i + 2)) & 0x01;     //lit chaque capteur et store l'etat dans un booleen.   (capteurs sur A2 a A7)
 }
+
+
+bool Capteurs::getSensor(uint8_t indice) {
+    return sensors_[indice];
+}
+
+bool Capteurs::estPerdu(){
+    for(uint8_t i = 0; i < 200; i++){
+        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
+            _delay_ms(1);
+            lecture();
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+bool Capteurs::estPerduLong(){
+    for(uint16_t i = 0; i < 297; i++){
+        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
+            _delay_ms(2);
+            lecture();
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+void Capteurs::attendreIntersection(){
+    while(!estIntersection ())
+        lineTracking();
+}
+     
+
 
 void  Capteurs:: lineTracking() {
     lecture();
@@ -36,7 +77,7 @@ void  Capteurs:: lineTracking() {
     }
 }
 
-void  Capteurs:: lineTrackingTranquille() {
+void  Capteurs::lineTrackingTranquille() {
     lecture();
 	Moteurs::avancer();
     if (sensors_[0]){      
@@ -167,28 +208,5 @@ bool Capteurs::estIntersection(){
 }
 
 
-bool Capteurs::estPerdu(){
-    for(uint8_t i = 0; i < 200; i++){
-        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
-            _delay_ms(1);
-            lecture();
-        }
-        else
-            return false;
-    }
-    return true;
-}
-
-bool Capteurs::estPerduLong(){
-    for(uint16_t i = 0; i < 297; i++){
-        if (!(sensors_[0] || sensors_[1] || sensors_[2] || sensors_[3] || sensors_[4])) {
-            _delay_ms(2);
-            lecture();
-        }
-        else
-            return false;
-    }
-    return true;
-}
-        
+   
 
