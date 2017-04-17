@@ -12,31 +12,99 @@ class Capteurs {
     
 public:
     Capteurs();
-
+    
+    /*
+     * Stocke les valeurs des capteurs IR.
+     * --> sesors_[]
+     */
 	void lecture();		  // Méthode permettant l'acquisition des données en provenance du capteur de ligne
-	void lineTracking();  // Methode pour faire avancer le robot sur son parcours.
-	void tourner180();	  // Methode pour exécuter le 180 degrés depuis la ligne de départ
+    
+    /*
+     * Effectue une lecture()
+     * Ajuste la direction en fonction de la pos. du robot sur la ligne
+     */
+	void lineTracking();
+    
+    /*
+     * Pour le guidage avant la partie Photorésistance
+     * Version plus précise du lineTracking() général
+     */
+    void lineTrackingTranquille();
+    
+    /*
+     * Ajuste la direction pour tourner à Gauche indéfiniment
+     */
 	void tournerGauche();
+    
+    /*
+     * Ajuste la direction des moteurs pour tourner à Droite indéfiniment
+     */    
 	void tournerDroite();
-    void intersectionDroite();	//Methode qui gere une intersection de droite depuis sa detection par les capteurs
-    void intersectionGauche();	//Methode qui gere une intersection de gauche depuis sa detection par les capteurs	
-    bool estIntersection();		//Methode qui retourne vrai si les capteurs detectent une intersection
+    
+    
+    /*
+     * Ajuste la direction des moteurs afin de réaliser un virage d'intersection à Droite
+     */
+    void intersectionDroite();
+    
+    /*
+     * Dirige les moteurs afin de réaliser un virage d'intersection à Gauche
+     */
+    void intersectionGauche();	
+    
+    /*
+     * Vérifie si les capteurs voient une intersection
+     */
+    bool estIntersection();
+    
+    /*
+     * Retourne la valeur du capteur IR indiqué en paramètre.
+     */
     bool getSensor(uint8_t indice);
+    
+    /*
+     * Vérifie si les capteurs on réellement perdu la ligne
+     */
     bool estPerdu();
+    
+    /*
+     * Pour la partie ALLERETOUR
+     * Version plus précise de estPerdu
+     */
     bool estPerduLong();
+     
+    /*
+     * Sur une ligne droite, le robot tourne a Gauche jusqu'à ce qu'il retrouve la ligne.
+     */
     void tourner180Gauche();
+    
+    /*
+     * Sur une ligne droite, le robot tourne a Droite jusqu'à ce qu'il retrouve la ligne.
+     */
     void tourner180Droite();
     
+    /*
+     * Pour le parking Final.
+     * Sur une ligne droite, tourne a Droite jusqu'à ce que tous les capteurs redépassent la ligne
+     */
     void tourner180DroiteFinal();
+    
+    /*
+     * Pour le parking Final.
+     * Sur une ligne droite, tourne a Gauche jusqu'à ce que tous les capteurs redépassent la ligne
+     */
     void tourner180GaucheFinal();
-        
-    void lineTrackingTranquille();
+    
+
+    
+    /*
+     * Pour le CINQ40
+     * Version plus précise de tournerGauche()
+     */
     void tournerGaucheTranquille();
+    
 private:
     bool sensors_[5];
-   // bool oldLigne_[5];
-   // bool newLigne_[5];
-
     
 };
 

@@ -3,6 +3,7 @@
 //Constructeur par défaut
 //Initialise la lecture des capteurs sur le port A
 
+
 bool Capteurs::getSensor(uint8_t indice) {
     return sensors_[indice];
 }
