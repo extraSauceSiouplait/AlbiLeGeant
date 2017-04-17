@@ -79,10 +79,11 @@ ISR(TIMER2_COMPA_vect) {
 
 
 int main() {
-    DDRB = 0x00;       //mode lecture pour lire les interrupts.
+    DDRB = 0x0A;       //mode lecture pour lire les interrupts.
     DDRC = 0x03;       //mode ecriture pour la DEL.
     DDRD = 0xFF;       //PORT D en sortie pour le signal des moteurs
     
+    jouerPacMan();
     //Machine à état décrivant le parcours du robot
     for(;;){
         switch(etat) {
@@ -99,10 +100,12 @@ int main() {
             /*
              * ROTATION 180 DEGRÉS
              */
-            case UTURN:{    
+            case UTURN:{   
+                jouerPacMan();
                 initialisationPwmMoteurs();
                 Moteurs::tourner180Gauche();
-                etat = TO_GA;
+                //etat = TO_GA;
+                etat = COMPTEURLIGNE_2;
                 break;
             }
             
@@ -185,7 +188,9 @@ int main() {
                 ajustementPwmMoteurs(50,50);
                 _delay_ms(1200);
                 Moteurs::freiner();            
-                
+                ajustementPwmPiezo(660);
+                _delay_ms(1000);
+                arretPiezo();
                 while(!(PINC & 0x04)){}
                 etat = TO_ABC;               
                 break;
@@ -351,13 +356,12 @@ int main() {
                 while (!Capteurs::estIntersection()){
                     Moteurs::lineTrackingTranquille();
                 }
-                Moteurs::freiner();
-                _delay_ms(1000);
                 Moteurs::intersectionDroite(); 
                 Moteurs::freiner();
-                _delay_ms(1000);
 
-                Moteurs::attendreIntersection();
+                while (!Capteurs::estIntersection()){
+                    Moteurs::lineTrackingTranquille();
+                }
                 Moteurs::intersectionGauche();
                 
                 Moteurs::attendreIntersection();
@@ -425,7 +429,7 @@ int main() {
                         Moteurs::freiner();
                         
                         Moteurs::tournerDroite();
-                        _delay_ms(63);
+                        _delay_ms(70);
                         Moteurs::avancer();
                         ajustementPwmMoteurs(50,50);
                         while(Capteurs::estPerdu())
@@ -441,7 +445,7 @@ int main() {
                             Moteurs::lineTrackingTranquille();
                         Moteurs::freiner();
                         Moteurs::tournerGauche();
-                        _delay_ms(70);
+                        _delay_ms(80);
                         Moteurs::avancer();
                         ajustementPwmMoteurs(50,50);
                         while(Capteurs::estPerdu())
@@ -469,13 +473,14 @@ int main() {
              */
             case INTERMITTENCE:{
                 for (uint8_t compteurBlanc = 0; compteurBlanc < 5; compteurBlanc++){
-                    Moteurs::attendreIntersection();             //si compteur = 0, on commence les pointillé
+                    while(!Capteurs::estPerdu())             //si compteur = 0, on commence les pointillé
+                        Moteurs::lineTracking();
                     ajustementPwmMoteurs(50,50);
-                    ajustementPwmPiezo(990);
                     
+                    if(compteurBlanc == 0)
+                        ajustementPwmPiezo(990);
                     while (Capteurs::estPerdu())
                         Capteurs::lecture();
-                    
                 }
                 arretPiezo();
                 
@@ -515,8 +520,8 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(50,50);
-                        while (repetitionMinuterie < (100)){}
+                        ajustementPwmMoteurs(58,48);
+                        while (repetitionMinuterie < 100){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
@@ -529,8 +534,8 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(50,50);
-                        while (repetitionMinuterie < (85)){}
+                        ajustementPwmMoteurs(48,58);
+                        while (repetitionMinuterie < 85){}
                         minuterieActive = false;
 
                         Moteurs::freiner();

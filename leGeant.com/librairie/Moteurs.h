@@ -31,7 +31,6 @@ public:
     static void tourner180Droite();
     static void tourner180DroiteFinal();
     static void tourner180GaucheFinal();
-    static void tournerGaucheTranquille();
   
     
 private:

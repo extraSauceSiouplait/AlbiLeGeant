@@ -149,10 +149,10 @@ void minuterie(uint8_t duree){
 }
 void jouerFrequence (int frequence){
     int periode = 1000000 / frequence;
-    PORTB = 0x01;
+    PORTB |= (1 << 1);
     for(int i = 0; i < periode; i += 2)
         _delay_us(1);
-    PORTB = 0x00;
+    PORTB &= ~(1 << 1);
     for(int i = 0; i < periode; i += 2)
         _delay_us(1);
 }
