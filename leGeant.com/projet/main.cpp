@@ -177,18 +177,23 @@ int main() {
             repetitionMinuterie = 0;
             minuterieActive = true;
             minuterie(250);
+            
             while (repetitionMinuterie < (DISTANCE_PARKING * uniteTempsDistance)) {
                 Moteurs::lineTracking();
             }
+            
             minuterieActive = false;
             Moteurs::tournerGauche();
             _delay_ms(900);
+            
             Moteurs::reculer();
             ajustementPwmMoteurs(50,50);
             _delay_ms(1200);
+            
             Moteurs::freiner();
             ajustementPwmPiezo(660);
             _delay_ms(1000);
+            
             arretPiezo();
             while(!(PINC & 0x04)) {}
             etat = TO_ABC;

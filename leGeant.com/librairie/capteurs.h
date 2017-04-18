@@ -21,7 +21,6 @@ public:
     static bool getSensor(uint8_t indice);
     
     /*
-     * 
      * Vérifie si les capteurs voient une intersection
      */
     static bool estIntersection();
