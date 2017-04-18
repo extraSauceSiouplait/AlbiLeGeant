@@ -100,7 +100,7 @@ int main() {
          * ROTATION 180 DEGRÉS
          */
         case UTURN: {
-            jouerPacMan();
+            //jouerPacMan();
             initialisationPwmMoteurs();
             Moteurs::tourner180Gauche();
             etat = TO_GA;
@@ -172,25 +172,32 @@ int main() {
          * EFFECTUE LE PARKING DANS LE BON ESPACE
          */
         case PARKING_1: {
-
-            const float DISTANCE_PARKING = 27.0;
+            float distanceParking = 0;
+            switch(couleurChoisie){
+                case ROUGE:
+                    distanceParking = 28.5;
+                    break;
+                case VERT: 
+                    distanceParking = 27.0;
+                    break;
+            }
             repetitionMinuterie = 0;
             minuterieActive = true;
             minuterie(250);
             
-            while (repetitionMinuterie < (DISTANCE_PARKING * uniteTempsDistance)) {
+            while (repetitionMinuterie < (distanceParking * uniteTempsDistance)) {
                 Moteurs::lineTracking();
             }
             
             minuterieActive = false;
             Moteurs::tournerGauche();
-            _delay_ms(900);
-            
+            _delay_ms(1100);
+            Moteurs::freiner();
             Moteurs::reculer();
             ajustementPwmMoteurs(50,50);
-            _delay_ms(1200);
-            
+            _delay_ms(1100);
             Moteurs::freiner();
+            
             ajustementPwmPiezo(660);
             _delay_ms(1000);
             
@@ -356,13 +363,13 @@ int main() {
         case INTERSECTION_PHOTO: {
 
             while (!Capteurs::estIntersection()) {
-                Moteurs::lineTrackingTranquille();
+                Moteurs::lineTrackingExtreme();
             }
             Moteurs::intersectionDroite();
             Moteurs::freiner();
 
             while (!Capteurs::estIntersection()) {
-                Moteurs::lineTrackingTranquille();
+                Moteurs::lineTrackingExtreme();
             }
             Moteurs::intersectionGauche();
 
@@ -416,7 +423,7 @@ int main() {
                 Capteurs::lecture();
             }
             Moteurs::freiner();
-            _delay_ms(500);
+            _delay_ms(200);
 
             switch(cote) {
             case GAUCHE:
@@ -424,14 +431,16 @@ int main() {
                 while(!Capteurs::getSensor(3))
                     Capteurs::lecture();
                 while(!Capteurs::estPerdu()) {
-                    Moteurs::lineTrackingTranquille();
+                    Moteurs::lineTrackingExtreme();
                 }
-                Moteurs::freiner();
-
+                Moteurs::freiner();                
+                Moteurs::boost();
                 Moteurs::tournerDroite();
-                _delay_ms(475);
+                _delay_ms(700);
+                Moteurs::freiner();
                 Moteurs::avancer();
-                ajustementPwmMoteurs(65,50);
+                Moteurs::boost();
+                ajustementPwmMoteurs(65,45);
                 while(Capteurs::estPerdu())
                     Capteurs::lecture();
 
@@ -442,12 +451,15 @@ int main() {
                 while(!Capteurs::getSensor(1))
                     Capteurs::lecture();
                 while(!Capteurs::estPerdu())
-                    Moteurs::lineTrackingTranquille();
+                    Moteurs::lineTrackingExtreme();
                 Moteurs::freiner();
                 Moteurs::tournerGauche();
-                _delay_ms(400);
+                _delay_ms(650);
+                Moteurs::freiner();
                 Moteurs::avancer();
-                ajustementPwmMoteurs(50,65);
+                Moteurs::boost();
+                
+                ajustementPwmMoteurs(52,65);
                 while(Capteurs::estPerdu())
                     Capteurs::lecture();
                 break;
@@ -493,14 +505,9 @@ int main() {
         case TO_GAH: {
             Moteurs::attendreIntersection();
             Moteurs::intersectionGauche();
-
-verif:
             while (!Capteurs::estPerdu()) {
                 Moteurs::lineTracking();
             }
-            _delay_ms(200);
-            if(!Capteurs::estPerdu())
-                goto verif;
             Moteurs::freiner();
             etat = PARKING_2;
             break;
@@ -515,14 +522,16 @@ verif:
             switch(couleurChoisie) {
             case VERT:
                 Moteurs::tourner180GaucheFinal();
+                Moteurs::freiner();
+                _delay_ms(500);
                 Moteurs::reculer();
 
                 repetitionMinuterie = 0;
                 minuterieActive = true;
                 minuterie(250);
                 Moteurs::boost();
-                ajustementPwmMoteurs(58,48);
-                while (repetitionMinuterie < 92) {}
+                ajustementPwmMoteurs(60,48);
+                while (repetitionMinuterie < 88) {}
                 minuterieActive = false;
 
                 Moteurs::freiner();
@@ -530,14 +539,16 @@ verif:
 
             case ROUGE:
                 Moteurs::tourner180DroiteFinal();
+                Moteurs::freiner();
+                _delay_ms(500);
                 Moteurs::reculer();
 
                 repetitionMinuterie = 0;
                 minuterieActive = true;
                 minuterie(250);
                 Moteurs::boost();
-                ajustementPwmMoteurs(45,58);
-                while (repetitionMinuterie < 101) {}
+                ajustementPwmMoteurs(46,58);
+                while (repetitionMinuterie < 94) {}
                 minuterieActive = false;
 
                 Moteurs::freiner();
@@ -546,6 +557,7 @@ verif:
             
             }
             etat = -1;
+            break;
         }
 
         }
