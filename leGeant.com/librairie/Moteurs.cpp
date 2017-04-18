@@ -5,11 +5,9 @@
 /*************** AJUSTEMENT DES DIRECTION ***************/
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Mutateur des attributs directionGauche/Droite. Envoie les valeurs aux moteurs.
+ * \param gauche direction du moteur gauche (0 = avant, 1 = arrière).
+ * \param droit direction du moteur droit (0 = avant, 1 = arrière).
  */
 void Moteurs::setDirections(bool droit, bool gauche) {
     directionDroit_ = droit;
@@ -18,55 +16,35 @@ void Moteurs::setDirections(bool droit, bool gauche) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Change la direction des moteurs: mode marche arrière.
  */
 void Moteurs::reculer() {
     setDirections(true, true);
 }
 
-/**
- * \fn 
- * 
- * \param
- * 
- * \return
+/** 
+ * \brief Change la direction des moteurs: mode marche avant.
  */
 void Moteurs::avancer() {
     setDirections(false, false);
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Change la direction des moteurs: mode rotation à Droite.
  */
 void Moteurs::directionDroite() {
     setDirections(true, false);
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Change la direction des moteurs: mode rotation à Gauche.
  */
 void Moteurs::directionGauche() {
     setDirections(false, true);
 }
 
-/**
- * \fn 
- * 
- * \param
- * 
- * \return
+/** 
+ * \brief Écrit sur les broches des moteurs les attributs de classe.
  */
 void Moteurs::ecrire() {
     PORTD |= (directionDroit_ << 3) | (directionGauche_ << 2);
@@ -79,11 +57,7 @@ void Moteurs::ecrire() {
 /*************** AJUSTEMENT PWM ***************/
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Brise l'inertie d'arrêt des engrenages afin d'activer les roues. Précède les changements de mouvement du robot.
  */
 void Moteurs::boost() {
     ajustementPwmMoteurs(90,90);
@@ -91,11 +65,7 @@ void Moteurs::boost() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Brise l'inertie de mouvement des engrenages afin d'arrêter les roues.
  */
 void Moteurs::freiner() {
     setDirections(!directionDroit_, !directionGauche_);
@@ -106,11 +76,7 @@ void Moteurs::freiner() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Suit la ligne enregistrée par les capteurs IR.
  */
 void  Moteurs:: lineTracking() {
     Capteurs::lecture();      //lit la valeur des capteurs.
@@ -119,21 +85,17 @@ void  Moteurs:: lineTracking() {
     if (Capteurs::getSensor(2) || (Capteurs::getSensor(1) && Capteurs::getSensor(3))) {             //seulement le sensor du millieu. Le robot va tout droit.
         ajustementPwmMoteurs(55,50);
     } else if ((Capteurs::getSensor(1) || Capteurs::getSensor(0)) && !(Capteurs::getSensor(3))) {   //sensors de gauche, mais pas de droite. Le robot doit tourner a gauche.
-        ajustementPwmMoteurs(53, 30);
+        ajustementPwmMoteurs(52, 30);
     } else if ((Capteurs::getSensor(3) || Capteurs::getSensor(4)) && !(Capteurs::getSensor(1))) {   //sensors de droite, mais pas de gauche. Le robot doit tourner a droite.
         // Le robot doit tourner a droite.
-        ajustementPwmMoteurs(30, 53);
+        ajustementPwmMoteurs(35, 53);
     }
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Version plus réactive de lineTracking().
  */
-void  Moteurs::lineTrackingTranquille() {
+void  Moteurs::lineTrackingExtreme() {
     Capteurs::lecture();
     avancer();
     if (Capteurs::getSensor(0)) {
@@ -155,11 +117,7 @@ void  Moteurs::lineTrackingTranquille() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Ajuste la force des moteurs: virage Gauche.
  */
 void Moteurs::tournerGauche() {
     directionGauche();
@@ -168,11 +126,7 @@ void Moteurs::tournerGauche() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Ajuste la force des moteurs: virage Droite.
  */
 void Moteurs::tournerDroite() {
     directionDroite();
@@ -181,11 +135,7 @@ void Moteurs::tournerDroite() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief  Effectue un virage Gauche dans le cadre d'une intersection.
  */
 void Moteurs::intersectionGauche() {
     ajustementPwmMoteurs(50,50);
@@ -200,11 +150,7 @@ void Moteurs::intersectionGauche() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief  Effectue un virage Gauche dans le cadre d'une intersection.
  */
 void Moteurs::intersectionDroite() {
     ajustementPwmMoteurs(50,50);
@@ -219,11 +165,7 @@ void Moteurs::intersectionDroite() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Suit la ligne jusqu'à la prochaine intersection.
  */
 void Moteurs::attendreIntersection() {
     while(!Capteurs::estIntersection())
@@ -231,11 +173,8 @@ void Moteurs::attendreIntersection() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Sur une ligne droite, effectue un virage Gauche de 180 degrés.
+ * \sa tournerGauche()
  */
 void Moteurs::tourner180Gauche() {
     tournerGauche();
@@ -249,11 +188,8 @@ void Moteurs::tourner180Gauche() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Sur une ligne droite, effectue un virage à Droite de 180 degrés.
+ * \sa tournerDroite()
  */
 void Moteurs::tourner180Droite() {
     tournerDroite();
@@ -268,11 +204,8 @@ void Moteurs::tourner180Droite() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Pour l'état PARKING_2, effectue un virage Gauche de 180 degrés.
+ * \sa tournerGauche()
  */
 void Moteurs::tourner180GaucheFinal() {
     tournerGauche();
@@ -280,16 +213,13 @@ void Moteurs::tourner180GaucheFinal() {
         Capteurs::lecture();          //Acquisition des données en provenance des capteurs
     while (Capteurs::getSensor(4))
         Capteurs::lecture();
-    _delay_ms(200);
+    _delay_ms(350);
 
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Pour l'état PARKING_2, effectue un virage Gauche de 180 degrés.
+ * \sa tournerDroite()
  */
 void Moteurs::tourner180DroiteFinal() {
     tournerDroite();
@@ -297,7 +227,7 @@ void Moteurs::tourner180DroiteFinal() {
         Capteurs::lecture();          //Acquisition des données en provenance des capteurs
     while (Capteurs::getSensor(0))
         Capteurs::lecture();
-    _delay_ms(420);
+    _delay_ms(500);
 }
 
 

@@ -3,6 +3,14 @@
 #ifndef MOTEURS_H
 #define MOTEURS_H
 
+
+/** \class Moteurs
+ *  \brief Classe pour les moteurs du robot.
+ * 
+ *  Cette classe comprend toutes les fonctions membres qui ajustent la vitesse des moteurs (eg. lineTracking()).
+ *  Elle permet aussi de gérer la direction des moteurs et d'écrire leur valeur sur la broche voulue.
+ */
+
 class Moteurs{
 public:
     Moteurs() {}
@@ -21,7 +29,7 @@ public:
     static void boost();
     static void freiner();
     static void lineTracking();
-    static void lineTrackingTranquille();
+    static void lineTrackingExtreme();
     static void tournerGauche();   
     static void tournerDroite();
     static void intersectionDroite();
@@ -32,10 +40,9 @@ public:
     static void tourner180DroiteFinal();
     static void tourner180GaucheFinal();
   
-    
 private:
-    static bool directionDroit_;
-    static bool directionGauche_;
+    static bool directionDroit_;   ///< Booléen qui représente la direction du moteur gauche.
+    static bool directionGauche_;  ///< Booléen qui représente la direction du moteur droit.
 };
 
 #endif //MOTEURS_H

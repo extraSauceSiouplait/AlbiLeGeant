@@ -3,12 +3,9 @@
 //Constructeur par défaut
 //Initialise la lecture des capteurs sur le port A
 
-/**
- * \fn 
- * 
- * \param
- * 
- * \return 
+//! Constructeur de la classe Capteurs
+/*!
+ * Initialise la valeur des capteurs en mémoire à 0.
  */
 Capteurs::Capteurs() {
     DDRA = 0x00; //Port A en entrée pour permettre lecture des capteurs
@@ -17,11 +14,7 @@ Capteurs::Capteurs() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Lit la valeur de chaque capteur sur le port A et stocke la valeur dans l'attribut sensors_.
  */
 void Capteurs::lecture() {
     for (int i = 0; i < 5; i++)
@@ -29,33 +22,26 @@ void Capteurs::lecture() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Chercheur de l'attribut sensors_.
+ * \param indice L'indice du capteur voulu dans le tableau.
+ * \return La valeur à l'indice voulu dans le tableau sensors_.
  */
 bool Capteurs::getSensor(uint8_t indice) {
     return sensors_[indice];
 }
 
-/**
- * \fn 
- * 
- * \param
- * 
- * \return void
+
+ /**
+ * \brief Utilisé pour déterminer si les capteurs sont à une intersection
+ * \return Si les capteurs détectent une intersection.
  */
 bool Capteurs::estIntersection() {
     return ((sensors_[0] && sensors_[1] && sensors_[2]) || (sensors_[2] && sensors_[3] && sensors_[4]));       //vrai si tous les capteurs de gauche ou/et droite sont actifs
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Permet de déterminer si tous les capteurs sont éteints pendant une courte durée de temps.
+ * \return Si les capteurs sont éteints.
  */
 bool Capteurs::estPerdu() {
     for(uint8_t i = 0; i < 200; i++) {
@@ -69,11 +55,8 @@ bool Capteurs::estPerdu() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Permet de déterminer si tous les capteurs sont éteints pendant une plus longue durée de temps.
+ * \return Si les capteurs sont éteints.
  */
 bool Capteurs::estPerduLong() {
     for(uint16_t i = 0; i < 297; i++) {
