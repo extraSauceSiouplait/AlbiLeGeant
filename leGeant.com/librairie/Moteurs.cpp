@@ -168,7 +168,7 @@ void Moteurs::tourner180DroiteFinal(){
         Capteurs::lecture();        //Acquisition des données en provenance des capteurs
     while (Capteurs::getSensor(0)) 
         Capteurs::lecture();
-    freiner();
+    _delay_ms(420);
 }
 
 

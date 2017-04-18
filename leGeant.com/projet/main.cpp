@@ -83,7 +83,6 @@ int main() {
     DDRC = 0x03;       //mode ecriture pour la DEL.
     DDRD = 0xFF;       //PORT D en sortie pour le signal des moteurs
     
-    jouerPacMan();
     //Machine à état décrivant le parcours du robot
     for(;;){
         switch(etat) {
@@ -104,8 +103,8 @@ int main() {
                 jouerPacMan();
                 initialisationPwmMoteurs();
                 Moteurs::tourner180Gauche();
-                //etat = TO_GA;
-                etat = COMPTEURLIGNE_2;
+                etat = TO_GA;
+                //etat = PHOTORESISTANCE;
                 break;
             }
             
@@ -416,7 +415,7 @@ int main() {
                     Capteurs::lecture();
                 }
                 Moteurs::freiner();
-                _delay_ms(1000);
+                _delay_ms(500);
                 
                 switch(cote){
                     case GAUCHE:
@@ -429,9 +428,9 @@ int main() {
                         Moteurs::freiner();
                         
                         Moteurs::tournerDroite();
-                        _delay_ms(70);
+                        _delay_ms(475);
                         Moteurs::avancer();
-                        ajustementPwmMoteurs(50,50);
+                        ajustementPwmMoteurs(65,50);
                         while(Capteurs::estPerdu())
                             Capteurs::lecture();
                             
@@ -445,12 +444,11 @@ int main() {
                             Moteurs::lineTrackingTranquille();
                         Moteurs::freiner();
                         Moteurs::tournerGauche();
-                        _delay_ms(80);
+                        _delay_ms(400);
                         Moteurs::avancer();
-                        ajustementPwmMoteurs(50,50);
+                        ajustementPwmMoteurs(50,65);
                         while(Capteurs::estPerdu())
                             Capteurs::lecture();
-                        
                         break;
                 }
                                                 //le robot a atteint le prochain segment
@@ -497,10 +495,15 @@ int main() {
            {
                 Moteurs::attendreIntersection();
                 Moteurs::intersectionGauche();
+                
+                verif:
                 while (!Capteurs::estPerdu()){
                     Moteurs::lineTracking();
                 }
-                ajustementPwmMoteurs(0,0);
+                _delay_ms(200);
+                if(!Capteurs::estPerdu())
+                    goto verif;
+                Moteurs::freiner();
                 etat = PARKING_2;
                 break;
            }
@@ -512,6 +515,7 @@ int main() {
             {
                 while(!(PINC & 0x04)){}
                 
+                
                 switch(couleurChoisie){
                     case VERT:
                         Moteurs::tourner180GaucheFinal();
@@ -520,8 +524,9 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
+                        Moteurs::boost();
                         ajustementPwmMoteurs(58,48);
-                        while (repetitionMinuterie < 100){}
+                        while (repetitionMinuterie < 92){}
                         minuterieActive = false;
 
                         Moteurs::freiner();
@@ -534,14 +539,11 @@ int main() {
                         repetitionMinuterie = 0;
                         minuterieActive = true;
                         minuterie(250);
-                        ajustementPwmMoteurs(48,58);
-                        while (repetitionMinuterie < 85){}
+                        Moteurs::boost();
+                        ajustementPwmMoteurs(45,58);
+                        while (repetitionMinuterie < 101){}
                         minuterieActive = false;
 
-                        Moteurs::freiner();
-                        
-                        Moteurs::tournerGauche();
-                        _delay_ms(500);
                         Moteurs::freiner();
                         break;
                      
