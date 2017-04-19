@@ -142,8 +142,9 @@ void Moteurs::intersectionGauche() {
     _delay_ms(850);             //la ligne perpendiculaire au robot croise son axe de rotation
     Moteurs::freiner();
     tournerGauche();            //debuter rotation
-    Capteurs::lecture();        //pour signaler que les capteurs sont eteints
-    while (!Capteurs::getSensor(2)) {
+    while(Capteurs::getSensor(2))        //commence a tourner tant que le capteur du mileu est allumé
+        Capteurs::lecture();            
+    while (!Capteurs::getSensor(2)) {    //continue tant que le capteur du milieu est éteint.
         Capteurs::lecture();
     }
     freiner();
@@ -157,8 +158,9 @@ void Moteurs::intersectionDroite() {
     _delay_ms(820);              //la ligne perpendiculaire au robot croise son axe de rotation
     Moteurs::freiner();
     tournerDroite();             //debuter rotation
-    Capteurs::lecture();         //pour signaler que les capteurs sont eteints
-    while (!Capteurs::getSensor(2)) {
+    while(Capteurs::getSensor(2))        //commence a tourner tant que le capteur du mileu est allumé
+        Capteurs::lecture();            
+    while (!Capteurs::getSensor(2)) {    //continue tant que le capteur du milieu est éteint.
         Capteurs::lecture();
     }
     freiner();
@@ -213,7 +215,7 @@ void Moteurs::tourner180GaucheFinal() {
         Capteurs::lecture();          //Acquisition des données en provenance des capteurs
     while (Capteurs::getSensor(4))
         Capteurs::lecture();
-    _delay_ms(350);
+    _delay_ms(560);
 
 }
 

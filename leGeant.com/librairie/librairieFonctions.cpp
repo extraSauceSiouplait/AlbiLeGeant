@@ -244,7 +244,7 @@ void jouerFrequence (int frequence) {
  * \return void
  */
 void jouerNote(int frequence, float temps) {
-    const int DUREE_TEMPS = 650;
+    const int DUREE_TEMPS = 520;
     float duree = DUREE_TEMPS * temps;
     duree *= 1000;
     float periode = 1000000 / frequence;
@@ -320,4 +320,22 @@ bool jouerPacMan() {
 
     return true; //Retourne un bool pour signifier au robot que la chanson est terminée
 
+}
+
+void jouerMario(){
+    const float RONDE = 1.2;
+    const float BLANCHE = RONDE/2;
+    const float NOIRE = BLANCHE/2;
+
+    jouerNote(1046, BLANCHE * 0.7);
+    jouerNote(2, NOIRE);    //silence
+    jouerNote(784, BLANCHE * 0.7);
+    jouerNote(660, NOIRE * 1.5);
+    jouerNote(880, BLANCHE * 0.67);
+    jouerNote(988, BLANCHE * 0.67);
+    jouerNote(880, BLANCHE * 0.67);
+    jouerNote(830, BLANCHE);
+    jouerNote(932, BLANCHE);
+    jouerNote(830, BLANCHE * 1.2);
+    jouerNote(784, RONDE);
 }

@@ -79,7 +79,7 @@ ISR(TIMER2_COMPA_vect) {
 
 
 int main() {
-    DDRB = 0x0A;       //mode lecture pour lire les interrupts.
+    DDRB = 0x0A;       //mode lecture pour lire les interrupts. ecriture pour le piezo.
     DDRC = 0x03;       //mode ecriture pour la DEL.
     DDRD = 0xFF;       //PORT D en sortie pour le signal des moteurs
 
@@ -100,11 +100,10 @@ int main() {
          * ROTATION 180 DEGRÉS
          */
         case UTURN: {
-            //jouerPacMan();
+            jouerPacMan();
             initialisationPwmMoteurs();
             Moteurs::tourner180Gauche();
             etat = TO_GA;
-            //etat = PHOTORESISTANCE;
             break;
         }
 
@@ -211,6 +210,12 @@ int main() {
          * LINETRACKING() JUSQU'A L'INTERSECTION ABC ET TOURNE A GAUCHE SUR LE SEGMENT BC
          */
         case TO_ABC: {
+            Moteurs::avancer();
+            Moteurs::boost();
+            ajustementPwmMoteurs(40,40);
+            _delay_ms(400);
+            Moteurs::freiner();
+            
             Moteurs::tourner180Droite();
             switch(couleurChoisie) {
             case VERT:
@@ -436,11 +441,11 @@ int main() {
                 Moteurs::freiner();                
                 Moteurs::boost();
                 Moteurs::tournerDroite();
-                _delay_ms(700);
+                _delay_ms(480);
                 Moteurs::freiner();
                 Moteurs::avancer();
                 Moteurs::boost();
-                ajustementPwmMoteurs(65,45);
+                ajustementPwmMoteurs(65,52);
                 while(Capteurs::estPerdu())
                     Capteurs::lecture();
 
@@ -454,7 +459,7 @@ int main() {
                     Moteurs::lineTrackingExtreme();
                 Moteurs::freiner();
                 Moteurs::tournerGauche();
-                _delay_ms(650);
+                _delay_ms(570);
                 Moteurs::freiner();
                 Moteurs::avancer();
                 Moteurs::boost();
@@ -530,8 +535,8 @@ int main() {
                 minuterieActive = true;
                 minuterie(250);
                 Moteurs::boost();
-                ajustementPwmMoteurs(60,48);
-                while (repetitionMinuterie < 88) {}
+                ajustementPwmMoteurs(64,48);
+                while (repetitionMinuterie < 92) {}
                 minuterieActive = false;
 
                 Moteurs::freiner();
@@ -547,8 +552,8 @@ int main() {
                 minuterieActive = true;
                 minuterie(250);
                 Moteurs::boost();
-                ajustementPwmMoteurs(46,58);
-                while (repetitionMinuterie < 94) {}
+                ajustementPwmMoteurs(49,58);
+                while (repetitionMinuterie < 95) {}
                 minuterieActive = false;
 
                 Moteurs::freiner();
@@ -556,6 +561,7 @@ int main() {
 
             
             }
+            jouerMario();
             etat = -1;
             break;
         }

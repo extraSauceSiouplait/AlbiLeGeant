@@ -6,7 +6,6 @@
 *******************************************/
 
 #include <avr/interrupt.h>
-#include "memoire_24.h"
 
 
 //************FONCTIONS************//
@@ -46,5 +45,6 @@ void jouerFrequence(int frequence);
 void jouerNote(int, float);
 
 bool jouerPacMan();
+void jouerMario();
 
 
