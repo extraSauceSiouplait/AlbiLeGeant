@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.11"/>
+<title>Albi Le Geant:  Fichier source de librairie/Moteurs.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { init_search(); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Albi Le Geant
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Généré par Doxygen 1.8.11 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Page&#160;principale</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li class="current"><a href="files.html"><span>Fichiers</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Recherche" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Liste&#160;des&#160;fichiers</span></a></li>
+      <li><a href="globals.html"><span>Membres&#160;de&#160;fichier</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_44cc5a800ae82765987169e5d485844e.html">librairie</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">Moteurs.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="Moteurs_8h.html">Aller à la documentation de ce fichier.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define F_CPU 8000000</span></div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef MOTEURS_H</span></div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define MOTEURS_H</span></div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div><div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classMoteurs.html">   18</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMoteurs.html">Moteurs</a>{</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <a class="code" href="classMoteurs.html">Moteurs</a>() {}</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    ~<a class="code" href="classMoteurs.html">Moteurs</a>() {}</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    </div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">/***** AJUSTEMENT DES DIRECTION *****/</span></div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#ace5fdc24e345e1d2ab9a9209d265dded">setDirections</a>(<span class="keywordtype">bool</span> droit, <span class="keywordtype">bool</span> gauche);</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a95e7438e528f8c7e2ff24d79c803cbde">reculer</a>();</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#af71873e3596ee7f47763546c8d360039">avancer</a>();</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a8ade18031fc30792c44f665cd5a3592c">directionGauche</a>();</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#ae0535a7a8fb711193845fa2a14dadd51">directionDroite</a>();</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a0aeb32dbc675410237fc014c1e8df6f2">ecrire</a>();</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    </div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    </div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">/***** AJUSTEMENT PWM *****/</span></div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#aa9f1dff764000f549c52492ac82816dd">boost</a>();</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#ac0a482a550419c01cb3d030bbd4d203a">freiner</a>();</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a1a091ef7186c20b645326628fbcdec39">lineTracking</a>();</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a628945d3ba7b67f036119b357825681b">lineTrackingExtreme</a>();</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#aae2029aff49daea8fcbc3ce3c0bd7c63">tournerGauche</a>();   </div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#aa9635254aba01be3768fddaff21df67f">tournerDroite</a>();</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a6d09165e250207db440fc0349821fa74">intersectionDroite</a>();</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#abaaf1bed83b430d421ee095b2d2296bf">intersectionGauche</a>();</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a73154378e48fa846cfd0c3f72b161b32">attendreIntersection</a>();</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#aea4531e19dec955beab0da50d5317d76">tourner180Gauche</a>();</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a08be4dbd183b9eab99321dd11804232d">tourner180Droite</a>();</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a42612ae322be1ba7e3414a11d81b4c2e">tourner180DroiteFinal</a>();</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classMoteurs.html#a23cd12dcea042e845cce62c9b32d1489">tourner180GaucheFinal</a>();</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  </div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">private</span>:</div><div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classMoteurs.html#a3a8e8827984e8a071e41f98b0bbc3749">   48</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classMoteurs.html#a3a8e8827984e8a071e41f98b0bbc3749">directionDroit_</a>;   </div><div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classMoteurs.html#a1b12bd80acb0d39595978500cfbcba19">   49</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classMoteurs.html#a1b12bd80acb0d39595978500cfbcba19">directionGauche_</a>;  </div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#endif //MOTEURS_H</span></div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div><div class="ttc" id="classMoteurs_html_a628945d3ba7b67f036119b357825681b"><div class="ttname"><a href="classMoteurs.html#a628945d3ba7b67f036119b357825681b">Moteurs::lineTrackingExtreme</a></div><div class="ttdeci">static void lineTrackingExtreme()</div><div class="ttdoc">Version plus réactive de lineTracking(). </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:103</div></div>
+<div class="ttc" id="classMoteurs_html_ae0535a7a8fb711193845fa2a14dadd51"><div class="ttname"><a href="classMoteurs.html#ae0535a7a8fb711193845fa2a14dadd51">Moteurs::directionDroite</a></div><div class="ttdeci">static void directionDroite()</div><div class="ttdoc">Change la direction des moteurs: mode rotation à Droite. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:40</div></div>
+<div class="ttc" id="classMoteurs_html_a23cd12dcea042e845cce62c9b32d1489"><div class="ttname"><a href="classMoteurs.html#a23cd12dcea042e845cce62c9b32d1489">Moteurs::tourner180GaucheFinal</a></div><div class="ttdeci">static void tourner180GaucheFinal()</div><div class="ttdoc">Pour l&amp;#39;état PARKING_2, effectue un virage Gauche de 180 degrés. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:217</div></div>
+<div class="ttc" id="classMoteurs_html_a3a8e8827984e8a071e41f98b0bbc3749"><div class="ttname"><a href="classMoteurs.html#a3a8e8827984e8a071e41f98b0bbc3749">Moteurs::directionDroit_</a></div><div class="ttdeci">static bool directionDroit_</div><div class="ttdoc">Booléen qui représente la direction du moteur gauche. </div><div class="ttdef"><b>Definition:</b> Moteurs.h:48</div></div>
+<div class="ttc" id="classMoteurs_html_a0aeb32dbc675410237fc014c1e8df6f2"><div class="ttname"><a href="classMoteurs.html#a0aeb32dbc675410237fc014c1e8df6f2">Moteurs::ecrire</a></div><div class="ttdeci">static void ecrire()</div><div class="ttdoc">Écrit sur les broches des moteurs les attributs de classe. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:54</div></div>
+<div class="ttc" id="classMoteurs_html_a08be4dbd183b9eab99321dd11804232d"><div class="ttname"><a href="classMoteurs.html#a08be4dbd183b9eab99321dd11804232d">Moteurs::tourner180Droite</a></div><div class="ttdeci">static void tourner180Droite()</div><div class="ttdoc">Sur une ligne droite, effectue un virage à Droite de 180 degrés. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:201</div></div>
+<div class="ttc" id="classMoteurs_html_aa9f1dff764000f549c52492ac82816dd"><div class="ttname"><a href="classMoteurs.html#aa9f1dff764000f549c52492ac82816dd">Moteurs::boost</a></div><div class="ttdeci">static void boost()</div><div class="ttdoc">Brise l&amp;#39;inertie d&amp;#39;arrêt des engrenages afin d&amp;#39;activer les roues. Précède les changements de mouvement...</div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:67</div></div>
+<div class="ttc" id="classMoteurs_html_ace5fdc24e345e1d2ab9a9209d265dded"><div class="ttname"><a href="classMoteurs.html#ace5fdc24e345e1d2ab9a9209d265dded">Moteurs::setDirections</a></div><div class="ttdeci">static void setDirections(bool droit, bool gauche)</div><div class="ttdoc">Mutateur des attributs directionGauche/Droite. Envoie les valeurs aux moteurs. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:17</div></div>
+<div class="ttc" id="classMoteurs_html_af71873e3596ee7f47763546c8d360039"><div class="ttname"><a href="classMoteurs.html#af71873e3596ee7f47763546c8d360039">Moteurs::avancer</a></div><div class="ttdeci">static void avancer()</div><div class="ttdoc">Change la direction des moteurs: mode marche avant. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:33</div></div>
+<div class="ttc" id="classMoteurs_html_aa9635254aba01be3768fddaff21df67f"><div class="ttname"><a href="classMoteurs.html#aa9635254aba01be3768fddaff21df67f">Moteurs::tournerDroite</a></div><div class="ttdeci">static void tournerDroite()</div><div class="ttdoc">Ajuste la force des moteurs: virage Droite. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:136</div></div>
+<div class="ttc" id="classMoteurs_html_a1a091ef7186c20b645326628fbcdec39"><div class="ttname"><a href="classMoteurs.html#a1a091ef7186c20b645326628fbcdec39">Moteurs::lineTracking</a></div><div class="ttdeci">static void lineTracking()</div><div class="ttdoc">Suit la ligne enregistrée par les capteurs IR. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:86</div></div>
+<div class="ttc" id="classMoteurs_html"><div class="ttname"><a href="classMoteurs.html">Moteurs</a></div><div class="ttdoc">Classe pour les moteurs du robot. </div><div class="ttdef"><b>Definition:</b> Moteurs.h:18</div></div>
+<div class="ttc" id="classMoteurs_html_a1b12bd80acb0d39595978500cfbcba19"><div class="ttname"><a href="classMoteurs.html#a1b12bd80acb0d39595978500cfbcba19">Moteurs::directionGauche_</a></div><div class="ttdeci">static bool directionGauche_</div><div class="ttdoc">Booléen qui représente la direction du moteur droit. </div><div class="ttdef"><b>Definition:</b> Moteurs.h:49</div></div>
+<div class="ttc" id="classMoteurs_html_aae2029aff49daea8fcbc3ce3c0bd7c63"><div class="ttname"><a href="classMoteurs.html#aae2029aff49daea8fcbc3ce3c0bd7c63">Moteurs::tournerGauche</a></div><div class="ttdeci">static void tournerGauche()</div><div class="ttdoc">Ajuste la force des moteurs: virage Gauche. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:127</div></div>
+<div class="ttc" id="classMoteurs_html_a8ade18031fc30792c44f665cd5a3592c"><div class="ttname"><a href="classMoteurs.html#a8ade18031fc30792c44f665cd5a3592c">Moteurs::directionGauche</a></div><div class="ttdeci">static void directionGauche()</div><div class="ttdoc">Change la direction des moteurs: mode rotation à Gauche. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:47</div></div>
+<div class="ttc" id="classMoteurs_html_abaaf1bed83b430d421ee095b2d2296bf"><div class="ttname"><a href="classMoteurs.html#abaaf1bed83b430d421ee095b2d2296bf">Moteurs::intersectionGauche</a></div><div class="ttdeci">static void intersectionGauche()</div><div class="ttdoc">Effectue un virage Gauche dans le cadre d&amp;#39;une intersection. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:145</div></div>
+<div class="ttc" id="classMoteurs_html_a95e7438e528f8c7e2ff24d79c803cbde"><div class="ttname"><a href="classMoteurs.html#a95e7438e528f8c7e2ff24d79c803cbde">Moteurs::reculer</a></div><div class="ttdeci">static void reculer()</div><div class="ttdoc">Change la direction des moteurs: mode marche arrière. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:26</div></div>
+<div class="ttc" id="classMoteurs_html_ac0a482a550419c01cb3d030bbd4d203a"><div class="ttname"><a href="classMoteurs.html#ac0a482a550419c01cb3d030bbd4d203a">Moteurs::freiner</a></div><div class="ttdeci">static void freiner()</div><div class="ttdoc">Brise l&amp;#39;inertie de mouvement des engrenages afin d&amp;#39;arrêter les roues. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:75</div></div>
+<div class="ttc" id="classMoteurs_html_a73154378e48fa846cfd0c3f72b161b32"><div class="ttname"><a href="classMoteurs.html#a73154378e48fa846cfd0c3f72b161b32">Moteurs::attendreIntersection</a></div><div class="ttdeci">static void attendreIntersection()</div><div class="ttdoc">Suit la ligne jusqu&amp;#39;à la prochaine intersection. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:177</div></div>
+<div class="ttc" id="classMoteurs_html_a6d09165e250207db440fc0349821fa74"><div class="ttname"><a href="classMoteurs.html#a6d09165e250207db440fc0349821fa74">Moteurs::intersectionDroite</a></div><div class="ttdeci">static void intersectionDroite()</div><div class="ttdoc">Effectue un virage Gauche dans le cadre d&amp;#39;une intersection. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:161</div></div>
+<div class="ttc" id="classMoteurs_html_aea4531e19dec955beab0da50d5317d76"><div class="ttname"><a href="classMoteurs.html#aea4531e19dec955beab0da50d5317d76">Moteurs::tourner180Gauche</a></div><div class="ttdeci">static void tourner180Gauche()</div><div class="ttdoc">Sur une ligne droite, effectue un virage Gauche de 180 degrés. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:186</div></div>
+<div class="ttc" id="classMoteurs_html_a42612ae322be1ba7e3414a11d81b4c2e"><div class="ttname"><a href="classMoteurs.html#a42612ae322be1ba7e3414a11d81b4c2e">Moteurs::tourner180DroiteFinal</a></div><div class="ttdeci">static void tourner180DroiteFinal()</div><div class="ttdoc">Pour l&amp;#39;état PARKING_2, effectue un virage Gauche de 180 degrés. </div><div class="ttdef"><b>Definition:</b> Moteurs.cpp:231</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Généré par &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.11
+</small></address>
+</body>
+</html>

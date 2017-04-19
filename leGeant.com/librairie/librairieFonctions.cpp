@@ -14,11 +14,9 @@
 //************FONCTIONS************//
 
 /**
- * \fn 
+ * \brief ajuste la frequence jouée par le piezo.
  * 
- * \param
- * 
- * \return
+ * \param frequence La frequence du son voulu.
  */
 void ajustementPwmPiezo(double frequence) {       //TIMER 2 (D7 et D6)
     TCNT0 = 0x00;
@@ -37,11 +35,7 @@ void ajustementPwmPiezo(double frequence) {       //TIMER 2 (D7 et D6)
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief arrête le périférique qui fait fonctionner le piezzo.
  */
 void arretPiezo() {
     TCCR0A &= ~(1 << COM0A0);            //normal port utilisation
@@ -51,11 +45,7 @@ void arretPiezo() {
 
 // Configure les registres d'initialisation du timer0 pour le PWM moteur.
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise le périphérique qui gère le PWM des moteurs.
  */
 void initialisationPwmMoteurs() {
     cli();
@@ -73,11 +63,9 @@ void initialisationPwmMoteurs() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Ajuste le pourcentage du PWM des moteurs.
+ * \param pourcentageA Pourcentage du moteur droit.
+ * \param pourcentageB Pourcentage du moteur gauche.
  */
 void ajustementPwmMoteurs(float pourcentageA, float pourcentageB) {     //TIMER 0 (B3 et B4)
     OCR1A = 255 * (100.0 - pourcentageA)/100.0;
@@ -85,11 +73,10 @@ void ajustementPwmMoteurs(float pourcentageA, float pourcentageB) {     //TIMER 
 }
 
 /**
- * \fn 
+ * \brief  Initialise les interruptions INT0 au mode specifie
  * 
- * \param
- * 
- * \return
+ * \param modeBit0 specifie le type d'interruption (rising edge/ falling edge).
+ * \param modeBit1 specifie le type d'interruption (rising edge/ falling edge)
  */
 void initialisationINT0(bool modeBit1, bool modeBit0) {
     cli();          //Interuptions désactivées
@@ -102,11 +89,9 @@ void initialisationINT0(bool modeBit1, bool modeBit0) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise les interruptions INT1 au mode specifie
+ * \param modeBit0 specifie le type d'interruption (rising edge/ falling edge).
+ * \param modeBit1 specifie le type d'interruption (rising edge/ falling edge)
  */
 void initialisationINT1(bool modeBit1, bool modeBit0) {
     cli();          //Interuptions désactivées
@@ -119,11 +104,9 @@ void initialisationINT1(bool modeBit1, bool modeBit0) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise les interruptions INT2 au mode specifie
+ * \param modeBit0 specifie le type d'interruption (rising edge/ falling edge).
+ * \param modeBit1 specifie le type d'interruption (rising edge/ falling edge)
  */
 void initialisationINT2(bool modeBit1, bool modeBit0) {
     cli();          //Interuptions désactivées
@@ -136,11 +119,7 @@ void initialisationINT2(bool modeBit1, bool modeBit0) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise les interruptions sur la broche B0 lors d'un pin-change.
  */
 void initialisationPCINT8() {
     cli();
@@ -152,11 +131,7 @@ void initialisationPCINT8() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise les interruptions sur la broche B4 lors d'un pin-change.
  */
 void initialisationPCINT12() {
     cli();
@@ -168,11 +143,7 @@ void initialisationPCINT12() {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return
+ * \brief Initialise le périphérique (timer2) qui gère la minuterie.
  */
 void initialisationMinuterie() {            //TIMER 2 (8-bits) (D6 ou D7)
     cli();
@@ -193,11 +164,8 @@ void initialisationMinuterie() {            //TIMER 2 (8-bits) (D6 ou D7)
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Initialise le périphérique (timer2) qui gère la minuterie à la durée voulue.
+ * \param duree Duree du timer voulue.
  */
 void minuterie(uint8_t duree) {
     cli();
@@ -220,11 +188,8 @@ void minuterie(uint8_t duree) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Joue une fréquence pour une période.
+ * \param frequence frequence du son voulu.
  */
 void jouerFrequence (int frequence) {
     int periode = 1000000 / frequence;
@@ -237,11 +202,9 @@ void jouerFrequence (int frequence) {
 }
 
 /**
- * \fn 
- * 
- * \param
- * 
- * \return void
+ * \brief Joue une fréquence pendant le temps voulu.
+ * \param frequence frequence du son voulu.
+ * \param temps durée voulue.
  */
 void jouerNote(int frequence, float temps) {
     const int DUREE_TEMPS = 520;
@@ -258,11 +221,8 @@ void jouerNote(int frequence, float temps) {
  * Interpreted by: William Harvey et Samuel Meilleur
  ***********************************/
 /**
- * \fn 
- * 
- * \param
- * 
- * \return 
+ * \brief Joue la chanson de pacman
+ * \return booléen pour dire que la chanson est finie.
  */
 bool jouerPacMan() {
 
@@ -322,6 +282,9 @@ bool jouerPacMan() {
 
 }
 
+/**
+ * \brief Joue la chanson Game over de Mario.
+ */
 void jouerMario(){
     const float RONDE = 1.2;
     const float BLANCHE = RONDE/2;
