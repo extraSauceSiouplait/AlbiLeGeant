@@ -1,18 +1,18 @@
+/*! \file librairieFonctions.cpp
+ *  \brief Fichier contenant les fonctions utilisées pour le parcours du robot.
+ * 
+ *  Ce fichier contient la définition (déclaration dans librairieFonctions.h) de toutes les fonctions utilisées par le main.cpp
+ *  qui exécute le parcours du robot.
+ * 
+ */
 
 
 #define F_CPU 8000000
-#include <avr/io.h>
-#include <util/delay_basic.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include <stdio.h>
 #include "header.h"
-
 
 
 //************FONCTIONS************//
 
-// Permet l'ajustement de la fréquence pour jouer une sonorité
 /**
  * \fn 
  * 

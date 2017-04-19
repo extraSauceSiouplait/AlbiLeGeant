@@ -1,3 +1,7 @@
+/*! \file capteurs.h
+ *  \brief Fichier d'en-tête de la classe Capteurs.
+ */
+
 #ifndef CAPTEURS_H
 #define CAPTEURS_H
 

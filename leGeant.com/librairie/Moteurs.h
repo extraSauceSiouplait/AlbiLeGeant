@@ -1,3 +1,7 @@
+/*! \file Moteurs.h
+ *  \brief Fichier d'en-tête de la classe Moteurs.
+ */
+
 #define F_CPU 8000000
 
 #ifndef MOTEURS_H

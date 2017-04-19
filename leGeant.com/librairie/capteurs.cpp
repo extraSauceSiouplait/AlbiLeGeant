@@ -1,3 +1,7 @@
+/*! \file capteurs.cpp
+ *  \brief Implémentation des fonctions membre de la classe Capteurs
+ */
+
 #include "header.h"
 
 //Constructeur par défaut

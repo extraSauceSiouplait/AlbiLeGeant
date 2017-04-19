@@ -10,6 +10,11 @@
  *
  */
 
+/*! \file can.cpp
+ *  \brief Implémentation des fonctions membre de la classe can
+ */
+
+
 #include "can.h"
 
 // constructeur: initialisation du convertisseur

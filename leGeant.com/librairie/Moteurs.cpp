@@ -1,3 +1,8 @@
+
+/*! \file Moteurs.cpp
+ *  \brief Implémentation des fonctions membre de la classe Moteurs
+ */
+
 #define F_CPU 8000000
 
 #include "header.h"

@@ -1,0 +1,48 @@
+/**
+*\mainpage Documentation
+*
+* Cette page contient la documentation des classes et des fonctions de notre librairie que nous avons utilisées dans le cadre du projet final du cours INF1995.
+*
+* \section setup_sec Setup initial du robot
+
+        PORT A: 
+                A0,A1 : fil vert-gris (breadboard)
+
+                A2-A7 : capteur lignes-noires
+
+                GND,VCC : capteur lignes-noires (calibration)
+
+
+        PORT B:
+                B0,B2 : fil bleu-noir (breadboard)
+
+                B1,B3 : branchement piezo
+
+
+        PORT C: 
+                C0,C1 : fil jaune-orange (del)
+
+                C2,C3 : fil mauve-blanc
+
+                GND VCC : fil rouge-noir (breadboard)
+
+
+        PORT D: 
+                D0,D2 : fil rouge-noir (moteur gauche)
+
+                D1,D3 : fil blanc-mauve (moteur droit)
+                
+    \section Librairie
+        Liens vers les fichiers de la librairie :\n 
+        \ref librairieFonctions.h \n 
+        \ref librairieFonctions.cpp
+        
+    \section Classes
+        Liens vers les fichiers des classes : \n
+        \ref Moteurs.h \n
+        \ref Moteurs.cpp \n
+        \ref capteurs.h \n
+        \ref capteurs.cpp \n
+        \ref can.h \n
+        \ref can.cpp
+*/

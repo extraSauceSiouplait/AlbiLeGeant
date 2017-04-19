@@ -13,6 +13,17 @@
  *
  */
 
+/*! \file can.h
+ *  \brief Fichier d'en-tête de la classe can.
+ */
+
+/** \class can
+ *  \brief Classe pour le convertisseur analogique-numérique du robot.
+ * 
+ *  Elle permet de convertir l'intensité de la lumière captée par les photorésistances en valeur digitale lisible par le processeur.
+ */
+
+
 #ifndef CAN_H
 #define CAN_H
 

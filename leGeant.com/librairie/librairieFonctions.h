@@ -4,6 +4,9 @@
 * Auteurs: William Harvey, Mathieu Bélanger, Samuel Meilleur, 
 * Camille Bergeron, Olivier Boivin, Armand Hyeudip
 *******************************************/
+/*! \file librairieFonctions.h
+ *  \brief Fichier d'en-tête des fonctions de la librairie.
+ */
 
 #include <avr/interrupt.h>
 
